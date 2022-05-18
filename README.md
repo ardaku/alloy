@@ -1,18 +1,20 @@
-## About
+## Alloy
+Image viewer based on (now-discontinued)
+[Emulsion](https://arturkovacs.github.io/emulsion-website/).
 
-DISCONTINUED I do not plan to work on this project anymore.
+Alloy targets Windows, Mac, and Linux (with more targets to come!).
 
-Refer to the [website](https://arturkovacs.github.io/emulsion-website/) for an overview.
+A note for Linux users: Wayland support is limited, so for example expect high
+CPU usage and the title text not being shown. However X is fully supported.
 
-Emulsion is targeting Windows, Mac, and Linux although it is currently only being tested on Linux and Windows. A note for Linux users: Wayland support is limited, so for example expect high CPU usage and the title text not being shown. However X is fully supported.
-
-Planned releases are represented with Milestones (under Issues). I try making a new release every other month or so, but don't take the deadline too seriously. If there's a feature or bugfix that's particularly interesting to you, please indicate this at the issue - a reaction like a thumbs up might just be enough but sometimes it's better to leave a comment because that's what I get a notification about.
+Releases will be made as needed, with no set schedule.  Merging of bugfix PRs
+will warrant an immediate new release.  Related features may be grouped together
+in a release.
 
 Contribution is welcome. Feel free to post feature requests, bug reports, and make pull requests.
 
 ## Building and Installing
-
-It is recommended to use the officially provided installer found on the website and at the GitHub releases page. Although there can be a few resons why someone wants to build from source. For this, it's required to have the latest stable release of [Rust](https://www.rust-lang.org/) installed; proceed when that's done.
+Building requires the latest stable version of Rust.
 
 In many cases it's a good start to try running `cargo install emulsion`. If that build fails or if emulsion panics on startup, look into the `nix-example/emulsion/default.nix` file and locate `rpathLibs` which lists the libraries that emulsion depends on. Install the dev version of those libraries then try running the build/install again. For example on Ubuntu one can install `libXi` by running
 

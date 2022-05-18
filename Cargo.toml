@@ -1,9 +1,8 @@
 [package]
-name = "emulsion"
-version = "9.0.0"
-description = "A fast and minimalistic image viewer"
-repository = "https://github.com/ArturKovacs/emulsion"
-authors = ["Artur Barnabas <kovacs.artur.barnabas@gmail.com>"]
+name = "alloy"
+version = "1.0.0"
+description = "A fast and minimalistic image viewer based on emulsion"
+repository = "https://github.com/ardaku/alloy"
 license = "MIT"
 readme = "README.md"
 edition = "2018"
@@ -11,11 +10,11 @@ build = "build.rs"
 
 [package.metadata.bundle]
 name = "Emulsion"
-identifier = "io.github.arturkovacs.emulsion"
+identifier = "org.ardaku.alloy"
 icon = ["resource_dev/emulsion.png"]
 resources = ["LICENSE.txt"]
-short_description = "A lightweight and minimalistic image viewer"
-copyright = "Copyright (c) 2020 The Emulsion Contributors"
+short_description = "A lightweight and minimalistic image viewer based on emulsion"
+copyright = "Copyright (c) 2020 The Emulsion Contributors, Copyright (c) 2022 The Alloy Contributors"
 linux_exec_args = "%f"
 linux_mime_types = [
     "image/jpeg",

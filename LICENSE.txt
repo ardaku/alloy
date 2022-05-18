@@ -1,6 +1,7 @@
 ﻿MIT License
 
 Copyright (c) 2020 The Emulsion Contributors
+Copyright (c) 2022 The Alloy Contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

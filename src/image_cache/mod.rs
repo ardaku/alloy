@@ -192,17 +192,17 @@ fn texture_from_img_rect(
 	cell_w: u32,
 	cell_h: u32,
 ) -> Result<SrgbTexture2d> {
-	let raw_image;
+	let raw_image =
 	if img_w == cell_w {
 		assert!(offset_x == 0);
 		let start = (offset_y as usize * img_w as usize) * 4;
 		let end = start + (cell_h as usize * cell_w as usize * 4);
-		raw_image = RawImage2d {
+		RawImage2d {
 			data: Cow::Borrowed(&img_bytes[start..end]),
 			format: glium::texture::ClientFormat::U8U8U8U8,
 			width: cell_w,
 			height: cell_h,
-		};
+		}
 	} else {
 		let cell_size = cell_w as usize * cell_h as usize * 4;
 		let mut cell_pixels = Vec::with_capacity(cell_size);
@@ -213,8 +213,8 @@ fn texture_from_img_rect(
 			let end = start + (cell_w as usize * 4);
 			cell_pixels.extend_from_slice(&img_bytes[start..end]);
 		}
-		raw_image = RawImage2d::from_raw_rgba(cell_pixels, (cell_w, cell_h));
-	}
+		RawImage2d::from_raw_rgba(cell_pixels, (cell_w, cell_h))
+	};
 
 	let x_pow = 31 - img_w.leading_zeros();
 	let y_pow = 31 - img_h.leading_zeros();
@@ -542,7 +542,6 @@ impl ImageCache {
 		self.receive_prefetched();
 		let mut uploaded_one = false;
 		let req_ids = self.pending_requests.get_all_ids();
-		let mut retval = Ok(());
 		for id in req_ids {
 			if let Some(results) = self.pending_requests.take_results(id) {
 				for result in results {
@@ -550,17 +549,11 @@ impl ImageCache {
 						Ok(_) => uploaded_one = true,
 						// it's okay to ignore if the image falied to load here, this is just pre-fetch.
 						Err(Error(ErrorKind::FailedToLoadImage(..), ..)) => {}
-						Err(e) => {
-							retval = Err(e);
-							break;
-						}
+						Err(e) => return Err(e),
 					}
 				}
 			}
 
-			if retval.is_err() {
-				return retval;
-			}
 			if uploaded_one {
 				break;
 			}
@@ -612,12 +605,12 @@ impl ImageCache {
 			if get_from_cache {
 				let count = tex.frames.len() as isize;
 				if tex.fully_loaded || (frame_id >= 0 && frame_id < count) {
-					let wrapped_id;
+					let wrapped_id =
 					if frame_id < 0 {
-						wrapped_id = count + (frame_id % count);
+						count + (frame_id % count)
 					} else {
-						wrapped_id = frame_id % count;
-					}
+						frame_id % count
+					};
 					if let Some(frame) = tex.frames.get(wrapped_id as usize) {
 						self.current_frame_idx = wrapped_id as usize;
 						return Ok(frame.clone());

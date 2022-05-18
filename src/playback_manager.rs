@@ -357,13 +357,14 @@ impl<P: Playback> ImgSequencePlayer<P> {
 		// function early. And at the same time I want to use it's value as it is at this line.
 		let mut load_request = LoadRequest::None;
 		mem::swap(&mut self.load_request, &mut load_request);
-		let frame_delta_time_nanos;
+		let frame_delta_time_nanos = 
+            
 		match self.playback_state {
 			PlaybackState::Present | PlaybackState::RandomPresent => {
-				frame_delta_time_nanos = (NANOS_PER_SEC * 6) as i64;
+				(NANOS_PER_SEC * 6) as i64
 			}
 			_ => {
-				frame_delta_time_nanos = P::delay_nanos(self) as i64;
+				P::delay_nanos(self) as i64
 			}
 		};
 		if self.playback_state == PlaybackState::Paused {
@@ -394,12 +395,12 @@ impl<P: Playback> ImgSequencePlayer<P> {
 			// This assumes that the following frames have the same delay but that's okay considering that
 			// if frame step is greater than 1 it almost certainly means that we couldn't load the
 			// next frame quiclky enough so there's not much else to do here.
-			let frame_step;
+			let frame_step = 
 			if frame_delta_time_nanos > 0 {
-				frame_step = elapsed_nanos / frame_delta_time_nanos;
+			    elapsed_nanos / frame_delta_time_nanos
 			} else {
-				frame_step = 0;
-			}
+				0
+			};
 			if frame_step > 0 {
 				load_request = match self.playback_state {
 					PlaybackState::Forward | PlaybackState::Present => {

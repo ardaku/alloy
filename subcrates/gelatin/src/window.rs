@@ -316,18 +316,18 @@ impl Window {
 					}
 				}
 				WindowEvent::MouseWheel { delta: native_delta, .. } => {
-					let delta;
+					let delta =
 					match native_delta {
 						MouseScrollDelta::LineDelta(x, y) => {
-							delta = LogicalVector::new(x, y);
+							LogicalVector::new(x, y)
 						}
 						MouseScrollDelta::PixelDelta(native_pos) => {
-							delta = LogicalVector::new(
+							LogicalVector::new(
 								native_pos.x as f32 / 13.0,
 								native_pos.y as f32 / 8.0,
-							);
+							)
 						}
-					}
+					};
 					event = Some(Event {
 						cursor_pos: borrowed.cursor_pos,
 						modifiers: borrowed.modifiers,

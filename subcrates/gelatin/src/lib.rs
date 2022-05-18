@@ -346,7 +346,6 @@ pub struct Vertex {
 	pub tex_coords: [f32; 2],
 }
 
-#[allow(clippy::unneeded_field_pattern)]
 implement_vertex!(Vertex, position, tex_coords);
 
 pub struct DrawContext<'a> {
@@ -375,18 +374,18 @@ impl<'a> DrawContext<'a> {
 		// Rendering a quad to emulate clear.
 		// This is a workaround for https://github.com/glium/glium/issues/1842
 
-		let transform;
+		let transform =
 		if let Some(rect) = rect {
 			let width = rect.size.vec.x;
 			let height = rect.size.vec.y;
 			// Model tranform
 			let scale = Matrix4::from_nonuniform_scale(width, height, 1.0);
 			let translate = Matrix4::from_translation(rect.pos.vec.extend(0.0)) * scale;
-			transform = self.projection_transform * translate;
+			self.projection_transform * translate
 		} else {
 			let scale = Matrix4::from_scale(2.0);
-			transform = Matrix4::from_translation(Vector3::new(-1.0, -1.0, 0.0)) * scale;
-		}
+			Matrix4::from_translation(Vector3::new(-1.0, -1.0, 0.0)) * scale
+		};
 		let image_draw_params = glium::DrawParameters {
 			blend: Blend {
 				color: BlendingFunction::Addition {

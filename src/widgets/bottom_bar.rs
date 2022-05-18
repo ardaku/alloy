@@ -99,13 +99,12 @@ impl BottomBar {
 		widget.add_child(theme_button.clone());
 		widget.add_child(help_button.clone());
 
-		let should_show;
-		if let Some(ConfigWindowSection { show_bottom_bar: Some(false), .. }) = config.window {
+		let should_show = if let Some(ConfigWindowSection { show_bottom_bar: Some(false), .. }) = config.window {
 			widget.set_visible(false);
-			should_show = false;
+			false
 		} else {
-			should_show = true;
-		}
+			true
+		};
 
 		Self {
 			widget,

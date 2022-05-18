@@ -116,12 +116,7 @@ impl Application {
 						// but gelatin is specifically made for emulsion so this is fine hehe
 						request_exit();
 					}
-					let destroyed;
-					if let WindowEvent::Destroyed = event {
-						destroyed = true;
-					} else {
-						destroyed = false;
-					}
+					let destroyed = matches!(event, WindowEvent::Destroyed);
 					windows.get(&window_id).unwrap().process_event(event);
 					if destroyed {
 						windows.remove(&window_id);

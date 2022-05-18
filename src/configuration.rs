@@ -91,15 +91,11 @@ impl Default for ConfigUpdateSection {
 	}
 }
 
-#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
+#[derive(Default, Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct CacheUpdateSection {
 	pub last_checked: u64,
 }
-impl Default for CacheUpdateSection {
-	fn default() -> Self {
-		Self { last_checked: 0 }
-	}
-}
+
 impl CacheUpdateSection {
 	pub fn update_check_needed(&self) -> bool {
 		let duration = SystemTime::now()

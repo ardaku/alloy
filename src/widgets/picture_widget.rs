@@ -438,8 +438,7 @@ impl PictureWidget {
 			.borrow()
 			.image
 			.as_ref()
-			.map(|s| s.antialiasing.clone())
-			.flatten()
+			.and_then(|s| s.antialiasing.clone())
 			.unwrap_or_else(|| "auto".into());
 
 		let antialiasing = match antialiasing.as_str() {

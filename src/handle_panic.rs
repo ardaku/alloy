@@ -43,16 +43,16 @@ pub fn handle_panic(info: &panic::PanicInfo) {
 }
 
 fn write_to_file(msg: &str) -> io::Result<()> {
-	let local_data_folder;
+	let local_data_folder =
 	if let Some(ref project_dirs) = *PROJECT_DIRS {
-		local_data_folder = project_dirs.data_local_dir().to_owned();
+		project_dirs.data_local_dir().to_owned()
 	} else {
 		let curr_exe = env::current_exe()?;
 		let curr_exe_dir = curr_exe.parent().ok_or_else(|| {
 			io::Error::new(io::ErrorKind::Other, "Could not get exe parent folder!")
 		})?;
-		local_data_folder = curr_exe_dir.to_owned();
-	}
+		curr_exe_dir.to_owned()
+	};
 	if !local_data_folder.exists() {
 		std::fs::create_dir_all(&local_data_folder).unwrap();
 	}

@@ -64,7 +64,7 @@ winres = "0.1.11"
 
 [dependencies]
 gelatin = { path = "./subcrates/gelatin", version = "0.7" }
-ureq = { version = "2.0.2", features = ["json"], optional = true }
+ureq = { version = "2.3.1", features = ["json"], optional = true }
 lazy_static = "1.4.0"
 directories-next = "2.0.0"
 open = "1.5.0"

@@ -64,14 +64,14 @@ winres = "0.1.11"
 
 [dependencies]
 gelatin = { path = "./subcrates/gelatin", version = "0.7" }
-ureq = { version = "2.0.2", features = ["json"], optional = true }
+ureq = { version = "2.3.1", features = ["json"], optional = true }
 lazy_static = "1.4.0"
 directories-next = "2.0.0"
 open = "1.5.0"
 sys-info = "0.9.0"
 error-chain = "0.12.4"
 backtrace = "0.3.56"
-serde = { version = "1.0.123", features = ["derive"] }
+serde = { version = "1.0.137", features = ["derive"] }
 toml = "0.5.8"
 rand = "0.8.3"
 lexical-sort = "0.3.1"

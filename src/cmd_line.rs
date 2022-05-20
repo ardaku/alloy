@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use clap::{App, Arg};
+use clap::{Command, Arg};
 
 use crate::Version;
 
@@ -17,7 +17,7 @@ pub fn parse_args(config_path: &Path, cache_path: &Path) -> Args {
         cache_path.to_string_lossy(),
     );
 
-    let matches = App::new("emulsion")
+    let matches = Command::new("emulsion")
         .version(Version::cargo_pkg_version().to_string().as_str())
         .author("Artur Barnabas <kovacs.artur.barnabas@gmail.com>")
         .about(
@@ -26,9 +26,9 @@ pub fn parse_args(config_path: &Path, cache_path: &Path) -> Args {
         )
         .after_help(config.as_str())
         .arg(
-            Arg::with_name("FOLDERS")
+            Arg::new("FOLDERS")
                 .long("folders")
-                .short("f")
+                .short('f')
                 .help("Number of folders to display")
                 .takes_value(true)
                 .validator(|v| match v.parse::<u32>() {
@@ -37,15 +37,15 @@ pub fn parse_args(config_path: &Path, cache_path: &Path) -> Args {
                 }),
         )
         .arg(
-            Arg::with_name("absolute")
+            Arg::new("absolute")
                 .long("absolute")
-                .short("a")
+                .short('a')
                 .help("Show absolute file path")
                 .takes_value(false)
                 .conflicts_with("FOLDERS"),
         )
         .arg(
-            Arg::with_name("PATH")
+            Arg::new("PATH")
                 .help("The file path of the image")
                 .index(1),
         )

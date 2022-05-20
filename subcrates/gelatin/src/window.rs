@@ -7,6 +7,8 @@ use std::{
 };
 
 use cgmath::{ortho, Matrix4, Vector3};
+#[cfg(not(any(target_os = "macos", windows)))]
+use glium::glutin::platform::unix::WindowBuilderExtUnix;
 use glium::{
     glutin::{
         self,
@@ -18,8 +20,6 @@ use glium::{
     Program, Rect, Surface, VertexBuffer,
 };
 use typed_builder::TypedBuilder;
-#[cfg(not(any(target_os = "macos", windows)))]
-use winit::platform::unix::WindowBuilderExtUnix;
 
 use crate::{
     application::Application,

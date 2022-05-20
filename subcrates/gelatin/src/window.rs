@@ -7,7 +7,6 @@ use std::{
 };
 
 use cgmath::{ortho, Matrix4, Vector3};
-use derive_builder::Builder;
 use glium::{
     glutin::{
         self,
@@ -18,6 +17,7 @@ use glium::{
     program, uniform, Blend, BlendingFunction, Display, Frame, IndexBuffer,
     Program, Rect, Surface, VertexBuffer,
 };
+use typed_builder::TypedBuilder;
 #[cfg(not(any(target_os = "macos", windows)))]
 use winit::platform::unix::WindowBuilderExtUnix;
 
@@ -71,21 +71,20 @@ impl<'a> DerefMut for WindowDisplayRefMut<'a> {
     }
 }
 
-#[derive(Builder, Clone)]
-#[builder(setter(into))]
+#[derive(TypedBuilder, Clone)]
 pub struct WindowDescriptor {
-    #[builder(default)]
+    #[builder(setter(into), default)]
     icon: Option<Icon>,
 
-    #[builder(default = "PhysicalSize::<u32>::new(800, 600)")]
+    #[builder(setter(into), default = PhysicalSize::<u32>::new(800, 600))]
     size: PhysicalSize<u32>,
 
-    #[builder(default)]
+    #[builder(setter(into), default)]
     position: Option<PhysicalPosition<i32>>,
 
     /// Only relevant on Wayland.
     /// See: https://docs.rs/winit/0.24.0/winit/platform/unix/trait.WindowBuilderExtUnix.html#tymethod.with_app_id
-    #[builder(default)]
+    #[builder(setter(into), default)]
     app_id: Option<String>,
 }
 

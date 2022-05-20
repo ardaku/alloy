@@ -29,7 +29,7 @@ use gelatin::{
     line_layout_container::*,
     misc::*,
     picture::*,
-    window::{Window, WindowDescriptorBuilder},
+    window::{Window, WindowDescriptor},
     NextUpdate, Widget,
 };
 use lazy_static::lazy_static;
@@ -146,13 +146,12 @@ fn main() {
         }
         let pos = PhysicalPosition::new(window_cache.win_x, window_cache.win_y);
         let size = PhysicalSize::new(window_cache.win_w, window_cache.win_h);
-        let window_desc = WindowDescriptorBuilder::default()
+        let window_desc = WindowDescriptor::builder()
             .icon(Some(make_icon()))
             .size(size)
             .position(Some(pos))
-            .app_id(Some("Emulsion".into()))
-            .build()
-            .unwrap();
+            .app_id(Some("Alloy".into()))
+            .build();
         let window = Window::new(&mut application, window_desc);
         // This is just to fix the bug on Linux that the window doesn't start up at
         // the specified position when the position is specified during initialization

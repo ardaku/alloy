@@ -10,7 +10,7 @@ fn main() {
     // A window
     let window = Window::new(
         &mut application,
-        WindowDescriptorBuilder::default().build().unwrap(),
+        WindowDescriptor::builder().build(),
     );
     let container = Rc::new(HorizontalLayoutContainer::new());
     container.set_margin_top(5.0);

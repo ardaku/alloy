@@ -118,7 +118,7 @@ checksum = "dc120354d1b5ec6d7aaf4876b602def75595937b5e15d356eb554ab5177e08bb"
 dependencies = [
  "clipboard-win",
  "core-graphics 0.22.2",
- "image",
+ "image 0.23.14",
  "log",
  "objc",
  "objc-foundation",
@@ -200,9 +200,9 @@ checksum = "63396b8a4b9de3f4fdfb320ab6080762242f66a8ef174c49d8e19b674db4cdbe"
 
 [[package]]
 name = "bytemuck"
-version = "1.5.1"
+version = "1.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bed57e2090563b83ba8f83366628ce535a7584c9afa4c9fc0612a03925c6df58"
+checksum = "cdead85bdec19c194affaeeb670c0e41fe23de31459efd1c174d049269cf02cc"
 
 [[package]]
 name = "byteorder"
@@ -819,7 +819,7 @@ version = "0.7.0"
 dependencies = [
  "cgmath",
  "glium",
- "image",
+ "image 0.23.14",
  "typed-builder",
  "winit",
 ]
@@ -1019,11 +1019,25 @@ dependencies = [
  "gif",
  "jpeg-decoder",
  "num-iter",
- "num-rational",
+ "num-rational 0.3.2",
  "num-traits",
  "png",
  "scoped_threadpool",
  "tiff",
+]
+
+[[package]]
+name = "image"
+version = "0.24.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "28edd9d7bc256be2502e325ac0628bde30b7001b9b52e0abe31a1a9dc2701212"
+dependencies = [
+ "bytemuck",
+ "byteorder",
+ "color_quant",
+ "num-iter",
+ "num-rational 0.4.0",
+ "num-traits",
 ]
 
 [[package]]
@@ -1147,28 +1161,28 @@ dependencies = [
 
 [[package]]
 name = "libavif"
-version = "0.6.0"
+version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8b80fe9319dc8fbeb5110b8e791f12678e2910ddf425cb53a0ce26fac2e078af"
+checksum = "6ccd38208ba58bffa9caeb824f6e1a242384516c387de21dec5dce5b3d7e020c"
 dependencies = [
  "libavif-sys",
 ]
 
 [[package]]
 name = "libavif-image"
-version = "0.6.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cbb4d6f590d4f879bc349886f59acd4f21695e9f030e7d599c9285a58bda0b42"
+checksum = "df8453b71f680f286b5336a6724b16c756a64994ff3875a8260214007243569a"
 dependencies = [
- "image",
+ "image 0.24.2",
  "libavif",
 ]
 
 [[package]]
 name = "libavif-sys"
-version = "0.9.0"
+version = "0.13.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "744832b766d90e2d1ba4661711859d33761ef6ecc9b3df149a691a60bb01352b"
+checksum = "6d686efe0bc699e6ba3254f6b62d3fa2306b2308cbc2825d6a6a0b8170cfa29f"
 dependencies = [
  "cmake",
  "libc",
@@ -1183,9 +1197,9 @@ checksum = "349d5a591cd28b49e1d1037471617a32ddcda5731b99419008085f72d5a53836"
 
 [[package]]
 name = "libdav1d-sys"
-version = "0.3.0"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f0481eccd9bddb0f76073d9ed9099553511898b9544d4fa200c1e2ff72fad911"
+checksum = "2449c0cf51b69ae65edb12fa071063e5a51034a8b2347269b5a40aefe2071fcf"
 
 [[package]]
 name = "libloading"
@@ -1533,6 +1547,17 @@ name = "num-rational"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "12ac428b1cb17fce6f731001d307d351ec70a6d202fc2e60f7d4c5e42d8f4f07"
+dependencies = [
+ "autocfg",
+ "num-integer",
+ "num-traits",
+]
+
+[[package]]
+name = "num-rational"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d41702bd167c2df5520b384281bc111a4b5efcf7fbc4c9c222c815b07e0a6a6a"
 dependencies = [
  "autocfg",
  "num-integer",

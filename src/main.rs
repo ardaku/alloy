@@ -150,7 +150,7 @@ fn main() {
             .icon(Some(make_icon()))
             .size(size)
             .position(Some(pos))
-            .app_id(Some("Emulsion".into()))
+            .app_id(Some("Alloy".into()))
             .build();
         let window = Window::new(&mut application, window_desc);
         // This is just to fix the bug on Linux that the window doesn't start up at

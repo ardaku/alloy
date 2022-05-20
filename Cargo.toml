@@ -73,7 +73,7 @@ error-chain = "0.12.4"
 backtrace = "0.3.56"
 serde = { version = "1.0.123", features = ["derive"] }
 toml = "0.5.8"
-rand = "0.8.3"
+rand = "0.8.5"
 lexical-sort = "0.3.1"
 trash = "2.0.1"
 clap = { version = "2.33.3", default-features = false }

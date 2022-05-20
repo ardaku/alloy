@@ -70,7 +70,7 @@ directories-next = "2.0.0"
 open = "1.5.0"
 sys-info = "0.9.1"
 error-chain = "0.12.4"
-backtrace = "0.3.56"
+backtrace = "0.3.59"
 serde = { version = "1.0.137", features = ["derive"] }
 toml = "0.5.9"
 rand = "0.8.5"

@@ -1,6 +1,6 @@
 use std::path::Path;
 
-use clap::{Command, Arg};
+use clap::{Arg, Command};
 
 use crate::Version;
 
@@ -44,11 +44,7 @@ pub fn parse_args(config_path: &Path, cache_path: &Path) -> Args {
                 .takes_value(false)
                 .conflicts_with("FOLDERS"),
         )
-        .arg(
-            Arg::new("PATH")
-                .help("The file path of the image")
-                .index(1),
-        )
+        .arg(Arg::new("PATH").help("The file path of the image").index(1))
         .get_matches();
 
     let file_path = matches.value_of("PATH").map(ToString::to_string);

@@ -11,7 +11,9 @@ use std::{
 };
 
 use gelatin::image::{
-    self, gif::GifDecoder, png::PngDecoder, AnimationDecoder, ImageFormat,
+    self,
+    codecs::{gif::GifDecoder, png::PngDecoder},
+    AnimationDecoder, ImageFormat,
 };
 
 pub mod errors {
@@ -177,8 +179,13 @@ pub fn load_svg(path: &std::path::Path) -> Result<image::RgbaImage> {
     let (width, height) = ((width * zoom) as u32, (height * zoom) as u32);
     // These unwrapped Options are fine as long as the dimensions are correct
     let mut pixmap = tiny_skia::Pixmap::new(width, height).unwrap();
-    resvg::render(&rtree, usvg::FitTo::Zoom(zoom as f32), tiny_skia::Transform::identity(), pixmap.as_mut())
-        .unwrap();
+    resvg::render(
+        &rtree,
+        usvg::FitTo::Zoom(zoom as f32),
+        tiny_skia::Transform::identity(),
+        pixmap.as_mut(),
+    )
+    .unwrap();
     Ok(image::RgbaImage::from_raw(width, height, pixmap.take()).unwrap())
 }
 

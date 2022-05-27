@@ -8,10 +8,8 @@ use gelatin::{
 fn main() {
     let mut application = Application::new();
     // A window
-    let window = Window::new(
-        &mut application,
-        WindowDescriptor::builder().build(),
-    );
+    let window =
+        Window::new(&mut application, WindowDescriptor::builder().build());
     let container = Rc::new(HorizontalLayoutContainer::new());
     container.set_margin_top(5.0);
     container.set_margin_bottom(5.0);

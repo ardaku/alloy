@@ -67,7 +67,7 @@ trash = "2.1"
 clap = { version = "3.1", default-features = false, features = ["std"] }
 kamadak-exif = "0.5"
 arboard = { version = "2.1", features = ["wayland-data-control"] }
-resvg = "0.22"
+resvg = "0.23"
 usvg = "0.22"
 tiny-skia = "0.6"
 log = "0.4"

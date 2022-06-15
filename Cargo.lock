@@ -44,7 +44,7 @@ version = "1.0.0"
 dependencies = [
  "arboard",
  "backtrace",
- "clap 3.1.18",
+ "clap 3.2.1",
  "directories-next",
  "env_logger",
  "error-chain",
@@ -316,9 +316,9 @@ dependencies = [
 
 [[package]]
 name = "clap"
-version = "3.1.18"
+version = "3.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d2dbdf4bdacb33466e854ce889eee8dfd5729abf7ccd7664d0a2d60cd384440b"
+checksum = "a836566fa5f52f7ddf909a8a2f9029b9f78ca584cd95cf7e87f8073110f4c5c9"
 dependencies = [
  "bitflags",
  "clap_lex",
@@ -328,9 +328,9 @@ dependencies = [
 
 [[package]]
 name = "clap_lex"
-version = "0.2.0"
+version = "0.2.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a37c35f1112dad5e6e0b1adaff798507497a18fceeb30cceb3bae7d1427b9213"
+checksum = "5538cd660450ebeb4234cfecf8f2284b844ffc4c50531e66d584ad5b91293613"
 dependencies = [
  "os_str_bytes",
 ]
@@ -2908,9 +2908,9 @@ dependencies = [
 
 [[package]]
 name = "tiny-skia"
-version = "0.6.4"
+version = "0.6.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6f5ac9783610677139de05b2b438cf46d13ae3260721ad77f9f72d4f324bcbf7"
+checksum = "78b3e1db967020dd509b49cecc024025beba2b1b6cf204618610ba266269d6b9"
 dependencies = [
  "arrayref",
  "arrayvec 0.5.2",

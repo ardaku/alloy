@@ -52,7 +52,7 @@ winres = "0.1"
 
 [dependencies]
 gelatin = { path = "../gelatin" }
-ureq = { version = "2.3", features = ["json"], optional = true }
+ureq = { version = "2.5", features = ["json"], optional = true }
 lazy_static = "1.4"
 directories-next = "2.0"
 open = "3.0"

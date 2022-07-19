@@ -1,62 +1,48 @@
-use std::path::Path;
-
-use clap::{Arg, Command};
+use pico_args::Arguments;
 
 use crate::Version;
 
 pub struct Args {
     pub file_path: Option<String>,
-    pub displayed_folders: Option<u32>,
 }
 
-const FOLDERS: &str = "folders";
-const ABSOLUTE: &str = "absolute";
-const PATH: &str = "path";
+const HELP: &str = "\
+Alloy
+USAGE:
+  alloy [OPTIONS] [PATH]
+FLAGS:
+  -h, --help            Prints help information
+  -v, --version         Prints version
+OPTIONS:
+ARGS:
+  <PATH>                The file path of the image
+";
 
 /// Parses the command-line arguments and returns the file path
-pub fn parse_args(config_path: &Path, cache_path: &Path) -> Args {
-    let config = format!(
-        "CONFIGURATION:\n    config file: {}\n    cache file:  {}",
-        config_path.to_string_lossy(),
-        cache_path.to_string_lossy(),
-    );
+pub fn parse_args() -> Args {
+    let mut pargs = Arguments::from_env();
 
-    let matches = Command::new("alloy")
-        .version(Version::cargo_pkg_version().to_string().as_str())
-        .author("Artur Barnabas <kovacs.artur.barnabas@gmail.com>")
-        .about(
-            "A fast and minimalistic image viewer\n\
-			https://arturkovacs.github.io/emulsion-website/",
-        )
-        .after_help(config.as_str())
-        .arg(
-            Arg::new(FOLDERS)
-                .long("folders")
-                .short('f')
-                .help("Number of folders to display")
-                .takes_value(true),
-        )
-        .arg(
-            Arg::new(ABSOLUTE)
-                .long("absolute")
-                .short('a')
-                .help("Show absolute file path")
-                .takes_value(false)
-                .conflicts_with(FOLDERS),
-        )
-        .arg(Arg::new(PATH).help("The file path of the image").index(1))
-        .get_matches();
+    // Help and version flags take precedence
+    if pargs.contains(["-h", "--help"]) {
+        print!("{}", HELP);
+        std::process::exit(0);
+    } else if pargs.contains(["-v", "--version"]) {
+        println!("{}", Version::cargo_pkg_version().to_string().as_str());
+        std::process::exit(0);
+    }
 
-    let file_path = matches.get_one::<String>(PATH).map(|s| s.to_string());
+    // TODO: Options
 
-    let displayed_folders = if matches.contains_id(ABSOLUTE) {
-        Some(std::u32::MAX)
-    } else {
-        matches.get_one::<u32>(FOLDERS).cloned()
-    };
-
-    Args {
-        file_path,
-        displayed_folders,
+    // Get filename
+    match pargs.free_from_str::<String>() {
+        Ok(file_path) if !file_path.starts_with("-") => Args {
+            file_path: Some(file_path),
+        },
+        Ok(_) => {
+            println!("Invalid usage\n");
+            print!("{}", HELP);
+            std::process::exit(1);
+        }
+        Err(_) => Args { file_path: None },
     }
 }

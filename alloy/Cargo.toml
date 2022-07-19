@@ -64,7 +64,6 @@ toml = "0.5"
 rand = "0.8"
 lexical-sort = "0.3"
 trash = "2.1"
-clap = { version = "3.2", default-features = false, features = ["std"] }
 kamadak-exif = "0.5"
 arboard = "2.1"
 resvg = "0.23"
@@ -72,6 +71,7 @@ usvg = "0.23"
 tiny-skia = "0.6"
 log = "0.4"
 env_logger = "0.9"
+pico-args = "0.5"
 
 [dependencies.libavif-image]
 version = "0.9"

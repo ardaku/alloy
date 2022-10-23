@@ -172,7 +172,7 @@ pub fn load_svg(path: &std::path::Path) -> Result<image::RgbaImage> {
     let opt = usvg::Options::default();
     let data = std::fs::read(path)?;
     let rtree = usvg::Tree::from_data(&data, &opt.to_ref())?;
-    let size = rtree.svg_node().size;
+    let size = rtree.size;
     let (width, height) = (size.width(), size.height());
     // Scale to fit 4096
     let zoom = 4096. / width.max(height);

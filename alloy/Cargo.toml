@@ -65,7 +65,7 @@ rand = "0.8"
 lexical-sort = "0.3"
 trash = { version = "2.1", default-features = false }
 kamadak-exif = "0.5"
-arboard = "3.1"
+arboard = "3.2"
 resvg = "0.24"
 usvg = "0.24"
 tiny-skia = "0.8"

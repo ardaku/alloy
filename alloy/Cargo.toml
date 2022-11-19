@@ -67,7 +67,7 @@ trash = { version = "2.1", default-features = false }
 kamadak-exif = "0.5"
 arboard = "3.2"
 resvg = "0.24"
-usvg = "0.24"
+usvg = "0.25"
 tiny-skia = "0.8"
 log = "0.4"
 env_logger = "0.9"

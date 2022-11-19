@@ -15,7 +15,7 @@ use crate::image_cache::{self, AnimationFrameTexture, ImageCache};
 
 const NANOS_PER_SEC: u64 = 1_000_000_000;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum LoadRequest {
     None,
     LoadNext,
@@ -25,7 +25,7 @@ pub enum LoadRequest {
     Jump(i32),
 }
 
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Eq, Copy, Clone)]
 pub enum PlaybackState {
     Paused,
     Forward,
@@ -459,7 +459,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
                         let mut target = None;
                         for _ in 0..frame_step {
                             target = self.present_remaining.pop();
-                            if target == None {
+                            if target.is_none() {
                                 // Restart
                                 // WARNING we silently assume that the folder is fully
                                 // filtered at this point.

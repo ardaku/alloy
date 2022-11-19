@@ -35,7 +35,7 @@ pub fn parse_args() -> Args {
 
     // Get filename
     match pargs.free_from_str::<String>() {
-        Ok(file_path) if !file_path.starts_with("-") => Args {
+        Ok(file_path) if !file_path.starts_with('-') => Args {
             file_path: Some(file_path),
         },
         Ok(_) => {

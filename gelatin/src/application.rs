@@ -67,10 +67,12 @@ fn update_control_flow(
     }
 }
 
+type ApplicationGlobalHandler = Box<dyn FnMut(&Event<()>) -> NextUpdate>;
+
 pub struct Application {
     pub event_loop: glutin::event_loop::EventLoop<()>,
     windows: HashMap<WindowId, Rc<Window>>,
-    global_handlers: Vec<Box<dyn FnMut(&Event<()>) -> NextUpdate>>,
+    global_handlers: Vec<ApplicationGlobalHandler>,
     at_exit: Option<Box<dyn FnOnce()>>,
 }
 

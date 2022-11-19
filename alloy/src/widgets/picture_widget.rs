@@ -39,7 +39,7 @@ const MIN_ZOOM_FACTOR: f32 = 0.0001;
 const MAX_ZOOM_FACTOR: f32 = 10000.0;
 const AA_TEXEL_SIZE_THRESHOLD: f32 = 4f32;
 
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
 pub enum ScalingMode {
     Fixed,
     FitStretch,
@@ -679,7 +679,7 @@ impl PictureWidget {
         }
         if triggered!(IMG_DEL_NAME) {
             if let Some(path) = borrowed.playback_manager.shown_file_path() {
-                if let Err(e) = trash::delete(&path) {
+                if let Err(e) = trash::delete(path) {
                     eprintln!(
                         "Error while moving file '{:?}' to trash: {:?}",
                         path, e

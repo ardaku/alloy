@@ -88,6 +88,8 @@ pub struct WindowDescriptor {
     app_id: Option<String>,
 }
 
+type WindowGlobalEventHandler = Box<dyn FnMut(&WindowEvent)>;
+
 struct WindowData {
     display: glium::Display,
     size_before_fullscreen: PhysicalSize<u32>,
@@ -105,7 +107,7 @@ struct WindowData {
     root_widget: Rc<dyn Widget>,
     bg_color: [f32; 4],
 
-    global_event_handlers: Vec<Box<dyn FnMut(&WindowEvent)>>,
+    global_event_handlers: Vec<WindowGlobalEventHandler>,
 
     // Draw data
     unit_quad_vertices: VertexBuffer<Vertex>,

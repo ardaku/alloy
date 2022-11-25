@@ -70,7 +70,7 @@ resvg = "0.25"
 usvg = "0.25"
 tiny-skia = "0.8"
 log = "0.4"
-env_logger = "0.9"
+env_logger = "0.10"
 pico-args = "0.5"
 
 [dependencies.libavif-image]

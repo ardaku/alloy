@@ -57,7 +57,7 @@ dependencies = [
  "toml",
  "trash",
  "ureq",
- "usvg",
+ "usvg 0.27.0",
  "winres",
 ]
 
@@ -752,6 +752,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "fontdb"
+version = "0.10.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8131752b3f3b876a20f42b3d08233ad177d6e7ec6d18aaa6954489a201071be5"
+dependencies = [
+ "fontconfig-parser",
+ "log",
+ "memmap2 0.5.8",
+ "ttf-parser 0.17.1",
+]
+
+[[package]]
 name = "foreign-types"
 version = "0.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1010,6 +1022,12 @@ dependencies = [
  "scoped_threadpool",
  "tiff",
 ]
+
+[[package]]
+name = "imagesize"
+version = "0.10.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "df19da1e92fbfec043ca97d622955381b1f3ee72a180ec999912df31b1ccd951"
 
 [[package]]
 name = "instant"
@@ -1944,7 +1962,7 @@ dependencies = [
  "svgfilters",
  "svgtypes",
  "tiny-skia",
- "usvg",
+ "usvg 0.25.0",
 ]
 
 [[package]]
@@ -2496,7 +2514,33 @@ dependencies = [
  "base64",
  "data-url",
  "flate2",
- "fontdb",
+ "fontdb 0.9.3",
+ "kurbo",
+ "log",
+ "pico-args",
+ "rctree",
+ "roxmltree",
+ "rustybuzz",
+ "simplecss",
+ "siphasher",
+ "strict-num",
+ "svgtypes",
+ "unicode-bidi",
+ "unicode-script",
+ "unicode-vo",
+]
+
+[[package]]
+name = "usvg"
+version = "0.27.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "18f21439baebaab1773fd5c9f70a04491946ef1480ea813e2d46b61fa632a82b"
+dependencies = [
+ "base64",
+ "data-url",
+ "flate2",
+ "fontdb 0.10.0",
+ "imagesize",
  "kurbo",
  "log",
  "pico-args",

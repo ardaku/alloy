@@ -63,7 +63,7 @@ serde = { version = "1.0.150", features = ["derive"] }
 toml = "0.5"
 rand = "0.8"
 lexical-sort = "0.3"
-trash = { version = "2.1", default-features = false }
+trash = { version = "3.0", default-features = false }
 kamadak-exif = "0.5"
 arboard = "3.2"
 resvg = "0.25"

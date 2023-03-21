@@ -59,7 +59,7 @@ open = "3.2"
 sys-info = "0.9"
 error-chain = "0.12"
 backtrace = "0.3"
-serde = { version = "1.0.156", features = ["derive"] }
+serde = { version = "1.0.158", features = ["derive"] }
 toml = "0.5"
 rand = "0.8"
 lexical-sort = "0.3"

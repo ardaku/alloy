@@ -74,7 +74,7 @@ env_logger = "0.10"
 pico-args = "0.5"
 
 [dependencies.libavif-image]
-version = "0.9"
+version = "0.10"
 default-features = false
 features = ["codec-dav1d"]
 optional = true

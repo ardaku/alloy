@@ -18,28 +18,28 @@ copyright = "Copyright (c) 2020 The Emulsion Contributors, Copyright (c) 2022 Th
 linux_exec_args = "%f"
 linux_mime_types = [
     "image/jpeg",
-	"image/jpg",
-	"image/pjpeg",
-	"image/png",
-	"image/apng",
-	"image/gif",
-	"image/webp",
-	"image/tiff",
-	"image/bmp",
-	"image/avif",
-	"image/svg+xml",
-	"image/svg",
-	"image/x-png",
-	"image/x-tga",
-	"image/x-targa",
-	"image/x-bmp",
-	"image/x-icon",
-	"image/vnd.microsoft.icon",
-	"image/vnd.radiance",
-	"image/x‑portable‑bitmap",
-	"image/x‑portable‑graymap",
-	"image/x‑portable‑pixmap",
-	"image/x‑portable‑anymap"
+    "image/jpg",
+    "image/pjpeg",
+    "image/png",
+    "image/apng",
+    "image/gif",
+    "image/webp",
+    "image/tiff",
+    "image/bmp",
+    "image/avif",
+    "image/svg+xml",
+    "image/svg",
+    "image/x-png",
+    "image/x-tga",
+    "image/x-targa",
+    "image/x-bmp",
+    "image/x-icon",
+    "image/vnd.microsoft.icon",
+    "image/vnd.radiance",
+    "image/x‑portable‑bitmap",
+    "image/x‑portable‑graymap",
+    "image/x‑portable‑pixmap",
+    "image/x‑portable‑anymap"
 ]
 
 [features]
@@ -66,11 +66,11 @@ lexical-sort = "0.3"
 trash = { version = "2.1", default-features = false }
 kamadak-exif = "0.5"
 arboard = "3.2"
-resvg = "0.25"
-usvg = "0.25"
+resvg = "0.31"
+usvg = "0.31"
 tiny-skia = "0.8"
 log = "0.4"
-env_logger = "0.9"
+env_logger = "0.10"
 pico-args = "0.5"
 
 [dependencies.libavif-image]

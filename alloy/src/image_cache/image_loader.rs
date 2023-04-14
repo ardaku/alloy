@@ -15,6 +15,7 @@ use gelatin::image::{
     codecs::{gif::GifDecoder, png::PngDecoder},
     AnimationDecoder, ImageFormat,
 };
+use usvg::TreeParsing;
 
 pub mod errors {
     use std::io;
@@ -171,7 +172,7 @@ pub fn load_gif(
 pub fn load_svg(path: &std::path::Path) -> Result<image::RgbaImage> {
     let opt = usvg::Options::default();
     let data = std::fs::read(path)?;
-    let rtree = usvg::Tree::from_data(&data, &opt.to_ref())?;
+    let rtree = usvg::Tree::from_data(&data, &opt)?;
     let size = rtree.size;
     let (width, height) = (size.width(), size.height());
     // Scale to fit 4096
@@ -181,7 +182,7 @@ pub fn load_svg(path: &std::path::Path) -> Result<image::RgbaImage> {
     let mut pixmap = tiny_skia::Pixmap::new(width, height).unwrap();
     resvg::render(
         &rtree,
-        usvg::FitTo::Zoom(zoom as f32),
+        resvg::FitTo::Zoom(zoom as f32),
         tiny_skia::Transform::identity(),
         pixmap.as_mut(),
     )

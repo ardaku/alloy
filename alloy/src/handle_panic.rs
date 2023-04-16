@@ -57,6 +57,6 @@ fn write_to_file(msg: &str) -> io::Result<()> {
         .append(true)
         .open(local_data_folder.join("panic.txt"))?;
 
-    write!(file, "{}", msg)?;
+    write!(file, "{msg}")?;
     Ok(())
 }

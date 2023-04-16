@@ -22,15 +22,24 @@ pub mod errors {
 
     use gelatin::{glium::texture, image};
 
-    error_chain! {
-        foreign_links {
-            Io(io::Error) #[doc = "Error during IO"];
-            TextureCreationError(texture::TextureCreationError);
-            ImageLoadError(image::ImageError);
-            ExifError(exif::Error);
-            SvgError(usvg::Error);
-            AvifError(libavif_image::Error) #[cfg(feature = "avif")];
-        }
+    pub type Result<T = (), E = Error> = std::result::Result<T, E>;
+
+    #[derive(Debug, thiserror::Error)]
+    pub enum Error {
+        #[error("Error during I/O")]
+        Io(#[from] io::Error),
+        #[error(transparent)]
+        TextureCreationError(#[from] texture::TextureCreationError),
+        #[error(transparent)]
+        ImageLoadError(#[from] image::ImageError),
+        #[error(transparent)]
+        ExifError(#[from] exif::Error),
+        #[error(transparent)]
+        SvgError(#[from] usvg::Error),
+        #[cfg(feature = "avif")]
+        AvifError(#[from] libavif_image::Error),
+        #[error("{0}")]
+        Msg(String),
     }
 }
 
@@ -56,9 +65,10 @@ pub enum ImgFormat {
 /// image. This is represented by the value `Deg0`. All other cases must be interpreted as relative
 /// to this. The rotation part is counter-clockwise. When there's a flip it's always interpreted as
 /// if it happened after the rotation.
-#[derive(Debug, Copy, Clone)]
+#[derive(Copy, Clone, Debug, Default)]
 pub enum Orientation {
     /// Exif 1
+    #[default]
     Deg0,
 
     /// Exif 2
@@ -81,11 +91,6 @@ pub enum Orientation {
 
     /// Exif 8
     Deg90,
-}
-impl Default for Orientation {
-    fn default() -> Self {
-        Orientation::Deg0
-    }
 }
 
 /// Detects the format of an image file. It looks at the first 512 bytes;
@@ -143,7 +148,7 @@ pub fn detect_orientation(path: &Path) -> Result<Orientation> {
                 Ok(Orientation::Deg0)
             }
         } else {
-            Err("EXIF orientation was expected to be of type 'short' but it wasn't".into())
+            Err(Error::Msg("EXIF orientation was expected to be of type 'short' but it wasn't".to_string()))
         }
     } else {
         Ok(Orientation::Deg0)

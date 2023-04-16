@@ -12,6 +12,7 @@ use glium::glutin::dpi;
 pub struct LogicalVector {
     pub vec: Vector2<f32>,
 }
+
 impl LogicalVector {
     pub fn new(x: f32, y: f32) -> Self {
         LogicalVector {
@@ -19,6 +20,7 @@ impl LogicalVector {
         }
     }
 }
+
 impl Default for LogicalVector {
     fn default() -> LogicalVector {
         LogicalVector {
@@ -26,6 +28,7 @@ impl Default for LogicalVector {
         }
     }
 }
+
 impl Add for LogicalVector {
     type Output = Self;
 
@@ -33,11 +36,13 @@ impl Add for LogicalVector {
         (self.vec + other.vec).into()
     }
 }
+
 impl AddAssign for LogicalVector {
     fn add_assign(&mut self, other: LogicalVector) {
         self.vec += other.vec;
     }
 }
+
 impl Sub for LogicalVector {
     type Output = Self;
 
@@ -45,6 +50,7 @@ impl Sub for LogicalVector {
         (self.vec - other.vec).into()
     }
 }
+
 impl<T: Into<f32>> Mul<T> for LogicalVector {
     type Output = Self;
 
@@ -52,6 +58,7 @@ impl<T: Into<f32>> Mul<T> for LogicalVector {
         (self.vec * other.into()).into()
     }
 }
+
 impl Mul<LogicalVector> for f32 {
     type Output = LogicalVector;
 
@@ -59,6 +66,7 @@ impl Mul<LogicalVector> for f32 {
         (self * other.vec).into()
     }
 }
+
 impl<T: Into<f32>> Div<T> for LogicalVector {
     type Output = Self;
 
@@ -66,6 +74,7 @@ impl<T: Into<f32>> Div<T> for LogicalVector {
         (self.vec / other.into()).into()
     }
 }
+
 impl<T: Into<f32>> From<Vector2<T>> for LogicalVector {
     fn from(other: Vector2<T>) -> LogicalVector {
         LogicalVector {
@@ -81,6 +90,7 @@ impl From<dpi::LogicalSize<f32>> for LogicalVector {
         }
     }
 }
+
 impl From<LogicalVector> for dpi::LogicalSize<f32> {
     fn from(vec: LogicalVector) -> Self {
         dpi::LogicalSize::<f32> {
@@ -97,6 +107,7 @@ impl From<dpi::LogicalPosition<f32>> for LogicalVector {
         }
     }
 }
+
 impl From<LogicalVector> for dpi::LogicalPosition<f32> {
     fn from(vec: LogicalVector) -> Self {
         dpi::LogicalPosition::<f32> {
@@ -109,6 +120,7 @@ impl From<LogicalVector> for dpi::LogicalPosition<f32> {
 pub trait FromPhysical<T> {
     fn from_physical(source: T, scale_factor: f32) -> Self;
 }
+
 impl<T: Into<f64>> FromPhysical<dpi::PhysicalSize<T>> for LogicalVector {
     fn from_physical(source: dpi::PhysicalSize<T>, scale_factor: f32) -> Self {
         let vec = Vector2::new(
@@ -120,6 +132,7 @@ impl<T: Into<f64>> FromPhysical<dpi::PhysicalSize<T>> for LogicalVector {
         }
     }
 }
+
 impl<T: Into<f64>> FromPhysical<dpi::PhysicalPosition<T>> for LogicalVector {
     fn from_physical(
         source: dpi::PhysicalPosition<T>,
@@ -138,6 +151,7 @@ pub struct LogicalRect {
     pub pos: LogicalVector,
     pub size: LogicalVector,
 }
+
 impl LogicalRect {
     #[inline]
     pub fn left(&self) -> f32 {
@@ -194,24 +208,22 @@ pub enum Length {
     Fixed(f32),
     Stretch { min: f32, max: f32 },
 }
+
 impl Default for Length {
     fn default() -> Length {
         Length::Fixed(256.0)
     }
 }
-#[derive(Debug, Copy, Clone)]
+
+#[derive(Copy, Clone, Debug, Default)]
 pub enum Alignment {
+    #[default]
     Start,
     Center,
     End,
 }
-impl Default for Alignment {
-    fn default() -> Alignment {
-        Alignment::Start
-    }
-}
 
-#[derive(Default, Debug, Copy, Clone)]
+#[derive(Copy, Clone, Debug, Default)]
 pub struct WidgetPlacement {
     pub width: Length,
     pub height: Length,
@@ -250,7 +262,9 @@ pub trait PickDimension {
     fn rect_size_mut(rect: &mut LogicalRect) -> &mut f32;
     fn rect_size(rect: &LogicalRect) -> f32;
 }
-pub struct HorDim {}
+
+pub struct HorDim;
+
 impl PickDimension for HorDim {
     fn vec_mut(v: &mut LogicalVector) -> &mut f32 {
         &mut v.vec.x
@@ -308,7 +322,9 @@ impl PickDimension for HorDim {
         rect.size.vec.x
     }
 }
-pub struct VerDim {}
+
+pub struct VerDim;
+
 impl PickDimension for VerDim {
     fn vec_mut(v: &mut LogicalVector) -> &mut f32 {
         &mut v.vec.y

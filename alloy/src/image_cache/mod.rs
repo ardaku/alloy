@@ -1,3 +1,7 @@
+mod directory;
+pub mod image_loader;
+mod pending_requests;
+
 use std::{
     borrow::Cow,
     collections::BTreeMap,
@@ -19,14 +23,11 @@ use gelatin::{
 };
 use log::trace;
 
-pub mod image_loader;
-use self::{directory::DirItem, image_loader::*};
-
-mod pending_requests;
-use pending_requests::PendingRequests;
-
-mod directory;
-use directory::Directory;
+use self::{
+    directory::{DirItem, Directory},
+    image_loader::*,
+    pending_requests::PendingRequests,
+};
 
 pub mod errors {
     use std::io;
@@ -35,26 +36,28 @@ pub mod errors {
 
     use crate::image_cache::image_loader;
 
-    error_chain! {
-        foreign_links {
-            Io(io::Error) #[doc = "Error during IO"];
-            TextureCreationError(texture::TextureCreationError);
-            ImageRsError(image::ImageError);
-            TextureLoaderError(image_loader::errors::Error);
-            DirError(super::directory::Error);
-        }
-        errors {
-            WaitingOnLoader {
-                description("ImageCache is waiting for loader to send result")
-                display("ImageCache is waiting for loader to send result")
-            }
-            WaitingOnDirFilter {
-                display("ImageCache is waiting for the directory items to be filtered for image files")
-            }
-            FailedToLoadImage(req_id: u32) {
-                display("Failed to load #{}", req_id)
-            }
-        }
+    pub type Result<T = (), E = Error> = std::result::Result<T, E>;
+
+    #[derive(Debug, thiserror::Error)]
+    pub enum Error {
+        #[error("Error during IO")]
+        Io(#[from] io::Error),
+        #[error(transparent)]
+        TextureCreationError(#[from] texture::TextureCreationError),
+        #[error(transparent)]
+        ImageRsError(#[from] image::ImageError),
+        #[error(transparent)]
+        TextureLoaderError(#[from] image_loader::errors::Error),
+        #[error(transparent)]
+        DirError(#[from] super::directory::Error),
+        #[error("ImageCache is waiting for loader to send result")]
+        WaitingOnLoader,
+        #[error("ImageCache is waiting for the directory items to be filtered for image files")]
+        WaitingOnDirFilter,
+        #[error("Failed to load {req_id}")]
+        FailedToLoadImage { req_id: u32 },
+        #[error("{0}")]
+        Msg(String),
     }
 }
 
@@ -125,6 +128,7 @@ pub struct AnimationFrameTexture {
     /// textures from a single column of the grid
     pub h: u32,
 }
+
 impl AnimationFrameTexture {
     pub fn from_image(
         display: &glium::Display,
@@ -334,7 +338,9 @@ impl ImageCache {
         if let Some(desc) = self.dir.curr_descriptor() {
             Ok(desc.clone())
         } else {
-            bail!("Could not get the current file descriptor");
+            Err(Error::Msg(
+                "Could not get the current file descriptor".to_string(),
+            ))
         }
     }
 
@@ -382,7 +388,7 @@ impl ImageCache {
         let path = self
             .dir
             .image_by_index(index)
-            .ok_or_else(|| Error::from_kind(ErrorKind::WaitingOnDirFilter))?
+            .ok_or_else(|| Error::WaitingOnDirFilter)?
             .path
             .clone();
 
@@ -390,7 +396,7 @@ impl ImageCache {
         Ok((result, path))
     }
 
-    /// Returns `Err(errors::Error::from_kind(errors::ErrorKind::WaitingOnLoader))`
+    /// Returns `Err(errors::Error::WaitingOnLoader)`
     /// when the image
     pub fn load_specific(
         &mut self,
@@ -426,9 +432,7 @@ impl ImageCache {
                 request_id,
                 RequestKind::Priority { display },
             );
-            return Err(errors::Error::from_kind(
-                errors::ErrorKind::WaitingOnLoader,
-            ));
+            return Err(errors::Error::WaitingOnLoader);
         }
         if let Some(img_index) = self.dir.curr_img_index() {
             self.dir.set_curr_img_index(img_index)?;
@@ -516,7 +520,7 @@ impl ImageCache {
             if let Some(path) = self.current_file_path() {
                 return requested.map(|t| (t, path));
             } else {
-                bail!("No file is open");
+                return Err(Error::Msg("No file is open".to_string()));
             }
         } else {
             self.current_frame_idx = 0;
@@ -541,7 +545,7 @@ impl ImageCache {
             target_path =
                 self.dir.image_by_index(target_index).unwrap().path.clone();
         } else {
-            bail!("Folder is empty, no folder was open, or folder hasn't finished filtering when trying to jump to an image by index.");
+            return Err(Error::Msg("Folder is empty, no folder was open, or folder hasn't finished filtering when trying to jump to an image by index.".to_string()));
         }
         let result = self.load_specific(display, &target_path, None)?;
         Ok((result, target_path))
@@ -575,7 +579,7 @@ impl ImageCache {
                     match self.upload_to_texture(display, result) {
                         Ok(_) => uploaded_one = true,
                         // it's okay to ignore if the image falied to load here, this is just pre-fetch.
-                        Err(Error(ErrorKind::FailedToLoadImage(..), ..)) => {}
+                        Err(Error::FailedToLoadImage { .. }) => {}
                         Err(e) => return Err(e),
                     }
                 }
@@ -619,9 +623,7 @@ impl ImageCache {
         // Check if it is inside the texture cache first
         if let Some(tex) = self.texture_cache.get(&req_id) {
             if tex.failed {
-                return Err(Error::from_kind(ErrorKind::FailedToLoadImage(
-                    req_id,
-                )));
+                return Err(Error::FailedToLoadImage { req_id });
             }
             let modified =
                 fs::metadata(&path).ok().and_then(|m| m.modified().ok());
@@ -649,11 +651,13 @@ impl ImageCache {
                     }
                 }
             }
-            return Err(Error::from_kind(ErrorKind::WaitingOnLoader));
+
+            return Err(Error::WaitingOnLoader);
         }
         if self.pending_requests.contains(&req_id) {
             PRIORITY_REQUEST_ID.store(req_id, Ordering::SeqCst);
-            return Err(Error::from_kind(ErrorKind::WaitingOnLoader));
+
+            return Err(Error::WaitingOnLoader);
         }
         self.send_request_for_file(
             path,
@@ -662,7 +666,7 @@ impl ImageCache {
         );
         // If the texture is not in the cache just throw our hands in the air
         // and tell the caller that we gotta wait for the loader to load this texture.
-        Err(Error::from_kind(ErrorKind::WaitingOnLoader))
+        Err(Error::WaitingOnLoader)
     }
 
     fn upload_to_texture(
@@ -771,9 +775,7 @@ impl ImageCache {
                     Ordering::SeqCst,
                 );
                 self.pending_requests.set_finished(&req_id);
-                Err(errors::Error::from_kind(
-                    errors::ErrorKind::FailedToLoadImage(req_id),
-                ))
+                Err(errors::Error::FailedToLoadImage { req_id })
             }
         }
     }
@@ -896,7 +898,7 @@ impl ImageCache {
     ) -> Result<()> {
         self.dir
             .change_directory_with_filename(dir_path, filename)
-            .map_err(|e| Error::from_kind(ErrorKind::Msg(format!("{}", e))))
+            .map_err(|e| Error::Msg(format!("{e}")))
     }
 
     // fn collect_directory(&mut self) -> Result<Vec<DirItem>> {
@@ -938,7 +940,11 @@ impl ImageCache {
 fn get_file_name_and_parent(path: &Path) -> Result<(OsString, PathBuf)> {
     let file_name = match path.file_name() {
         Some(f) => f.to_owned(),
-        None => bail!("Could not get file name from path {:?}", path),
+        None => {
+            return Err(Error::Msg(format!(
+                "Could not get file name from path {path:?}"
+            )))
+        }
     };
     let parent = match path.parent() {
         Some(p) => {
@@ -951,7 +957,9 @@ fn get_file_name_and_parent(path: &Path) -> Result<(OsString, PathBuf)> {
         None => {
             let mut path = path.canonicalize()?;
             if !path.pop() {
-                bail!("Could not get parent directory of {:?}", path);
+                return Err(Error::Msg(format!(
+                    "Could not get parent directory of {path:?}"
+                )));
             }
             path
         }

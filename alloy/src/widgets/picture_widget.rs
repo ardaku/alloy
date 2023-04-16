@@ -197,8 +197,7 @@ impl PictureWidgetData {
             let widget_phys_size = size * dpi_scale;
             let fits_in_widget = widget_phys_size.x >= img_phys_w
                 && widget_phys_size.y >= img_pyhs_h;
-            self.img_pos =
-                LogicalVector::new(size.x as f32 * 0.5, size.y as f32 * 0.5);
+            self.img_pos = LogicalVector::new(size.x * 0.5, size.y * 0.5);
             if fits_in_widget && !stretch {
                 self.img_texel_size = 1.0;
             } else {
@@ -1048,7 +1047,7 @@ impl Widget for PictureWidget {
                     let mut borrowed = self.data.borrow_mut();
                     if let Err(e) = borrowed.playback_manager.update_directory()
                     {
-                        eprintln!("{}", e);
+                        eprintln!("{e}");
                     }
                     borrowed.render_validity.invalidate();
                 }

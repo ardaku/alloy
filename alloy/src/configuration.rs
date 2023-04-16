@@ -23,6 +23,7 @@ pub enum Theme {
     Light,
     Dark,
 }
+
 impl Theme {
     pub fn switch_theme(self) -> Self {
         match self {
@@ -32,17 +33,15 @@ impl Theme {
     }
 }
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(
+    Copy, Clone, Eq, PartialEq, Debug, Default, Serialize, Deserialize,
+)]
 #[serde(rename_all = "snake_case")]
 pub enum Antialias {
+    #[default]
     Auto,
     Always,
     Never,
-}
-impl Default for Antialias {
-    fn default() -> Self {
-        Antialias::Auto
-    }
 }
 
 #[derive(Debug, Default, PartialEq, Eq, Clone, Serialize, Deserialize)]
@@ -64,6 +63,7 @@ pub struct CacheWindowSection {
     pub win_x: i32,
     pub win_y: i32,
 }
+
 impl Default for CacheWindowSection {
     fn default() -> Self {
         Self {
@@ -93,6 +93,7 @@ pub struct ConfigWindowSection {
 pub struct ConfigUpdateSection {
     pub check_updates: bool,
 }
+
 impl Default for ConfigUpdateSection {
     fn default() -> Self {
         Self {
@@ -136,6 +137,7 @@ pub struct Cache {
     pub updates: CacheUpdateSection,
     pub image: CacheImageSection,
 }
+
 impl From<IncompleteCache> for Cache {
     fn from(cache: IncompleteCache) -> Self {
         Self {
@@ -145,6 +147,7 @@ impl From<IncompleteCache> for Cache {
         }
     }
 }
+
 impl Cache {
     pub fn theme(&self) -> Theme {
         if self.window.dark {
@@ -198,13 +201,15 @@ pub struct TitleSection {
     pub displayed_folders: Option<u32>,
     pub show_program_name: Option<bool>,
 }
+
 impl TitleSection {
     pub fn format_file_path<'a>(&self, file_path: &'a Path) -> Cow<'a, str> {
         match self.displayed_folders {
             Some(0) | None => file_path.file_name().unwrap().to_string_lossy(),
             Some(n) => {
                 let mut component_count = 0;
-                // On Windows the root can be the second component, when a `Prefix` is the first.
+                // On Windows the root can be the second component, when a
+                // `Prefix` is the first.
                 let mut root_index = 0;
                 for (idx, c) in file_path.components().enumerate() {
                     component_count += 1;
@@ -248,14 +253,14 @@ pub struct Configuration {
     pub image: Option<ConfigImageSection>,
     pub window: Option<ConfigWindowSection>,
 }
+
 impl Configuration {
     pub fn load<P: AsRef<Path>>(file_path: P) -> Result<Configuration, String> {
         let file_path = file_path.as_ref();
-        let cfg_str = fs::read_to_string(file_path).map_err(|_| {
-            format!("Could not read config from {:?}", file_path)
-        })?;
+        let cfg_str = fs::read_to_string(file_path)
+            .map_err(|_| format!("Could not read config from {file_path:?}"))?;
         let result =
-            toml::from_str(cfg_str.as_ref()).map_err(|e| format!("{}", e))?;
+            toml::from_str(cfg_str.as_ref()).map_err(|e| format!("{e}"))?;
         //println!("Read config from file:\n{:#?}", result);
         Ok(result)
     }

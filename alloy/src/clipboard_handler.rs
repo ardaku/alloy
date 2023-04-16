@@ -12,7 +12,7 @@ use gelatin::image::imageops::{
 };
 
 use crate::image_cache::image_loader::{
-    complex_load_image, LoadResult, Orientation,
+    complex_load_image, errors::Error, LoadResult, Orientation,
 };
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -163,13 +163,15 @@ impl ClipboardHandler {
                             bytes: image.into_raw().into(),
                         };
                         if let Err(e) = clipboard.set_image(cb_image) {
-                            eprintln!("Could not set the clipboard image, error was: {}", e);
+                            eprintln!("Could not set the clipboard image, error was: {e}");
                         } else {
                             return Ok(());
                         }
                     }
                 }
-                Err("Could not set the clipboard image.".into())
+                Err(Error::Msg(
+                    "Could not set the clipboard image.".to_string(),
+                ))
             });
             let mut state = request_handle.state.lock().unwrap();
             *state = if result.is_ok() {

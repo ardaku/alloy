@@ -1,8 +1,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-#[macro_use]
-extern crate error_chain;
-
 use std::{
     cell::{Cell, RefCell},
     f32,
@@ -85,7 +82,7 @@ fn main() {
     let args = cmd_line::parse_args();
 
     let cache = Cache::load(&cache_path);
-    let config = Configuration::load(&config_path);
+    let config = Configuration::load(config_path);
 
     let first_launch = cache.is_err();
     let cache = Arc::new(Mutex::new(cache.unwrap_or_default()));
@@ -530,12 +527,13 @@ mod update {
     }
 
     mod errors {
-        error_chain! {
-            foreign_links {
-                Io(std::io::Error);
-                Ureq(Box<ureq::Error>);
-                ParseIntError(std::num::ParseIntError);
-            }
+        pub type Result<T = (), E = Error> = std::result::Result<T, E>;
+
+        #[derive(thiserror::Error)]
+        pub enum Error {
+            Io(#[from] std::io::Error),
+            Ureq(#[from] Box<ureq::Error>),
+            ParseIntError(#[from] std::num::ParseIntError),
         }
     }
 
@@ -564,9 +562,9 @@ mod update {
 
         if latest > current {
             println!(
-                "Current version is {}, latest version is {}",
-                current, latest
+                "Current version is {current}, latest version is {latest}",
             );
+
             Ok(true)
         } else {
             Ok(false)
@@ -579,12 +577,12 @@ mod update {
             Ok(info) => match compare_release(&info) {
                 Ok(is_newer) => is_newer,
                 Err(err) => {
-                    eprintln!("Error parsing release tag: {}", err);
+                    eprintln!("Error parsing release tag: {err}");
                     false
                 }
             },
             Err(err) => {
-                eprintln!("Error checking latest release: {}", err);
+                eprintln!("Error checking latest release: {err}");
                 false
             }
         }

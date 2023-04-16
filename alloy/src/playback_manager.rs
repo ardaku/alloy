@@ -140,9 +140,7 @@ impl Playback for AnimPlayback {
         if let Some(curr_index) = image_cache.current_file_index() {
             image_cache.load_at_index(display, curr_index, Some(index as isize))
         } else {
-            Err(image_cache::errors::Error::from_kind(
-                image_cache::errors::ErrorKind::WaitingOnDirFilter,
-            ))
+            Err(image_cache::errors::Error::WaitingOnDirFilter)
         }
     }
 
@@ -536,10 +534,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
                     self.image_texture = Some(frame);
                     self.file_path = Some(file_path);
                 }
-                Err(image_cache::errors::Error(
-                    image_cache::errors::ErrorKind::WaitingOnLoader,
-                    _,
-                )) => {
+                Err(image_cache::errors::Error::WaitingOnLoader) => {
                     // Set the load request to jump in place so that
                     // next time we attempt to load this again.
                     self.load_request = LoadRequest::Jump(0);
@@ -557,14 +552,6 @@ impl<P: Playback> ImgSequencePlayer<P> {
                         err
                     )
                     .expect(stderr_errmsg);
-                    for e in err.iter().skip(1) {
-                        writeln!(stderr, "... caused by: {}", e)
-                            .expect(stderr_errmsg);
-                    }
-                    if let Some(backtrace) = err.backtrace() {
-                        writeln!(stderr, "backtrace: {:?}", backtrace)
-                            .expect(stderr_errmsg);
-                    }
                     writeln!(stderr).expect(stderr_errmsg);
                 }
             }

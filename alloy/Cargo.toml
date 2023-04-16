@@ -55,14 +55,14 @@ gelatin = { path = "../gelatin" }
 ureq = { version = "2.6", features = ["json"], optional = true }
 lazy_static = "1.4"
 directories-next = "2.0"
-open = "3.2"
+open = "4.0"
 sys-info = "0.9"
 backtrace = "0.3"
 serde = { version = "1.0.159", features = ["derive"] }
-toml = "0.5"
+toml = "0.7"
 rand = "0.8"
 lexical-sort = "0.3"
-trash = { version = "2.1", default-features = false }
+trash = { version = "3.0", default-features = false }
 kamadak-exif = "0.5"
 arboard = "3.2"
 resvg = "0.31"
@@ -74,7 +74,7 @@ pico-args = "0.5"
 thiserror = "1.0"
 
 [dependencies.libavif-image]
-version = "0.9"
+version = "0.10"
 default-features = false
 features = ["codec-dav1d"]
 optional = true

@@ -65,7 +65,7 @@ lexical-sort = "0.3"
 trash = { version = "3.0", default-features = false }
 kamadak-exif = "0.5"
 arboard = "3.2"
-resvg = "0.31"
+resvg = "0.32"
 usvg = "0.31"
 tiny-skia = "0.8"
 log = "0.4"

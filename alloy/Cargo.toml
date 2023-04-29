@@ -55,7 +55,7 @@ gelatin = { path = "../gelatin" }
 ureq = { version = "2.6", features = ["json"], optional = true }
 lazy_static = "1.4"
 directories-next = "2.0"
-open = "4.0"
+open = "4.1"
 sys-info = "0.9"
 backtrace = "0.3"
 serde = { version = "1.0.159", features = ["derive"] }
@@ -65,9 +65,9 @@ lexical-sort = "0.3"
 trash = { version = "3.0", default-features = false }
 kamadak-exif = "0.5"
 arboard = "3.2"
-resvg = "0.31"
-usvg = "0.31"
-tiny-skia = "0.8"
+resvg = "0.32"
+usvg = "0.32"
+tiny-skia = "0.9"
 log = "0.4"
 env_logger = "0.10"
 pico-args = "0.5"

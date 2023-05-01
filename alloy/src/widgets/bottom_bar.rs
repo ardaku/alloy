@@ -17,10 +17,6 @@ static QUESTION_BUTTON: &[u8] =
     include_bytes!("../../resource/question_button.png");
 static QUESTION_BUTTON_LIGHT: &[u8] =
     include_bytes!("../../resource/question_button_light.png");
-static QUESTION_NOTI: &[u8] =
-    include_bytes!("../../resource/question-noti.png");
-static QUESTION_LIGHT_NOTI: &[u8] =
-    include_bytes!("../../resource/question-light-noti.png");
 static ONE: &[u8] = include_bytes!("../../resource/1.png");
 static ONE_LIGHT: &[u8] = include_bytes!("../../resource/1-light.png");
 static FIT_STRETCH: &[u8] = include_bytes!("../../resource/fit-stretch.png");
@@ -52,8 +48,6 @@ pub struct BottomBar {
 
     question: Rc<Picture>,
     question_light: Rc<Picture>,
-    question_noti: Rc<Picture>,
-    question_light_noti: Rc<Picture>,
     moon_img: Rc<Picture>,
     light_img: Rc<Picture>,
     one: Rc<Picture>,
@@ -69,9 +63,6 @@ impl BottomBar {
         let question = Rc::new(Picture::from_encoded_bytes(QUESTION_BUTTON));
         let question_light =
             Rc::new(Picture::from_encoded_bytes(QUESTION_BUTTON_LIGHT));
-        let question_noti = Rc::new(Picture::from_encoded_bytes(QUESTION_NOTI));
-        let question_light_noti =
-            Rc::new(Picture::from_encoded_bytes(QUESTION_LIGHT_NOTI));
         let moon_img = Rc::new(Picture::from_encoded_bytes(MOON));
         let light_img = Rc::new(Picture::from_encoded_bytes(LIGHT));
         let one = Rc::new(Picture::from_encoded_bytes(ONE));
@@ -135,8 +126,6 @@ impl BottomBar {
 
             question,
             question_light,
-            question_noti,
-            question_light_noti,
             moon_img,
             light_img,
             one,
@@ -148,7 +137,7 @@ impl BottomBar {
         }
     }
 
-    pub fn set_theme(&self, theme: Theme, update_available: bool) {
+    pub fn set_theme(&self, theme: Theme) {
         match theme {
             Theme::Light => {
                 self.orig_scale_button.set_icon(Some(self.one.clone()));
@@ -158,12 +147,7 @@ impl BottomBar {
                 self.theme_button.set_icon(Some(self.moon_img.clone()));
                 self.widget.set_bg_color([1.0, 1.0, 1.0, 1.0]);
                 self.slider.set_shadow_color([0.0, 0.0, 0.0]);
-
-                if update_available {
-                    self.help_button.set_icon(Some(self.question_noti.clone()));
-                } else {
-                    self.help_button.set_icon(Some(self.question.clone()));
-                }
+                self.help_button.set_icon(Some(self.question.clone()));
             }
             Theme::Dark => {
                 self.orig_scale_button
@@ -175,14 +159,7 @@ impl BottomBar {
                 self.theme_button.set_icon(Some(self.light_img.clone()));
                 self.widget.set_bg_color([0.08, 0.08, 0.08, 1.0]);
                 self.slider.set_shadow_color([0.0, 0.0, 0.0]);
-
-                if update_available {
-                    self.help_button
-                        .set_icon(Some(self.question_light_noti.clone()));
-                } else {
-                    self.help_button
-                        .set_icon(Some(self.question_light.clone()));
-                }
+                self.help_button.set_icon(Some(self.question_light.clone()));
             }
         }
     }

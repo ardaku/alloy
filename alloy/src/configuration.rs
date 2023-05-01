@@ -12,7 +12,6 @@ use std::{
     collections::BTreeMap,
     fs,
     path::Path,
-    time::{Duration, SystemTime, UNIX_EPOCH},
 };
 
 use serde::{Deserialize, Serialize};
@@ -89,52 +88,15 @@ pub struct ConfigWindowSection {
     pub win_y: Option<i32>,
 }
 
-#[derive(Debug, PartialEq, Eq, Clone, Deserialize)]
-pub struct ConfigUpdateSection {
-    pub check_updates: bool,
-}
-
-impl Default for ConfigUpdateSection {
-    fn default() -> Self {
-        Self {
-            check_updates: true,
-        }
-    }
-}
-
-#[derive(Default, Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
-pub struct CacheUpdateSection {
-    pub last_checked: u64,
-}
-
-impl CacheUpdateSection {
-    pub fn update_check_needed(&self) -> bool {
-        let duration = SystemTime::now()
-            .duration_since(UNIX_EPOCH + Duration::from_secs(self.last_checked))
-            .unwrap_or_else(|_| Duration::from_secs(0));
-
-        duration > Duration::from_secs(60 * 60 * 24) // 24 hours
-    }
-
-    pub fn set_update_check_time(&mut self) {
-        self.last_checked = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap_or_else(|_| Duration::from_secs(0))
-            .as_secs();
-    }
-}
-
 #[derive(Deserialize)]
 struct IncompleteCache {
     pub window: Option<CacheWindowSection>,
-    pub updates: Option<CacheUpdateSection>,
     pub image: Option<CacheImageSection>,
 }
 
 #[derive(Debug, Default, PartialEq, Eq, Clone, Serialize)]
 pub struct Cache {
     pub window: CacheWindowSection,
-    pub updates: CacheUpdateSection,
     pub image: CacheImageSection,
 }
 
@@ -142,7 +104,6 @@ impl From<IncompleteCache> for Cache {
     fn from(cache: IncompleteCache) -> Self {
         Self {
             window: cache.window.unwrap_or_default(),
-            updates: cache.updates.unwrap_or_default(),
             image: cache.image.unwrap_or_default(),
         }
     }
@@ -248,7 +209,6 @@ impl TitleSection {
 pub struct Configuration {
     pub bindings: Option<BTreeMap<String, Vec<String>>>,
     pub commands: Option<Vec<Command>>,
-    pub updates: Option<ConfigUpdateSection>,
     pub title: Option<TitleSection>,
     pub image: Option<ConfigImageSection>,
     pub window: Option<ConfigWindowSection>,

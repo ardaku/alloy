@@ -5,17 +5,12 @@ use std::{
     f32,
     path::PathBuf,
     rc::Rc,
-    sync::{
-        atomic::{AtomicBool, Ordering},
-        Arc, Mutex,
-    },
-    time::{Duration, Instant},
+    sync::{Arc, Mutex},
 };
 
 use directories_next::ProjectDirs;
 use gelatin::{
     application::*,
-    button::*,
     glium::glutin::{
         dpi::{PhysicalPosition, PhysicalSize},
         event::WindowEvent,
@@ -27,14 +22,12 @@ use gelatin::{
     misc::*,
     picture::*,
     window::{Window, WindowDescriptor},
-    NextUpdate, Widget,
 };
 use lazy_static::lazy_static;
 use log::trace;
 
 use crate::{
     configuration::{Cache, ConfigWindowSection, Configuration, Theme},
-    version::Version,
     widgets::{
         bottom_bar::BottomBar, copy_notification::CopyNotifications,
         help_screen::*, picture_widget::*,
@@ -60,11 +53,6 @@ lazy_static! {
     pub static ref PROJECT_DIRS: Option<ProjectDirs> = ProjectDirs::from("", "", "Emulsion");
 }
 
-static NEW_VERSION: &[u8] =
-    include_bytes!("../resource/new-version-available.png");
-static NEW_VERSION_LIGHT: &[u8] =
-    include_bytes!("../resource/new-version-available-light.png");
-static VISIT_SITE: &[u8] = include_bytes!("../resource/visit-site.png");
 static USAGE: &[u8] = include_bytes!("../resource/usage.png");
 static LEFT_TO_PAN: &[u8] = include_bytes!("../resource/use-left-to-pan.png");
 
@@ -169,13 +157,6 @@ fn main() {
     };
     add_window_movement_listener(&window, cache.clone());
 
-    let update_label_image = Rc::new(Picture::from_encoded_bytes(NEW_VERSION));
-    let update_label_image_light =
-        Rc::new(Picture::from_encoded_bytes(NEW_VERSION_LIGHT));
-    let update_label = make_update_label();
-
-    let update_notification = make_update_notification(update_label.clone());
-
     let usage_img = Picture::from_encoded_bytes(USAGE);
     let help_screen = Rc::new(HelpScreen::new(usage_img));
     let left_to_pan_img = Picture::from_encoded_bytes(LEFT_TO_PAN);
@@ -203,14 +184,10 @@ fn main() {
     picture_area_container.add_child(copy_notifications_widget);
     picture_area_container.add_child(left_to_pan_hint);
     picture_area_container.add_child(help_screen.clone());
-    picture_area_container.add_child(update_notification.clone());
 
     let root_container = make_root_container();
     root_container.add_child(picture_area_container);
     root_container.add_child(bottom_bar.widget.clone());
-
-    let update_available = Arc::new(AtomicBool::new(false));
-    let update_check_done = Arc::new(AtomicBool::new(false));
 
     let theme = {
         Rc::new(Cell::new(match &config.borrow().window {
@@ -223,12 +200,9 @@ fn main() {
     };
 
     let set_theme = {
-        let update_label = update_label;
         let picture_widget = picture_widget.clone();
-        let update_notification = update_notification.clone();
         let window = window.clone();
         let theme = theme.clone();
-        let update_available = update_available.clone();
         let bottom_bar = bottom_bar.clone();
 
         Rc::new(move || {
@@ -236,20 +210,14 @@ fn main() {
                 Theme::Light => {
                     picture_widget.set_bright_shade(0.96);
                     window.set_bg_color([0.85, 0.85, 0.85, 1.0]);
-                    update_notification.set_bg_color([0.06, 0.06, 0.06, 1.0]);
-                    update_label
-                        .set_icon(Some(update_label_image_light.clone()));
                 }
                 Theme::Dark => {
                     picture_widget.set_bright_shade(0.11);
                     window.set_bg_color([0.03, 0.03, 0.03, 1.0]);
-                    update_notification.set_bg_color([0.85, 0.85, 0.85, 1.0]);
-                    update_label.set_icon(Some(update_label_image.clone()));
                 }
             }
             bottom_bar.set_theme(
                 theme.get(),
-                update_available.load(Ordering::SeqCst),
             );
         })
     };
@@ -290,76 +258,21 @@ fn main() {
     }
     let help_visible = Cell::new(first_launch);
     help_screen.set_visible(help_visible.get());
-    update_notification.set_visible(
-        help_visible.get() && update_available.load(Ordering::SeqCst),
-    );
     {
-        let update_available = update_available.clone();
         let help_screen = help_screen.clone();
-        let update_notification = update_notification.clone();
         let bottom_bar_clone = bottom_bar.clone();
 
         bottom_bar.help_button.set_on_click(move || {
             help_visible.set(!help_visible.get());
             help_screen.set_visible(help_visible.get());
             bottom_bar_clone.set_help_visible(help_visible.get());
-            update_notification.set_visible(
-                help_visible.get() && update_available.load(Ordering::SeqCst),
-            );
         });
     }
 
     window.set_root(root_container);
 
-    let check_updates_enabled = config
-        .borrow()
-        .updates
-        .as_ref()
-        .map(|u| u.check_updates)
-        .unwrap_or(true);
-
-    let update_checker_join_handle = {
-        let updates = &mut cache.lock().unwrap().updates;
-        let cache = cache.clone();
-        let update_available = update_available.clone();
-        let update_check_done = update_check_done.clone();
-
-        if check_updates_enabled && updates.update_check_needed() {
-            // kick off a thread that will check for an update in the background
-            Some(std::thread::spawn(move || {
-                let has_update = update::check_for_updates();
-                update_available.store(has_update, Ordering::SeqCst);
-                update_check_done.store(true, Ordering::SeqCst);
-                if !has_update {
-                    cache.lock().unwrap().updates.set_update_check_time();
-                }
-            }))
-        } else {
-            None
-        }
-    };
-
-    let mut nothing_to_do = false;
-    application.add_global_event_handler(move |_| {
-        if nothing_to_do {
-            return NextUpdate::Latest;
-        }
-        if update_check_done.load(Ordering::SeqCst) {
-            nothing_to_do = true;
-            set_theme();
-            if help_screen.visible() && update_available.load(Ordering::SeqCst)
-            {
-                update_notification.set_visible(true);
-            }
-        }
-        NextUpdate::WaitUntil(Instant::now() + Duration::from_secs(1))
-    });
-
     application.set_at_exit(Some(move || {
         cache.lock().unwrap().save(cache_path).unwrap();
-        if let Some(h) = update_checker_join_handle {
-            h.join().unwrap();
-        }
     }));
     application.start_event_loop();
 }
@@ -418,43 +331,6 @@ fn make_picture_area_container() -> Rc<VerticalLayoutContainer> {
     picture_area_container
 }
 
-fn make_update_label() -> Rc<Label> {
-    let update_label = Rc::new(Label::new());
-    update_label.set_margin_top(4.0);
-    update_label.set_margin_bottom(4.0);
-    update_label.set_fixed_size(LogicalVector::new(200.0, 24.0));
-    update_label.set_horizontal_align(Alignment::Center);
-    update_label
-}
-
-fn make_update_notification(
-    update_label: Rc<Label>,
-) -> Rc<HorizontalLayoutContainer> {
-    let container = Rc::new(HorizontalLayoutContainer::new());
-    container.set_vertical_align(Alignment::End);
-    container.set_horizontal_align(Alignment::Start);
-    container.set_width(Length::Stretch {
-        min: 0.0,
-        max: f32::INFINITY,
-    });
-    container.set_height(Length::Fixed(32.0));
-
-    let update_button = Rc::new(Button::new());
-    let button_image = Rc::new(Picture::from_encoded_bytes(VISIT_SITE));
-    update_button.set_icon(Some(button_image));
-    update_button.set_margin_top(4.0);
-    update_button.set_margin_bottom(4.0);
-    update_button.set_fixed_size(LogicalVector::new(100.0, 24.0));
-    update_button.set_horizontal_align(Alignment::Center);
-    update_button.set_on_click(|| {
-        open::that("https://arturkovacs.github.io/emulsion-website/").unwrap();
-    });
-
-    container.add_child(update_label);
-    container.add_child(update_button);
-    container
-}
-
 fn make_picture_widget(
     window: &Rc<Window>,
     bottom_bar: Rc<BottomBar>,
@@ -507,84 +383,4 @@ pub fn get_config_and_cache_paths() -> (PathBuf, PathBuf) {
         config_folder.join("cfg.toml"),
         cache_folder.join("cache.toml"),
     )
-}
-
-#[cfg(not(feature = "networking"))]
-mod update {
-    /// Always returns false without the `networking` feature.
-    pub fn check_for_updates() -> bool {
-        false
-    }
-}
-
-#[cfg(feature = "networking")]
-mod update {
-    use serde::Deserialize;
-
-    #[derive(Deserialize)]
-    struct ReleaseInfoJson {
-        tag_name: String,
-    }
-
-    mod errors {
-        pub type Result<T = (), E = Error> = std::result::Result<T, E>;
-
-        #[derive(thiserror::Error)]
-        pub enum Error {
-            Io(#[from] std::io::Error),
-            Ureq(#[from] Box<ureq::Error>),
-            ParseIntError(#[from] std::num::ParseIntError),
-        }
-    }
-
-    /// Tries to fetch latest release tag
-    fn latest_release() -> errors::Result<ReleaseInfoJson> {
-        let url =
-            "https://api.github.com/repos/ArturKovacs/emulsion/releases/latest";
-        let res = ureq::get(url).set("User-Agent", "emulsion").call();
-        match res {
-            Ok(res) => {
-                let release_info = res.into_json()?;
-                Ok(release_info)
-            }
-            Err(err) => Err(Box::new(err).into()),
-        }
-    }
-
-    /// Tries to parse version tag and compare against current version
-    fn compare_release(info: &ReleaseInfoJson) -> errors::Result<bool> {
-        use std::str::FromStr;
-
-        use crate::version::Version;
-
-        let current = Version::cargo_pkg_version();
-        let latest = Version::from_str(&info.tag_name)?;
-
-        if latest > current {
-            println!(
-                "Current version is {current}, latest version is {latest}",
-            );
-
-            Ok(true)
-        } else {
-            Ok(false)
-        }
-    }
-
-    /// Returns true if updates are available.
-    pub fn check_for_updates() -> bool {
-        match latest_release() {
-            Ok(info) => match compare_release(&info) {
-                Ok(is_newer) => is_newer,
-                Err(err) => {
-                    eprintln!("Error parsing release tag: {err}");
-                    false
-                }
-            },
-            Err(err) => {
-                eprintln!("Error checking latest release: {err}");
-                false
-            }
-        }
-    }
 }

@@ -2,7 +2,7 @@
 @echo off
 set "distribution_dir=%cd%"
 cd ..\..
-cargo build --release --features=networking
+cargo build --release
 
 cd %distribution_dir%
 mkdir program

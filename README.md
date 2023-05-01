@@ -28,14 +28,8 @@ For the [Nix Package Manager](https://nixos.wiki/wiki/Nix) users: The Nix expres
 
 All packages on the website come with avif support, however it is not a default feature as the dependecies are not trivial to set up. If you are bulding from source (eg using `cargo install`) and would like emulsion to open avif files, I recommend taking a look at the [release workflow](.github/workflows/release-packages.yml) for steps to install the avif development dependencies.
 
-When installing Emulsion through the Windows installer, Emulsion will have networking enabled and will by default check for updates. However none of the other versions have networking and neither does the default feature-set. This also means that Emulsion will not have networking dependent capabilities when invoking
 ```
 cargo install emulsion
-```
-
-To enable such features when installing with cargo, run
-```
-cargo install emulsion --features=networking
 ```
 
 ## Reporting Bugs

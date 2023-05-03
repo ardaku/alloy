@@ -196,13 +196,6 @@ impl TitleSection {
             }
         }
     }
-
-    pub fn format_program_name(&self) -> &'static str {
-        match self.show_program_name {
-            Some(false) => "",
-            _ => " : E M U L S I O N",
-        }
-    }
 }
 
 #[derive(Debug, Default, Clone, Deserialize)]

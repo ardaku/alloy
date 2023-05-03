@@ -1,6 +1,6 @@
 use pico_args::Arguments;
 
-use crate::Version;
+use crate::version::Version;
 
 pub struct Args {
     pub file_path: Option<String>,

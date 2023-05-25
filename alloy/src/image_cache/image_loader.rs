@@ -15,12 +15,16 @@ use gelatin::image::{
     codecs::{gif::GifDecoder, png::PngDecoder},
     AnimationDecoder, ImageFormat,
 };
-use usvg::TreeParsing;
+use resvg::{
+    usvg::{self, TreeParsing},
+    Tree,
+};
 
 pub mod errors {
     use std::io;
 
     use gelatin::{glium::texture, image};
+    use resvg::usvg;
 
     pub type Result<T = (), E = Error> = std::result::Result<T, E>;
 
@@ -177,21 +181,22 @@ pub fn load_gif(
 pub fn load_svg(path: &std::path::Path) -> Result<image::RgbaImage> {
     let opt = usvg::Options::default();
     let data = std::fs::read(path)?;
-    let rtree = usvg::Tree::from_data(&data, &opt)?;
-    let size = rtree.size;
+    let tree = usvg::Tree::from_data(&data, &opt)?;
+    let tree = Tree::from_usvg(&tree);
+    let size = tree.size;
     let (width, height) = (size.width(), size.height());
     // Scale to fit 4096
-    let zoom = 4096. / width.max(height);
+    let zoom = 4096.0 / width.max(height);
     let (width, height) = ((width * zoom) as u32, (height * zoom) as u32);
+    let zoom = zoom as f32;
     // These unwrapped Options are fine as long as the dimensions are correct
     let mut pixmap = tiny_skia::Pixmap::new(width, height).unwrap();
-    resvg::render(
-        &rtree,
-        resvg::FitTo::Zoom(zoom as f32),
-        tiny_skia::Transform::identity(),
-        pixmap.as_mut(),
-    )
-    .unwrap();
+
+    tree.render(
+        tiny_skia::Transform::from_scale(zoom, zoom),
+        &mut pixmap.as_mut(),
+    );
+
     Ok(image::RgbaImage::from_raw(width, height, pixmap.take()).unwrap())
 }
 

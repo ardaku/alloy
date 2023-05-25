@@ -7,12 +7,7 @@
 //! Furthermore it's generally true that the user will only edit the *config* to specify their
 //! preferences.
 
-use std::{
-    borrow::Cow,
-    collections::BTreeMap,
-    fs,
-    path::Path,
-};
+use std::{borrow::Cow, collections::BTreeMap, fs, path::Path};
 
 use serde::{Deserialize, Serialize};
 

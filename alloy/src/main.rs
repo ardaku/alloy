@@ -216,15 +216,13 @@ fn main() {
                     window.set_bg_color([0.03, 0.03, 0.03, 1.0]);
                 }
             }
-            bottom_bar.set_theme(
-                theme.get(),
-            );
+            bottom_bar.set_theme(theme.get());
         })
     };
     set_theme();
     {
         let cache = cache.clone();
-        let set_theme = set_theme.clone();
+        let set_theme = set_theme;
         bottom_bar.theme_button.set_on_click(move || {
             let new_theme = theme.get().switch_theme();
             theme.set(new_theme);
@@ -259,7 +257,7 @@ fn main() {
     let help_visible = Cell::new(first_launch);
     help_screen.set_visible(help_visible.get());
     {
-        let help_screen = help_screen.clone();
+        let help_screen = help_screen;
         let bottom_bar_clone = bottom_bar.clone();
 
         bottom_bar.help_button.set_on_click(move || {

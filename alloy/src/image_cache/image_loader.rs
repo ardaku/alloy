@@ -16,6 +16,7 @@ use gelatin::image::{
     AnimationDecoder, ImageFormat,
 };
 use resvg::{
+    tiny_skia::{Pixmap, Transform},
     usvg::{self, TreeParsing},
     Tree,
 };
@@ -190,12 +191,9 @@ pub fn load_svg(path: &std::path::Path) -> Result<image::RgbaImage> {
     let (width, height) = ((width * zoom) as u32, (height * zoom) as u32);
     let zoom = zoom as f32;
     // These unwrapped Options are fine as long as the dimensions are correct
-    let mut pixmap = tiny_skia::Pixmap::new(width, height).unwrap();
+    let mut pixmap = Pixmap::new(width, height).unwrap();
 
-    tree.render(
-        tiny_skia::Transform::from_scale(zoom, zoom),
-        &mut pixmap.as_mut(),
-    );
+    tree.render(Transform::from_scale(zoom, zoom), &mut pixmap.as_mut());
 
     Ok(image::RgbaImage::from_raw(width, height, pixmap.take()).unwrap())
 }

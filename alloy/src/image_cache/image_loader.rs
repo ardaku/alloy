@@ -189,7 +189,6 @@ pub fn load_svg(path: &std::path::Path) -> Result<image::RgbaImage> {
     // Scale to fit 4096
     let zoom = 4096.0 / width.max(height);
     let (width, height) = ((width * zoom) as u32, (height * zoom) as u32);
-    let zoom = zoom as f32;
     // These unwrapped Options are fine as long as the dimensions are correct
     let mut pixmap = Pixmap::new(width, height).unwrap();
 

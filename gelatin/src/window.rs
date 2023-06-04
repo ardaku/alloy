@@ -147,13 +147,6 @@ impl Window {
             .with_window_icon(desc.icon)
             .with_visible(desc.position.is_none());
 
-        #[cfg(not(any(target_os = "macos", windows)))]
-        let window = if let Some(app_id) = desc.app_id {
-            window.with_app_id(app_id)
-        } else {
-            window
-        };
-
         let context = glutin::ContextBuilder::new()
             .with_gl_profile(glutin::GlProfile::Core)
             .with_vsync(true);

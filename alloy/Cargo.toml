@@ -53,7 +53,7 @@ winres = "0.1"
 gelatin = { path = "../gelatin" }
 lazy_static = "1.4"
 directories-next = "2.0"
-open = "4.1"
+open = "4.2"
 sys-info = "0.9"
 backtrace = "0.3"
 serde = { version = "1.0.159", features = ["derive"] }

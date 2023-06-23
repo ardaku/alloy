@@ -7,8 +7,6 @@ use std::{
 };
 
 use cgmath::{ortho, Matrix4, Vector3};
-#[cfg(not(any(target_os = "macos", windows)))]
-use glium::glutin::platform::unix::WindowBuilderExtUnix;
 use glium::{
     glutin::{
         self,
@@ -81,11 +79,6 @@ pub struct WindowDescriptor {
 
     #[builder(setter(into), default)]
     position: Option<PhysicalPosition<i32>>,
-
-    /// Only relevant on Wayland.
-    /// See: https://docs.rs/winit/0.24.0/winit/platform/unix/trait.WindowBuilderExtUnix.html#tymethod.with_app_id
-    #[builder(setter(into), default)]
-    app_id: Option<String>,
 }
 
 type WindowGlobalEventHandler = Box<dyn FnMut(&WindowEvent)>;

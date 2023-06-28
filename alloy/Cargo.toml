@@ -63,7 +63,7 @@ lexical-sort = "0.3"
 trash = { version = "3.0", default-features = false }
 kamadak-exif = "0.5"
 arboard = "3.2"
-resvg = "0.34"
+resvg = "0.35"
 log = "0.4"
 env_logger = "0.10"
 pico-args = "0.5"

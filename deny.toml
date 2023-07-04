@@ -1,0 +1,112 @@
+all-features = false
+no-default-features = false
+feature-depth = 1
+
+[advisories]
+db-path = "~/.cargo/advisory-db"
+db-urls = ["https://github.com/rustsec/advisory-db"]
+vulnerability = "deny"
+unmaintained = "deny"
+yanked = "deny"
+notice = "deny"
+ignore = [
+    # "RUSTSEC-0000-0000",
+]
+severity-threshold = "None"
+
+[licenses]
+unlicensed = "deny"
+allow = [
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "BSL-1.0",
+    "CC0-1.0",
+    "ISC",
+    "MIT",
+    "MPL-2.0",
+    "Unicode-DFS-2016",
+    "Zlib",
+]
+deny = []
+copyleft = "deny"
+allow-osi-fsf-free = "neither"
+default = "deny"
+confidence-threshold = 1.0
+exceptions = []
+
+#[[licenses.clarify]]
+#name = "ring"
+#version = "*"
+#expression = "MIT AND ISC AND OpenSSL"
+#license-files = [
+    # Each entry is a crate relative path, and the (opaque) hash of its contents
+    #{ path = "LICENSE", hash = 0xbd0eed23 }
+#]
+
+[licenses.private]
+ignore = false
+registries = []
+
+[bans]
+multiple-versions = "deny"
+wildcards = "deny"
+highlight = "all"
+workspace-default-features = "deny"
+external-default-features = "allow" # for now
+allow = []
+deny = []
+skip = [
+    { name = "arrayvec", version = "0.5" },
+    { name = "bitflags", version = "1.0" },
+    { name = "foreign-types", version = "0.3" },
+    { name = "foreign-types-shared", version = "0.1" },
+    { name = "libloading", version = "0.7" },
+    { name = "memmap2", version = "0.5" },
+    { name = "memoffset", version = "0.6" },
+    { name = "nix", version = "0.24" },
+    { name = "num_enum", version = "0.5" },
+    { name = "num_enum_derive", version = "0.5" },
+    { name = "raw-window-handle", version = "0.4" },
+    { name = "redox_syscall", version = "0.2" },
+    { name = "sctk-adwaita", version = "0.4" },
+    { name = "syn", version = "1.0" },
+    { name = "toml", version = "0.5" },
+    { name = "tiny-skia", version = "0.7" },
+    { name = "tiny-skia", version = "0.8" },
+    { name = "tiny-skia-path", version = "0.7" },
+    { name = "tiny-skia-path", version = "0.8" },
+    { name = "ttf-parser", version = "0.18" },
+    { name = "windows-targets", version = "0.42" },
+    { name = "windows-sys", version = "0.36" },
+    { name = "windows-sys", version = "0.45" },
+    { name = "windows_aarch64_gnullvm", version = "0.42" },
+    { name = "windows_aarch64_msvc", version = "0.36" },
+    { name = "windows_aarch64_msvc", version = "0.42" },
+    { name = "windows_i686_gnu", version = "0.36" },
+    { name = "windows_i686_gnu", version = "0.42" },
+    { name = "windows_i686_msvc", version = "0.36" },
+    { name = "windows_i686_msvc", version = "0.42" },
+    { name = "windows_x86_64_gnu", version = "0.36" },
+    { name = "windows_x86_64_gnu", version = "0.42" },
+    { name = "windows_x86_64_gnullvm", version = "0.42" },
+    { name = "windows_x86_64_msvc", version = "0.36" },
+    { name = "windows_x86_64_msvc", version = "0.42" },
+    { name = "winit", version = "0.27" },
+]
+
+[[bans.features]]
+name = "chrono"
+deny = ["time"]
+allow = []
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+allow-git = []
+
+[sources.allow-org]
+github = []
+gitlab = []
+bitbucket = []

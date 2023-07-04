@@ -43,14 +43,13 @@ linux_mime_types = [
 ]
 
 [features]
-default = []
 avif = ["libavif-image"]
 
 [target.'cfg(windows)'.build-dependencies]
 winres = "0.1"
 
 [dependencies]
-gelatin = { path = "../gelatin" }
+gelatin = { path = "../gelatin", version = "0.7" }
 lazy_static = "1.4"
 directories-next = "2.0"
 open = "5.0"
@@ -63,7 +62,7 @@ lexical-sort = "0.3"
 trash = { version = "3.0", default-features = false }
 kamadak-exif = "0.5"
 arboard = "3.2"
-resvg = "0.34"
+resvg = "0.35"
 log = "0.4"
 env_logger = "0.10"
 pico-args = "0.5"

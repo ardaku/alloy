@@ -55,7 +55,7 @@ directories-next = "2.0"
 open = "5.0"
 sys-info = "0.9"
 backtrace = "0.3"
-serde = { version = "1.0.159", features = ["derive"] }
+serde = { version = "1.0.167", features = ["derive"] }
 toml = "0.7"
 rand = "0.8"
 lexical-sort = "0.3"

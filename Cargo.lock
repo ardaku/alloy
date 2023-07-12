@@ -2342,9 +2342,9 @@ dependencies = [
 
 [[package]]
 name = "trash"
-version = "3.0.4"
+version = "3.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "eb060e46f3142e73342a48e30f31d24e6657bab2d7cc7b4b3afa213ea7a13b74"
+checksum = "af3663fb8f476d674b9c61d1d2796acec725bef6bec4b41402a904252a25971e"
 dependencies = [
  "libc",
  "log",

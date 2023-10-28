@@ -1,6 +1,6 @@
 use std::{cell::RefCell, collections::HashMap, process::Command, rc::Rc};
 
-use gelatin::glium::glutin::event::ModifiersState;
+use glium::glutin::event::ModifiersState;
 use lazy_static::lazy_static;
 
 use crate::configuration::Configuration;

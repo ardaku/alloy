@@ -11,7 +11,7 @@ use glium::glutin::{
     window::WindowId,
 };
 
-use crate::{window::Window, NextUpdate};
+use crate::gelatin::{window::Window, NextUpdate};
 
 const MAX_SLEEP_DURATION: std::time::Duration =
     std::time::Duration::from_millis(4);

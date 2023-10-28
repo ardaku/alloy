@@ -1,4 +1,4 @@
-use gelatin::glium::glutin::event::VirtualKeyCode;
+use crate::gelatin::glium::glutin::event::VirtualKeyCode;
 
 pub fn virtual_keycode_is_char(vk: VirtualKeyCode) -> bool {
     #[allow(clippy::match_like_matches_macro)]

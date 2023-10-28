@@ -13,13 +13,10 @@ use std::{
     time::SystemTime,
 };
 
-use gelatin::{
-    glium::{
-        self,
-        texture::{MipmapsOption, RawImage2d, SrgbTexture2d},
-        CapabilitiesSource,
-    },
-    image,
+use glium::{
+    self,
+    texture::{MipmapsOption, RawImage2d, SrgbTexture2d},
+    CapabilitiesSource,
 };
 use log::trace;
 
@@ -31,9 +28,7 @@ use self::{
 
 pub mod errors {
     use std::io;
-
-    use gelatin::{glium::texture, image};
-
+    use glium::texture;
     use crate::image_cache::image_loader;
 
     pub type Result<T = (), E = Error> = std::result::Result<T, E>;

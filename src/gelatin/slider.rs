@@ -1,16 +1,17 @@
 use std::{cell::RefCell, rc::Rc};
 
 use cgmath::{Matrix4, Vector3};
-use glium::{
-    glutin::event::{ElementState, MouseButton},
-    uniform, Frame, Surface,
-};
-
-use crate::{
-    add_common_widget_functions,
+use crate::add_common_widget_functions;
+use crate::gelatin::{
     misc::{Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement},
     window::RenderValidity,
     DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData, WidgetError,
+};
+use glium::{
+    glutin::event::{ElementState, MouseButton},
+    DrawParameters,
+    Blend, BlendingFunction, LinearBlendingFactor,
+    uniform, Frame, Surface,
 };
 
 struct SliderData {
@@ -112,7 +113,6 @@ impl Widget for Slider {
         target: &mut Frame,
         context: &DrawContext,
     ) -> Result<NextUpdate, WidgetError> {
-        use glium::{Blend, BlendingFunction, LinearBlendingFactor};
         {
             let borrowed = self.data.borrow();
             if !borrowed.visible {
@@ -126,7 +126,7 @@ impl Widget for Slider {
             //let width = borrowed.drawn_bounds.size.vec.x;
             //let height = borrowed.drawn_bounds.size.vec.y;
 
-            let image_draw_params = glium::DrawParameters {
+            let image_draw_params = DrawParameters {
                 viewport: Some(*context.viewport),
                 blend: Blend {
                     color: BlendingFunction::Addition {

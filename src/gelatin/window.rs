@@ -8,18 +8,20 @@ use std::{
 
 use cgmath::{ortho, Matrix4, Vector3};
 use glium::{
+    index::PrimitiveType,
     glutin::{
         self,
         dpi::{PhysicalPosition, PhysicalSize},
         event::WindowEvent,
         window::{CursorIcon, Icon, WindowId},
     },
-    program, uniform, Blend, BlendingFunction, Display, Frame, IndexBuffer,
+    program, uniform, Blend, BlendingFunction, Display, DrawParameters, Frame, IndexBuffer,
     Program, Rect, Surface, VertexBuffer,
 };
 use typed_builder::TypedBuilder;
 
-use crate::{
+use crate::VerticalLayoutContainer;
+use crate::gelatin::{
     application::Application,
     misc::{FromPhysical, LogicalRect, LogicalVector},
     shaders, DrawContext, Event, EventKind, NextUpdate, Vertex, Widget,
@@ -84,7 +86,7 @@ pub struct WindowDescriptor {
 type WindowGlobalEventHandler = Box<dyn FnMut(&WindowEvent)>;
 
 struct WindowData {
-    display: glium::Display,
+    display: Display,
     size_before_fullscreen: PhysicalSize<u32>,
     fullscreen: bool,
     last_mouse_move_update_time: std::time::Instant,
@@ -144,7 +146,7 @@ impl Window {
             .with_gl_profile(glutin::GlProfile::Core)
             .with_vsync(true);
         let display =
-            glium::Display::new(window, context, &application.event_loop)
+            Display::new(window, context, &application.event_loop)
                 .unwrap();
 
         if let Some(pos) = desc.position {
@@ -158,7 +160,6 @@ impl Window {
             .set_cursor_icon(CursorIcon::Default);
 
         // All the draw stuff
-        use glium::index::PrimitiveType;
         let vertex_buffer = {
             VertexBuffer::new(
                 &display,
@@ -243,8 +244,7 @@ impl Window {
                     validity: Rc::new(Cell::new(false)),
                 },
                 root_widget: Rc::new(
-                    crate::line_layout_container::VerticalLayoutContainer::new(
-                    ),
+                    VerticalLayoutContainer::new(),
                 ),
                 bg_color: [0.85, 0.85, 0.85, 1.0],
 
@@ -473,7 +473,7 @@ impl Window {
     /// WARNING The window may not be changed during the drawing phase.
     /// This means that trying to borrow the window *mutably* in a widget's
     /// draw function will fail.
-    pub fn redraw(&self) -> crate::NextUpdate {
+    pub fn redraw(&self) -> NextUpdate {
         // Using a scope to only borrow the data mutable for the very beggining.
         {
             let mut borrowed = self.data.borrow_mut();
@@ -596,7 +596,7 @@ impl Window {
         let transform =
             Matrix4::from_translation(Vector3::new(-1.0, -1.0, 0.0))
                 * transform;
-        let image_draw_params = glium::DrawParameters {
+        let image_draw_params = DrawParameters {
             blend: Blend {
                 color: BlendingFunction::Max,
                 alpha: BlendingFunction::Max,

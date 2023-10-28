@@ -7,7 +7,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use gelatin::{glium::Display, window::Window};
+use crate::gelatin::{NextUpdate, glium::Display, window::Window};
 use log::{debug, trace};
 use rand::{seq::SliceRandom, thread_rng};
 
@@ -272,7 +272,7 @@ impl PlaybackManager {
         &self.folder_player.file_path
     }
 
-    pub fn update_image(&mut self, window: &Window) -> gelatin::NextUpdate {
+    pub fn update_image(&mut self, window: &Window) -> NextUpdate {
         let display = window.display_mut();
         let prev_file = self.folder_player.image_texture();
         let next_update = self
@@ -379,7 +379,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
         &mut self,
         display: &Display,
         image_cache: &mut ImageCache,
-    ) -> gelatin::NextUpdate {
+    ) -> NextUpdate {
         trace!(
             "Begin `update_image`. Curr image is: {:?}. Load request is {:?}",
             self.file_path,
@@ -388,7 +388,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
         let is_paused = matches!(self.playback_state, PlaybackState::Paused);
         let no_request = matches!(self.load_request, LoadRequest::None);
         if self.file_path.is_none() && no_request && is_paused {
-            return gelatin::NextUpdate::Latest;
+            return NextUpdate::Latest;
         }
         let now = Instant::now();
         let few_millisecs_from_now =
@@ -416,11 +416,11 @@ impl<P: Playback> ImgSequencePlayer<P> {
                 LoadRequest::Jump(0) => {
                     // Waiting on current image to be loaded.
                     next_update =
-                        gelatin::NextUpdate::WaitUntil(few_millisecs_from_now);
+                        NextUpdate::WaitUntil(few_millisecs_from_now);
                 }
                 _ => {
                     image_cache.prefetch_neighbors();
-                    next_update = gelatin::NextUpdate::Latest;
+                    next_update = NextUpdate::Latest;
                 }
             }
         } else if load_request == LoadRequest::None {
@@ -432,7 +432,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
 
             let nanos_til_next = frame_delta_time_nanos - elapsed_nanos;
             let millis_til_next = nanos_til_next / 1_000_000;
-            next_update = gelatin::NextUpdate::WaitUntil(
+            next_update = NextUpdate::WaitUntil(
                 now.checked_add(Duration::from_millis(
                     (millis_til_next / 2).max(1) as u64,
                 ))
@@ -484,7 +484,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
                         as i64
                 {
                     // Just buisy wait if we are getting very close to the next frame swap
-                    next_update = gelatin::NextUpdate::Soonest;
+                    next_update = NextUpdate::Soonest;
                 } else {
                     match self.playback_state {
                         PlaybackState::RandomPresent => {
@@ -500,13 +500,13 @@ impl<P: Playback> ImgSequencePlayer<P> {
             }
         } else {
             next_update =
-                gelatin::NextUpdate::WaitUntil(few_millisecs_from_now);
+                NextUpdate::WaitUntil(few_millisecs_from_now);
         }
         match load_request {
             LoadRequest::None | LoadRequest::FilePath(..) => (),
             _ => {
                 if image_cache.current_dir_len() == Some(0) {
-                    return gelatin::NextUpdate::Latest;
+                    return NextUpdate::Latest;
                 }
             }
         }
@@ -539,7 +539,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
                     // next time we attempt to load this again.
                     self.load_request = LoadRequest::Jump(0);
                     next_update =
-                        gelatin::NextUpdate::WaitUntil(few_millisecs_from_now);
+                        NextUpdate::WaitUntil(few_millisecs_from_now);
                 }
                 Err(err) => {
                     self.image_texture = None;

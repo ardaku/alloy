@@ -6,8 +6,8 @@ use glium::{
     uniform, Frame, Surface,
 };
 
-use crate::{
-    add_common_widget_functions,
+use crate::add_common_widget_functions;
+use crate::gelatin::{
     misc::{Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement},
     picture::Picture,
     window::RenderValidity,

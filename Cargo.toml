@@ -55,7 +55,7 @@ backtrace = "0.3"
 cgmath = "0.18"
 directories-next = "2.0"
 env_logger = "0.10"
-glium = "0.29"
+glium = "0.32"
 image = "0.24"
 kamadak-exif = "0.5"
 lazy_static = "1.4"
@@ -73,7 +73,7 @@ toml = "0.7"
 trash = { version = "3.0", default-features = false }
 typed-builder = "0.14"
 usvg = "0.35"
-winit = "0.26"
+winit = "0.28"
 
 [dependencies.libavif-image]
 version = "0.10"

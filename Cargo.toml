@@ -43,7 +43,6 @@ linux_mime_types = [
 ]
 
 [features]
-default = []
 avif = ["libavif-image"]
 
 [target.'cfg(windows)'.build-dependencies]

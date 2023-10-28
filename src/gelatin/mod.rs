@@ -1,7 +1,7 @@
 //! Idk man
 
 use std::{
-    any::Any, error::Error, fmt, ops::Deref, path::PathBuf, rc::Rc,
+    any::Any, error::Error, fmt, path::PathBuf, rc::Rc,
     time::Instant, vec::Vec,
 };
 
@@ -29,16 +29,12 @@ pub mod window;
 #[derive(Debug)]
 pub enum WidgetError {
     Image(image::ImageError),
-    Custom(Box<dyn Error>),
 }
 impl fmt::Display for WidgetError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             WidgetError::Image(img_err) => {
                 write!(f, "WidgetError: Image ({})", img_err)?
-            }
-            WidgetError::Custom(err) => {
-                write!(f, "WidgetError: Custom ({})", err)?
             }
         }
         Ok(())
@@ -48,7 +44,6 @@ impl Error for WidgetError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
             WidgetError::Image(img_err) => Some(img_err),
-            WidgetError::Custom(err) => Some(Deref::deref(err)),
         }
     }
 }
@@ -267,6 +262,7 @@ pub fn widget_data_ptr(rc: &Rc<dyn Widget>) -> *const u8 {
 #[macro_export]
 macro_rules! add_common_widget_functions {
     ($data_field:ident) => {
+        #[allow(dead_code)]
         pub fn set_margin_all(&self, pixels: f32) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.placement.margin_left = pixels;
@@ -276,21 +272,25 @@ macro_rules! add_common_widget_functions {
             borrowed.render_validity.invalidate();
         }
 
+        #[allow(dead_code)]
         pub fn set_margin_left(&self, pixels: f32) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.placement.margin_left = pixels;
             borrowed.render_validity.invalidate();
         }
+        #[allow(dead_code)]
         pub fn set_margin_right(&self, pixels: f32) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.placement.margin_right = pixels;
             borrowed.render_validity.invalidate();
         }
+        #[allow(dead_code)]
         pub fn set_margin_top(&self, pixels: f32) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.placement.margin_top = pixels;
             borrowed.render_validity.invalidate();
         }
+        #[allow(dead_code)]
         pub fn set_margin_bottom(&self, pixels: f32) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.placement.margin_bottom = pixels;

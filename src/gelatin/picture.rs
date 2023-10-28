@@ -40,6 +40,7 @@ pub struct Picture {
 }
 
 impl Picture {
+    #[allow(dead_code)]
     pub fn new<T: Into<path::PathBuf>>(path: T) -> Picture {
         Picture {
             data: RefCell::new(PictureData::Path(path.into())),

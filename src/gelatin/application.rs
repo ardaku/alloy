@@ -97,6 +97,7 @@ impl Application {
         self.windows.insert(window.get_id(), window);
     }
 
+    #[allow(dead_code)]
     pub fn add_global_event_handler<
         F: FnMut(&Event<()>) -> NextUpdate + 'static,
     >(

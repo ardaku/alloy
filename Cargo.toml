@@ -68,7 +68,7 @@ resvg = "0.35"
 serde = { version = "1.0.159", features = ["derive"] }
 sys-info = "0.9"
 thiserror = "1.0"
-tiny-skia = "0.9"
+tiny-skia = "0.10"
 toml = "0.7"
 trash = { version = "3.0", default-features = false }
 typed-builder = "0.14"

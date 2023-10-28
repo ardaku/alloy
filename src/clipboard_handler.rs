@@ -6,7 +6,7 @@ use std::{
     },
 };
 
-use gelatin::image::imageops::{
+use image::imageops::{
     flip_horizontal_in_place, flip_vertical_in_place, rotate180_in_place,
     rotate270, rotate90,
 };

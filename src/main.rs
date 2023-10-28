@@ -9,25 +9,25 @@ use std::{
 };
 
 use directories_next::ProjectDirs;
-use gelatin::{
-    application::*,
-    glium::glutin::{
-        dpi::{PhysicalPosition, PhysicalSize},
-        event::WindowEvent,
-        window::Icon,
-    },
-    image,
-    label::*,
-    line_layout_container::*,
-    misc::*,
-    picture::*,
-    window::{Window, WindowDescriptor},
-};
 use lazy_static::lazy_static;
 use log::trace;
 
 use crate::{
     configuration::{Cache, ConfigWindowSection, Configuration, Theme},
+    gelatin::{
+        application::*,
+        glium::glutin::{
+            dpi::{PhysicalPosition, PhysicalSize},
+            event::WindowEvent,
+            window::Icon,
+        },
+        image,
+        label::*,
+        line_layout_container::*,
+        misc::*,
+        picture::*,
+        window::{Window, WindowDescriptor},
+    },
     widgets::{
         bottom_bar::BottomBar, copy_notification::CopyNotifications,
         help_screen::*, picture_widget::*,
@@ -37,6 +37,7 @@ use crate::{
 mod clipboard_handler;
 mod cmd_line;
 mod configuration;
+mod gelatin;
 mod handle_panic;
 mod image_cache;
 mod input_handling;

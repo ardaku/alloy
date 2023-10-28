@@ -2,8 +2,8 @@ use std::{cell::RefCell, rc::Rc};
 
 use glium::Frame;
 
-use crate::{
-    add_common_widget_functions,
+use crate::add_common_widget_functions;
+use crate::gelatin::{
     misc::{
         Alignment, HorDim, Length, LogicalRect, LogicalVector, PickDimension,
         VerDim, WidgetPlacement,

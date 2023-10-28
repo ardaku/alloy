@@ -1,7 +1,8 @@
 use std::{cell::RefCell, rc::Rc};
 
-use gelatin::{
-    add_common_widget_functions,
+use crate::add_common_widget_functions;
+use crate::gelatin::{
+    glium,
     cgmath::{Matrix4, Vector3},
     glium::{uniform, Frame, Surface},
     misc::{Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement},
@@ -70,7 +71,7 @@ impl Widget for HelpScreen {
         target: &mut Frame,
         context: &DrawContext,
     ) -> Result<NextUpdate, WidgetError> {
-        use gelatin::glium::{Blend, BlendingFunction, LinearBlendingFactor};
+        use glium::{Blend, BlendingFunction, LinearBlendingFactor};
         {
             let borrowed = self.data.borrow();
             if !borrowed.visible {
@@ -86,7 +87,7 @@ impl Widget for HelpScreen {
                 Matrix4::from_translation(pos.extend(0.0)) * transform;
             // Projection
             let transform = context.projection_transform * transform;
-            let image_draw_params = gelatin::glium::DrawParameters {
+            let image_draw_params = glium::DrawParameters {
                 viewport: Some(*context.viewport),
                 blend: Blend {
                     color: BlendingFunction::Addition {
@@ -133,13 +134,13 @@ impl Widget for HelpScreen {
             let sampler = texture
                 .sampled()
                 .wrap_function(
-                    gelatin::glium::uniforms::SamplerWrapFunction::Clamp,
+                    glium::uniforms::SamplerWrapFunction::Clamp,
                 )
                 .minify_filter(
-                    gelatin::glium::uniforms::MinifySamplerFilter::Linear,
+                    glium::uniforms::MinifySamplerFilter::Linear,
                 )
                 .magnify_filter(
-                    gelatin::glium::uniforms::MagnifySamplerFilter::Linear,
+                    glium::uniforms::MagnifySamplerFilter::Linear,
                 );
             let uniforms = uniform! {
                 matrix: Into::<[[f32; 4]; 4]>::into(transform),

@@ -10,7 +10,7 @@ use std::{
     thread,
 };
 
-use gelatin::image::{
+use image::{
     self,
     codecs::{gif::GifDecoder, png::PngDecoder},
     AnimationDecoder, ImageFormat,
@@ -23,9 +23,7 @@ use resvg::{
 
 pub mod errors {
     use std::io;
-
-    use gelatin::{glium::texture, image};
-    use resvg::usvg;
+    use glium::texture;
 
     pub type Result<T = (), E = Error> = std::result::Result<T, E>;
 

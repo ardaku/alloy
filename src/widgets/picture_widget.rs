@@ -6,11 +6,12 @@ use std::{
     time::{Duration, Instant},
 };
 
-use gelatin::{
-    add_common_widget_functions,
+use crate::gelatin::{
     application::request_exit,
+    cgmath,
     cgmath::{Matrix4, Vector2, Vector3},
     glium::{
+        self,
         glutin::event::{ElementState, ModifiersState, MouseButton},
         program, uniform,
         uniforms::MagnifySamplerFilter,
@@ -26,6 +27,7 @@ use super::{
     help_screen::HelpScreen,
 };
 use crate::{
+    add_common_widget_functions,
     clipboard_handler::ClipboardHandler,
     configuration::{Antialias, Cache, Configuration},
     image_cache::{image_loader::Orientation, AnimationFrameTexture},
@@ -1087,10 +1089,10 @@ fn draw_tex_grid(
 ) {
     let size = data.drawn_bounds.size.vec;
     let projection_transform =
-        gelatin::cgmath::ortho(0.0, size.x, size.y, 0.0, -1.0, 1.0);
+        cgmath::ortho(0.0, size.x, size.y, 0.0, -1.0, 1.0);
 
     let viewport_rect = context.logical_rect_to_viewport(&data.drawn_bounds);
-    let image_draw_params = gelatin::glium::DrawParameters {
+    let image_draw_params = glium::DrawParameters {
         viewport: Some(viewport_rect),
         ..Default::default()
     };
@@ -1177,8 +1179,8 @@ fn draw_tex_grid(
         let sampler = cell_tex
 			.tex
 			.sampled()
-			.minify_filter(gelatin::glium::uniforms::MinifySamplerFilter::LinearMipmapLinear)
-			.wrap_function(gelatin::glium::uniforms::SamplerWrapFunction::Clamp);
+			.minify_filter(glium::uniforms::MinifySamplerFilter::LinearMipmapLinear)
+			.wrap_function(glium::uniforms::SamplerWrapFunction::Clamp);
 
         let filter = match data.antialiasing {
             Antialias::Auto

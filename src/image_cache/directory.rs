@@ -71,7 +71,7 @@ pub struct Directory {
     /// Maps file indicies to indicies for the `curr_image_idx`.
     /// This is relevant when the current image is given by its name
     /// when it will first be located by its file index.
-    file_i_to_img_i: Vec<Option<u32>>,
+    file_i_to_img_i: Vec<Option<usize>>,
 
     /// A monotonically increasing integer used for identifying
     /// each load request
@@ -331,15 +331,15 @@ impl Directory {
             for _ in (last_file_i + 1) as usize..curr_file_i {
                 self.file_i_to_img_i.push(None);
             }
-            self.file_i_to_img_i.push(Some(curr_img_i as u32));
+            self.file_i_to_img_i.push(Some(curr_img_i));
             last_file_i = curr_file_i as isize;
         }
         self.set_image_index_from_file_index();
     }
 
     fn set_image_index_from_file_index(&mut self) {
-        if let Some(img_idx) = self.file_i_to_img_i.get(self.curr_file_idx) {
-            self.curr_image_idx = img_idx.unwrap() as usize;
+        if let Some(Some(img_idx)) = self.file_i_to_img_i.get(self.curr_file_idx) {
+            self.curr_image_idx = *img_idx;
         }
     }
 

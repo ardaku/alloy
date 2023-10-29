@@ -7,11 +7,11 @@ Unicode True
 
     ; VERSION is defined through a command line argument to the maker
     ; for example:
-    ; makensis.exe /DVERSION=9.0 emulsion.nsi
+    ; makensis.exe /DVERSION=9.0 alloy.nsi
 
-    !define PROGRAM_NAME "Emulsion"
-    !define REG_PROG_PATH "SOFTWARE\Emulsion"
-    !define REG_UNINST_PATH "Software\Microsoft\Windows\CurrentVersion\Uninstall\Emulsion"
+    !define PROGRAM_NAME "Alloy"
+    !define REG_PROG_PATH "SOFTWARE\Alloy"
+    !define REG_UNINST_PATH "Software\Microsoft\Windows\CurrentVersion\Uninstall\Alloy"
     !define MULTIUSER_INSTALLMODE_INSTDIR "${PROGRAM_NAME}"
     !define MULTIUSER_INSTALLMODE_INSTDIR_REGISTRY_KEY "${REG_PROG_PATH}"
     !define MULTIUSER_EXECUTIONLEVEL Highest
@@ -31,11 +31,11 @@ Unicode True
 ;General
 
     ;Name and file
-    Name "Emulsion"
-    OutFile "Emulsion-Installer.exe"
+    Name "Alloy"
+    OutFile "Alloy-Installer.exe"
 
     ;Default installation folder
-    ;InstallDir "$LOCALAPPDATA\Emulsion"
+    ;InstallDir "$LOCALAPPDATA\Alloy"
 
     ;Get installation folder from registry if available
     ;InstallDirRegKey SHCTX "${REG_PROG_PATH}" ""
@@ -48,7 +48,7 @@ Unicode True
 ;Interface Settings
 
     !define MUI_ABORTWARNING
-    !define MUI_ICON "emulsion.ico"
+    !define MUI_ICON "alloy.ico"
     !define MUI_HEADERIMAGE
     ;!define MUI_HEADERIMAGE_BITMAP
     !define MUI_HEADERIMAGE_BITMAP "empty.bmp"
@@ -86,7 +86,7 @@ Function un.onInit
 FunctionEnd
 
 
-!macro EmulsionRegisterExtension ExtensionName Description
+!macro AlloyRegisterExtension ExtensionName Description
     ; First, let's create the ProgID for the extension
     ; For more information about what is being done here, see
     ; "Default Programs"
@@ -99,14 +99,14 @@ FunctionEnd
     WriteRegStr SHCTX "${REG_PROG_PATH}\Capabilities\FileAssociations" ".${ExtensionName}" "${GENERIC_PROG_ID}"
 !macroend
 
-; !macro EmulsionUnregisterExtension ExtensionName Description
+; !macro AlloyUnregisterExtension ExtensionName Description
 ;     ${UnRegisterExtension} ".${ExtensionName}" "${Description}"
 ; !macroend
 
 ;--------------------------------
 ;Installer Sections
 
-Section "Emulsion" SecEmulsion
+Section "Alloy" SecAlloy
     SectionIn RO
 
     SetOutPath "$INSTDIR"
@@ -123,7 +123,7 @@ Section "Emulsion" SecEmulsion
     WriteRegStr SHCTX "${REG_PROG_PATH}" "Install Directory" "$INSTDIR"
 
     WriteRegStr SHCTX "${REG_UNINST_PATH}" "DisplayName" "${PROGRAM_NAME}"
-    WriteRegStr SHCTX "${REG_UNINST_PATH}" "DisplayIcon" "$\"$INSTDIR\emulsion.exe$\""
+    WriteRegStr SHCTX "${REG_UNINST_PATH}" "DisplayIcon" "$\"$INSTDIR\alloy.exe$\""
     WriteRegStr SHCTX "${REG_UNINST_PATH}" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\" /$MultiUser.InstallMode"
     WriteRegStr SHCTX "${REG_UNINST_PATH}" "QuietUninstallString" "$\"$INSTDIR\Uninstall.exe$\" /$MultiUser.InstallMode /S"
 
@@ -131,26 +131,26 @@ Section "Emulsion" SecEmulsion
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 
     ; Program description and list of supported extensions
-    ; (This in itself does not associate the extensions to Emulsion)
+    ; (This in itself does not associate the extensions to Alloy)
     WriteRegStr SHCTX "${REG_PROG_PATH}\Capabilities" "ApplicationDescription" "A fast and minimalistic image viewer"
     WriteRegStr SHCTX "${REG_PROG_PATH}\Capabilities" "ApplicationName" "${PROGRAM_NAME}"
 
-    !insertmacro EmulsionRegisterExtension "jpg" "JPG Image"
-    !insertmacro EmulsionRegisterExtension "jpeg" "JPEG Image"
-    !insertmacro EmulsionRegisterExtension "png" "PNG Image"
-    !insertmacro EmulsionRegisterExtension "bmp" "BMP Image"
-    !insertmacro EmulsionRegisterExtension "gif" "GIF Image"
-    !insertmacro EmulsionRegisterExtension "tga" "TGA Image"
-    !insertmacro EmulsionRegisterExtension "avif" "AVIF Image"
-    !insertmacro EmulsionRegisterExtension "webp" "WEBP Image"
-    !insertmacro EmulsionRegisterExtension "tif" "TIF Image"
-    !insertmacro EmulsionRegisterExtension "tiff" "TIFF Image"
-    !insertmacro EmulsionRegisterExtension "ico" "ICO Image"
-    !insertmacro EmulsionRegisterExtension "hdr" "HDR Image"
-    !insertmacro EmulsionRegisterExtension "pbm" "PBM Image"
-    !insertmacro EmulsionRegisterExtension "pam" "PAM Image"
-    !insertmacro EmulsionRegisterExtension "ppm" "PPM Image"
-    !insertmacro EmulsionRegisterExtension "pgm" "PGM Image"
+    !insertmacro AlloyRegisterExtension "jpg" "JPG Image"
+    !insertmacro AlloyRegisterExtension "jpeg" "JPEG Image"
+    !insertmacro AlloyRegisterExtension "png" "PNG Image"
+    !insertmacro AlloyRegisterExtension "bmp" "BMP Image"
+    !insertmacro AlloyRegisterExtension "gif" "GIF Image"
+    !insertmacro AlloyRegisterExtension "tga" "TGA Image"
+    !insertmacro AlloyRegisterExtension "avif" "AVIF Image"
+    !insertmacro AlloyRegisterExtension "webp" "WEBP Image"
+    !insertmacro AlloyRegisterExtension "tif" "TIF Image"
+    !insertmacro AlloyRegisterExtension "tiff" "TIFF Image"
+    !insertmacro AlloyRegisterExtension "ico" "ICO Image"
+    !insertmacro AlloyRegisterExtension "hdr" "HDR Image"
+    !insertmacro AlloyRegisterExtension "pbm" "PBM Image"
+    !insertmacro AlloyRegisterExtension "pam" "PAM Image"
+    !insertmacro AlloyRegisterExtension "ppm" "PPM Image"
+    !insertmacro AlloyRegisterExtension "pgm" "PGM Image"
 
     WriteRegStr SHCTX "SOFTWARE\RegisteredApplications" "ArturK.${PROGRAM_NAME}.${VERSION}" "${REG_PROG_PATH}\Capabilities"
 
@@ -159,7 +159,7 @@ Section "Emulsion" SecEmulsion
     !insertmacro UPDATEFILEASSOC
 SectionEnd
 
-; These are the programs that are needed by Emulsion.
+; These are the programs that are needed by Alloy.
 Section -Prerequisites
     IfFileExists $SYSDIR\vcruntime140.dll endVsRedist beginVsRedist
     Goto endVsRedist
@@ -173,8 +173,8 @@ SectionEnd
 ;--------------------------------
 ;Descriptions
     ;Language strings
-    LangString DESC_SecEmulsion ${LANG_ENGLISH} "The program itself."
-    ;LangString DESC_SecAssociate ${LANG_ENGLISH} "Associate jpg, jpeg, png, bmp, gif, tga, avif, webp, tif, tiff, hdr, pbm, pam, ppm, and pgm files with Emulsion"
+    LangString DESC_SecAlloy ${LANG_ENGLISH} "The program itself."
+    ;LangString DESC_SecAssociate ${LANG_ENGLISH} "Associate jpg, jpeg, png, bmp, gif, tga, avif, webp, tif, tiff, hdr, pbm, pam, ppm, and pgm files with Alloy"
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; These are only relevant when using the MUI_PAGE_COMPONENTS
@@ -183,7 +183,7 @@ SectionEnd
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;Assign language strings to sections
     ;!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-    ;    !insertmacro MUI_DESCRIPTION_TEXT ${SecEmulsion} $(DESC_SecEmulsion)
+    ;    !insertmacro MUI_DESCRIPTION_TEXT ${SecAlloy} $(DESC_SecAlloy)
     ;    !insertmacro MUI_DESCRIPTION_TEXT ${SecAssociate} $(DESC_SecAssociate)
     ;!insertmacro MUI_FUNCTION_DESCRIPTION_END
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -198,7 +198,7 @@ Section Uninstall
     ; Try to remove the Start Menu folder - this will only happen if it is empty
     RMDir "$SMPROGRAMS\${PROGRAM_NAME}"
     
-    Delete "$INSTDIR\emulsion.exe"
+    Delete "$INSTDIR\alloy.exe"
     Delete "$INSTDIR\Uninstall.exe"
     RMDir "$INSTDIR" ; This is okay, rmdir fails if the directory is not empty.
     
@@ -207,6 +207,6 @@ Section Uninstall
     DeleteRegKey SHCTX "${REG_UNINST_PATH}"
     
     ; Extensions mustn't be unregistered here. They might be associated
-    ; with a program other than Emulsion and removing those would be wrong.
+    ; with a program other than Alloy and removing those would be wrong.
     
 SectionEnd

@@ -265,7 +265,7 @@ fn main() {
 
 fn make_icon() -> Icon {
     let img =
-        image::load_from_memory(include_bytes!("../resource/emulsion48.png"))
+        image::load_from_memory(include_bytes!("../resource/alloy48.png"))
             .unwrap();
     let rgba = img.into_rgba8();
     let (w, h) = rgba.dimensions();

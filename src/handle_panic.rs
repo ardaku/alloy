@@ -1,8 +1,6 @@
-use std::{env, fs::OpenOptions, io, io::Write, iter, panic, string::String};
+use std::{fs::OpenOptions, io, io::Write, iter, panic, string::String};
 
 use backtrace::Backtrace;
-
-use crate::PROJECT_DIRS;
 
 pub fn handle_panic(info: &panic::PanicInfo) {
     let trace = Backtrace::new();
@@ -37,26 +35,11 @@ pub fn handle_panic(info: &panic::PanicInfo) {
 }
 
 fn write_to_file(msg: &str) -> io::Result<()> {
-    let local_data_folder = if let Some(ref project_dirs) = *PROJECT_DIRS {
-        project_dirs.data_local_dir().to_owned()
-    } else {
-        let curr_exe = env::current_exe()?;
-        let curr_exe_dir = curr_exe.parent().ok_or_else(|| {
-            io::Error::new(
-                io::ErrorKind::Other,
-                "Could not get exe parent folder!",
-            )
-        })?;
-        curr_exe_dir.to_owned()
-    };
-    if !local_data_folder.exists() {
-        std::fs::create_dir_all(&local_data_folder).unwrap();
-    }
+    let data_dir = crate::configuration::data_dir();
     let mut file = OpenOptions::new()
         .create(true)
         .append(true)
-        .open(local_data_folder.join("panic.txt"))?;
-
+        .open(data_dir.join("panic.txt"))?;
     write!(file, "{msg}")?;
     Ok(())
 }

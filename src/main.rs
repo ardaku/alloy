@@ -3,13 +3,10 @@
 use std::{
     cell::{Cell, RefCell},
     f32,
-    path::PathBuf,
     rc::Rc,
     sync::{Arc, Mutex},
 };
 
-use directories_next::ProjectDirs;
-use lazy_static::lazy_static;
 use log::trace;
 
 use crate::{
@@ -48,12 +45,6 @@ mod utils;
 mod version;
 mod widgets;
 
-lazy_static! {
-    // The program name will be 'emulsion'
-    // (i.e. starting with a lower-case letter) on Linux
-    pub static ref PROJECT_DIRS: Option<ProjectDirs> = ProjectDirs::from("", "", "Emulsion");
-}
-
 static USAGE: &[u8] = include_bytes!("../resource/usage.png");
 static LEFT_TO_PAN: &[u8] = include_bytes!("../resource/use-left-to-pan.png");
 
@@ -65,16 +56,12 @@ fn main() {
     env_logger::init();
     trace!("Starting up. Panic hook set, logger initialized.");
 
-    // Load configuration and cache files
-    let (config_path, cache_path) = get_config_and_cache_paths();
-
     let args = cmd_line::parse_args();
 
-    let cache = Cache::load(&cache_path);
-    let config = Configuration::load(config_path);
-
+    let cache = Cache::load();
     let first_launch = cache.is_err();
     let cache = Arc::new(Mutex::new(cache.unwrap_or_default()));
+    let config = Configuration::load();
     let config = Rc::new(RefCell::new(config.unwrap_or_default()));
 
     let mut application = Application::new();
@@ -270,7 +257,7 @@ fn main() {
     window.set_root(root_container);
 
     application.set_at_exit(Some(move || {
-        cache.lock().unwrap().save(cache_path).unwrap();
+        cache.lock().unwrap().save().unwrap();
     }));
     application.start_event_loop();
 }
@@ -355,30 +342,4 @@ fn make_picture_widget(
         max: f32::INFINITY,
     });
     picture_widget
-}
-
-pub fn get_config_and_cache_paths() -> (PathBuf, PathBuf) {
-    let config_folder;
-    let cache_folder;
-
-    if let Some(ref project_dirs) = *PROJECT_DIRS {
-        config_folder = project_dirs.config_dir().to_owned();
-        cache_folder = project_dirs.cache_dir().to_owned();
-    } else {
-        let exe_path = std::env::current_exe().unwrap();
-        let exe_folder = exe_path.parent().unwrap();
-        config_folder = exe_folder.to_owned();
-        cache_folder = exe_folder.to_owned();
-    }
-    if !config_folder.exists() {
-        std::fs::create_dir_all(&config_folder).unwrap();
-    }
-    if !cache_folder.exists() {
-        std::fs::create_dir_all(&cache_folder).unwrap();
-    }
-
-    (
-        config_folder.join("cfg.toml"),
-        cache_folder.join("cache.toml"),
-    )
 }

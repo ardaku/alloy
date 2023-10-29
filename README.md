@@ -22,10 +22,16 @@ In many cases it's a good start to clone and once in the project directory, try
 running
 
 ```shell
-cargo install --path alloy
+cargo install --path .
 ```
 
-TODO: List dependency packages
+### Dependency Installation - Fedora
+
+Currently alloy requires the following installation:
+
+```shell
+sudo dnf install cmake fontconfig-devel
+```
 
 Alloy is not currently distributed officially on crates.io or through GitHub
 releases (for Mac and Windows) and Flathub (for Linux), but will be in the

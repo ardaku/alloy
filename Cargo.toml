@@ -9,9 +9,9 @@ edition = "2021"
 build = "build.rs"
 
 [package.metadata.bundle]
-name = "Emulsion"
+name = "Alloy"
 identifier = "org.ardaku.alloy"
-icon = ["resource_dev/emulsion.png"]
+icon = ["resource_dev/alloy.png"]
 resources = ["LICENSE.txt"]
 short_description = "A lightweight and minimalistic image viewer based on emulsion"
 copyright = "Copyright (c) 2020 The Emulsion Contributors, Copyright (c) 2022 The Alloy Contributors"

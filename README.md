@@ -1,6 +1,5 @@
 ## Alloy
-Image viewer based on (now-discontinued)
-[Emulsion](https://arturkovacs.github.io/emulsion-website/).
+Image viewer based on (now-discontinued) [Emulsion].
 
 Alloy targets Windows, Mac, and Linux (with more targets to come!).
 
@@ -42,9 +41,9 @@ future.
 If Alloy closes unexpectedly please locate the `"panic.txt"` file. This file has
 a different location depending on the target platform.
 
-- Windows: `%localappdata%\emulsion\data`
-- MacOS: `$HOME/Library/Application Support/emulsion`
-- Linux: `$XDG_DATA_HOME/emulsion` or `$HOME/.local/share/emulsion`
+- Windows: `%localappdata%\alloy\data`
+- MacOS: `$HOME/Library/Application Support/alloy`
+- Linux: `$XDG_DATA_HOME/alloy` or `$HOME/.local/share/alloy`
 
 When posting a bug report please upload the contents of this file to GitHub.
 If you deem it too large just paste the last panic entry between the rows of

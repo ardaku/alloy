@@ -1,15 +1,18 @@
-//! There are two files that store properties for Emulsion, the *cache* and the *config*.
+//! There are two files that store properties for Alloy, the *cache* and the *config*.
 //!
-//! The most important distinction between these is that Emulsion never writes to the *config*
+//! The most important distinction between these is that Alloy never writes to the *config*
 //! but it does write to the *cache* to save portions of the state of the program (e.g. window size
 //! and position).
 //!
 //! Furthermore it's generally true that the user will only edit the *config* to specify their
 //! preferences.
-
-use std::{borrow::Cow, collections::BTreeMap, fs, path::Path};
-
+//!
+use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
+use std::{borrow::Cow, collections::BTreeMap, fs, path::Path, path::PathBuf};
+
+/// Application name for project directories
+const APPLICATION: &str = "Alloy";
 
 #[derive(Debug, Serialize, Deserialize, Copy, Clone, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -117,21 +120,21 @@ impl Cache {
         self.window.dark = theme == Theme::Dark;
     }
 
-    pub fn load<P: AsRef<Path>>(file_path: P) -> Result<Cache, String> {
-        let file_path = file_path.as_ref();
-        let cfg_str = fs::read_to_string(file_path).map_err(|_| {
-            format!("Could not read cache from {:?}", file_path)
+    pub fn load() -> Result<Cache, String> {
+        let file_path = cache_file();
+        let cfg_str = fs::read_to_string(&file_path).map_err(|_| {
+            format!("Could not read cache from {file_path:?}")
         })?;
         let result: IncompleteCache =
-            toml::from_str(&cfg_str).map_err(|e| format!("{}", e))?;
+            toml::from_str(&cfg_str).map_err(|e| format!("{e}"))?;
         //println!("Read cache from file:\n{:#?}", result);
         Ok(result.into())
     }
 
-    pub fn save<P: AsRef<Path>>(&self, file_path: P) -> Result<(), String> {
-        let file_path = file_path.as_ref();
-        let string = toml::to_string(self).map_err(|e| format!("{}", e))?;
-        fs::write(file_path, string).map_err(|_| {
+    pub fn save(&self) -> Result<(), String> {
+        let file_path = cache_file();
+        let string = toml::to_string(self).map_err(|e| format!("{e}"))?;
+        fs::write(&file_path, string).map_err(|_| {
             format!("Could not write to cache file {:?}", file_path)
         })?;
         Ok(())
@@ -203,13 +206,52 @@ pub struct Configuration {
 }
 
 impl Configuration {
-    pub fn load<P: AsRef<Path>>(file_path: P) -> Result<Configuration, String> {
-        let file_path = file_path.as_ref();
-        let cfg_str = fs::read_to_string(file_path)
+    pub fn load() -> Result<Configuration, String> {
+        let file_path = config_file();
+        let cfg_str = fs::read_to_string(&file_path)
             .map_err(|_| format!("Could not read config from {file_path:?}"))?;
         let result =
             toml::from_str(cfg_str.as_ref()).map_err(|e| format!("{e}"))?;
         //println!("Read config from file:\n{:#?}", result);
         Ok(result)
     }
+}
+
+fn project_dir_fallback() -> PathBuf {
+    let exe_path = std::env::current_exe().unwrap();
+    let exe_dir = exe_path.parent().unwrap();
+    exe_dir.to_owned()
+}
+
+fn config_file() -> PathBuf {
+    let config_dir = match ProjectDirs::from("", "", APPLICATION) {
+        Some(proj) => proj.config_dir().to_owned(),
+        None => project_dir_fallback(),
+    };
+    if !config_dir.exists() {
+        std::fs::create_dir_all(&config_dir).unwrap();
+    }
+    config_dir.join("cfg.toml")
+}
+
+fn cache_file() -> PathBuf {
+    let cache_dir = match ProjectDirs::from("", "", APPLICATION) {
+        Some(proj) => proj.cache_dir().to_owned(),
+        None => project_dir_fallback(),
+    };
+    if !cache_dir.exists() {
+        std::fs::create_dir_all(&cache_dir).unwrap();
+    }
+    cache_dir.join("cache.toml")
+}
+
+pub fn data_dir() -> PathBuf {
+    let data_dir = match ProjectDirs::from("", "", APPLICATION) {
+        Some(proj) => proj.data_local_dir().to_owned(),
+        None => project_dir_fallback(),
+    };
+    if !data_dir.exists() {
+        std::fs::create_dir_all(&data_dir).unwrap();
+    }
+    data_dir
 }

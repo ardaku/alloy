@@ -153,6 +153,7 @@ pub struct LogicalRect {
 }
 
 impl LogicalRect {
+    #[allow(dead_code)]
     #[inline]
     pub fn left(&self) -> f32 {
         self.pos.vec.x

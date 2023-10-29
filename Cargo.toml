@@ -70,7 +70,7 @@ thiserror = "1.0"
 tiny-skia = "0.10"
 toml = "0.7"
 trash = { version = "3.0", default-features = false }
-typed-builder = "0.14"
+typed-builder = "0.18"
 usvg = "0.35"
 winit = "0.28"
 

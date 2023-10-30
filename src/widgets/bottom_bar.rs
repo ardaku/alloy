@@ -7,9 +7,7 @@ use crate::gelatin::{
     picture::Picture,
     slider::Slider,
 };
-
-use super::picture_widget::ScalingMode;
-use crate::{ConfigWindowSection, Configuration, Theme};
+use crate::configuration::{ScalingMode, Theme};
 
 static MOON: &[u8] = include_bytes!("../../resource/moon.png");
 static LIGHT: &[u8] = include_bytes!("../../resource/light.png");
@@ -42,10 +40,6 @@ pub struct BottomBar {
     pub theme_button: Rc<Button>,
     pub help_button: Rc<Button>,
 
-    /// This is false if the configuration requires this to be invisible
-    // and true otherwise.
-    pub should_show: bool,
-
     question: Rc<Picture>,
     question_light: Rc<Picture>,
     moon_img: Rc<Picture>,
@@ -59,7 +53,7 @@ pub struct BottomBar {
 }
 
 impl BottomBar {
-    pub fn new(config: &Configuration) -> Self {
+    pub fn new() -> Self {
         let question = Rc::new(Picture::from_encoded_bytes(QUESTION_BUTTON));
         let question_light =
             Rc::new(Picture::from_encoded_bytes(QUESTION_BUTTON_LIGHT));
@@ -103,17 +97,6 @@ impl BottomBar {
         widget.add_child(theme_button.clone());
         widget.add_child(help_button.clone());
 
-        let should_show = if let Some(ConfigWindowSection {
-            show_bottom_bar: Some(false),
-            ..
-        }) = config.window
-        {
-            widget.set_visible(false);
-            false
-        } else {
-            true
-        };
-
         Self {
             widget,
             orig_scale_button,
@@ -122,7 +105,6 @@ impl BottomBar {
             slider,
             theme_button,
             help_button,
-            should_show,
 
             question,
             question_light,
@@ -164,10 +146,8 @@ impl BottomBar {
         }
     }
 
-    /// Sets this visible iff both the `visible` parameter is `true` and
-    /// the `should_show` property of this object is `true`
-    pub fn set_visible_if_should_show(&self, visible: bool) {
-        self.widget.set_visible(visible && self.should_show);
+    pub fn set_visible(&self, visible: bool) {
+        self.widget.set_visible(visible);
     }
 
     pub fn set_help_visible(&self, visible: bool) {

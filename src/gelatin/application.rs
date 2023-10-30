@@ -97,16 +97,6 @@ impl Application {
         self.windows.insert(window.get_id(), window);
     }
 
-    #[allow(dead_code)]
-    pub fn add_global_event_handler<
-        F: FnMut(&Event<()>) -> NextUpdate + 'static,
-    >(
-        &mut self,
-        fun: F,
-    ) {
-        self.global_handlers.push(Box::new(fun));
-    }
-
     pub fn start_event_loop(self) -> ! {
         let mut windows = self.windows;
         let mut at_exit = self.at_exit;

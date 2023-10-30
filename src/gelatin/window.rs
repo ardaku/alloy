@@ -262,14 +262,6 @@ impl Window {
         resulting_window
     }
 
-    pub fn add_global_event_handler<F: FnMut(&WindowEvent) + 'static>(
-        &self,
-        fun: F,
-    ) {
-        let mut borrowed = self.data.borrow_mut();
-        borrowed.global_event_handlers.push(Box::new(fun));
-    }
-
     pub fn set_root<T: Widget>(&self, widget: Rc<T>) {
         let mut borrowed = self.data.borrow_mut();
         widget.set_valid_ref(borrowed.render_validity.clone());

@@ -50,7 +50,7 @@ The contents of the `config.toml` file may for example be the following:
 ```toml
 [window]
 title_folders = 1
-start_fullscreen = true
+mode = "Fullscreen"
 
 [bindings]
 img_next = ["k"]
@@ -70,10 +70,10 @@ mode          | `"Normal"` | Window mode to start: `"Fullscreen"` / `"Maximized"
 
 ## Section `[image]`
 
-Field name   | Type             | Default | Description
--------------|------------------|---------|------------
-scaling      | unsigned integer | `0`     | Number of folders from the path to display in the title.
-antialiasing | `true`, `false`  | `false` | If true, startup in full-screen mode.
+Field name   | Default   | Description
+-------------|-----------|------------
+scaling      | `"Fixed"` | Scaling mode: `"FitStretch"` / `"FitMin"`
+antialiasing | `"Auto"`  | Antialias mode: `"Always"` / `"Never"`
 
 ## Section `[bindings]`
 
@@ -157,40 +157,18 @@ There are a few special cases for typeable characters:
 
 The following list contains all supported non-typeable key names.
 
-```toml
+```txt
 # The Escape key
 Escape,
 
-F1,
-F2,
-F3,
-F4,
-F5,
-F6,
-F7,
-F8,
-F9,
-F10,
-F11,
-F12,
-F13,
-F14,
-F15,
-F16,
-F17,
-F18,
-F19,
-F20,
-F21,
-F22,
-F23,
-F24,
+F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12,
+F13, F14, F15, F16, F17, F18, F19, F20, F21, F22, F23, F24,
 
 # Print Screen/SysRq
 Snapshot,
 # Scroll Lock
 Scroll,
-#Pause/Break key, next to Scroll lock
+# Pause/Break key
 Pause,
 
 # `Insert`, next to Backspace
@@ -214,16 +192,9 @@ Return,
 Compose,
 
 Numlock,
-Numpad0,
-Numpad1,
-Numpad2,
-Numpad3,
-Numpad4,
-Numpad5,
-Numpad6,
-Numpad7,
-Numpad8,
-Numpad9,
+
+Numpad0, Numpad1, Numpad2, Numpad3, Numpad4,
+Numpad5, Numpad6, Numpad7, Numpad8, Numpad9,
 
 Apps,
 Ax,

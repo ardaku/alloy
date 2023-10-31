@@ -53,8 +53,8 @@ title_folders = 1
 mode = "Fullscreen"
 
 [bindings]
-img_next = ["k"]
-img_prev = ["j"]
+img_next = ["j"]
+img_prev = ["k"]
 ```
 
 All sections in this file are optional, meaning that if for example only

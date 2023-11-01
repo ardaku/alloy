@@ -1,4 +1,5 @@
-use std::{cell::RefCell, collections::HashMap, process::Command, rc::Rc};
+use std::{collections::HashMap, process::Command};
+use std::sync::{Arc, Mutex};
 
 use glium::glutin::event::ModifiersState;
 use lazy_static::lazy_static;
@@ -79,13 +80,13 @@ fn substitute_command_parameters(
 /// wouldn't be able to construct a command from them if they cannot be converted to
 /// valid UTF-8.
 pub fn execute_triggered_commands(
-    config: Rc<RefCell<Configuration>>,
+    config: Arc<Mutex<Configuration>>,
     input_key: &str,
     modifiers: ModifiersState,
     img_path: &str,
     folder_path: &str,
 ) {
-    let config = config.borrow();
+    let config = config.lock().unwrap();
     if let Some(ref commands) = config.commands {
         let mut var_map = HashMap::with_capacity(2);
         var_map.insert("${img}", img_path);
@@ -158,12 +159,12 @@ pub fn keys_triggered<S: AsRef<str>>(
 }
 
 pub fn action_triggered(
-    config: &Rc<RefCell<Configuration>>,
+    config: &Arc<Mutex<Configuration>>,
     action_name: &str,
     input_key: &str,
     modifiers: ModifiersState,
 ) -> bool {
-    let config = config.borrow();
+    let config = config.lock().unwrap();
     let bindings = config.bindings.as_ref();
     if let Some(Some(keys)) = bindings.map(|b| b.get(action_name)) {
         keys_triggered(keys.as_slice(), input_key, modifiers)

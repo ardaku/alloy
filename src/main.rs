@@ -1,7 +1,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::{
-    cell::{Cell, RefCell},
+    cell::Cell,
     f32,
     rc::Rc,
     sync::{Arc, Mutex},
@@ -10,14 +10,10 @@ use std::{
 use log::trace;
 
 use crate::{
-    configuration::{Cache, ConfigWindowSection, Configuration, Theme},
+    configuration::{Configuration, Theme, WindowMode},
     gelatin::{
         application::*,
-        glium::glutin::{
-            dpi::{PhysicalPosition, PhysicalSize},
-            event::WindowEvent,
-            window::Icon,
-        },
+        glium::glutin::{window::Icon},
         image,
         label::*,
         line_layout_container::*,
@@ -58,91 +54,25 @@ fn main() {
 
     let args = cmd_line::parse_args();
 
-    let cache = Cache::load();
-    let first_launch = cache.is_err();
-    let cache = Arc::new(Mutex::new(cache.unwrap_or_default()));
     let config = Configuration::load();
-    let config = Rc::new(RefCell::new(config.unwrap_or_default()));
+    let first_launch = config.is_err();
+    let config = Arc::new(Mutex::new(config.unwrap_or_default()));
 
     let mut application = Application::new();
     let window: Rc<Window> = {
-        let window_cache = &mut cache.lock().unwrap().window;
-        let window_cfg = &config.borrow().window;
-        let window_defaults = configuration::CacheWindowSection::default();
-
-        if let Some(ConfigWindowSection {
-            use_last_window_area: Some(false),
-            win_x,
-            win_y,
-            win_w,
-            win_h,
-            ..
-        }) = window_cfg
-        {
-            window_cache.win_x = if let Some(x) = win_x {
-                *x
-            } else {
-                window_defaults.win_x
-            };
-            window_cache.win_y = if let Some(y) = win_y {
-                *y
-            } else {
-                window_defaults.win_y
-            };
-            window_cache.win_w = if let Some(w) = win_w {
-                *w
-            } else {
-                window_defaults.win_w
-            };
-            window_cache.win_h = if let Some(h) = win_h {
-                *h
-            } else {
-                window_defaults.win_h
-            };
-        } else {
-            let right = window_cache.win_x as i64 + window_cache.win_w as i64;
-            if right < 20 {
-                window_cache.win_w = window_defaults.win_w;
-                window_cache.win_x = window_defaults.win_x;
-            }
-            if window_cache.win_y < 20 {
-                window_cache.win_y = window_defaults.win_y;
-            }
-        }
-        let pos = PhysicalPosition::new(window_cache.win_x, window_cache.win_y);
-        let size = PhysicalSize::new(window_cache.win_w, window_cache.win_h);
+        let cfg = &mut config.lock().unwrap();
         let window_desc = WindowDescriptor::builder()
             .icon(Some(make_icon()))
-            .size(size)
-            .position(Some(pos))
             .build();
         let window = Window::new(&mut application, window_desc);
-        // This is just to fix the bug on Linux that the window doesn't start up at
-        // the specified position when the position is specified during initialization
-        window
-            .display_mut()
-            .gl_window()
-            .window()
-            .set_outer_position(pos);
 
-        if let Some(ConfigWindowSection {
-            start_maximized: Some(true),
-            ..
-        }) = window_cfg
-        {
-            window.set_maximized(true);
-        }
-
-        if let Some(ConfigWindowSection {
-            start_fullscreen: Some(true),
-            ..
-        }) = window_cfg
-        {
-            window.set_fullscreen(true);
+        match cfg.window_mode() {
+            WindowMode::Fullscreen => window.set_fullscreen(true),
+            WindowMode::Maximized => window.set_maximized(true),
+            _ => (),
         }
         window
     };
-    add_window_movement_listener(&window, cache.clone());
 
     let usage_img = Picture::from_encoded_bytes(USAGE);
     let help_screen = Rc::new(HelpScreen::new(usage_img));
@@ -152,14 +82,13 @@ fn main() {
     let copy_notifications_widget = Rc::new(Label::new());
     let copy_notifications = CopyNotifications::new(&copy_notifications_widget);
 
-    let bottom_bar = Rc::new(BottomBar::new(&config.borrow()));
+    let bottom_bar = Rc::new(BottomBar::new());
     let picture_widget = make_picture_widget(
         &window,
         bottom_bar.clone(),
         left_to_pan_hint.clone(),
         copy_notifications,
         config.clone(),
-        cache.clone(),
     );
 
     if let Some(file_path) = args.file_path {
@@ -176,24 +105,15 @@ fn main() {
     root_container.add_child(picture_area_container);
     root_container.add_child(bottom_bar.widget.clone());
 
-    let theme = {
-        Rc::new(Cell::new(match &config.borrow().window {
-            Some(ConfigWindowSection {
-                theme: Some(theme_cfg),
-                ..
-            }) => *theme_cfg,
-            _ => cache.lock().unwrap().theme(),
-        }))
-    };
-
     let set_theme = {
         let picture_widget = picture_widget.clone();
         let window = window.clone();
-        let theme = theme.clone();
         let bottom_bar = bottom_bar.clone();
+        let config = config.clone();
 
         Rc::new(move || {
-            match theme.get() {
+            let theme = config.lock().unwrap().theme();
+            match theme {
                 Theme::Light => {
                     picture_widget.set_bright_shade(0.96);
                     window.set_bg_color([0.85, 0.85, 0.85, 1.0]);
@@ -203,17 +123,16 @@ fn main() {
                     window.set_bg_color([0.03, 0.03, 0.03, 1.0]);
                 }
             }
-            bottom_bar.set_theme(theme.get());
+            bottom_bar.set_theme(theme);
         })
     };
     set_theme();
     {
-        let cache = cache.clone();
         let set_theme = set_theme;
+        let config = config.clone();
         bottom_bar.theme_button.set_on_click(move || {
-            let new_theme = theme.get().switch_theme();
-            theme.set(new_theme);
-            cache.lock().unwrap().set_theme(new_theme);
+            let theme = config.lock().unwrap().theme().toggle();
+            config.lock().unwrap().set_theme(theme);
             set_theme();
         });
     }
@@ -257,7 +176,7 @@ fn main() {
     window.set_root(root_container);
 
     application.set_at_exit(Some(move || {
-        cache.lock().unwrap().save().unwrap();
+        config.lock().unwrap().save().unwrap();
     }));
     application.start_event_loop();
 }
@@ -270,22 +189,6 @@ fn make_icon() -> Icon {
     let rgba = img.into_rgba8();
     let (w, h) = rgba.dimensions();
     Icon::from_rgba(rgba.into_raw(), w, h).unwrap()
-}
-
-fn add_window_movement_listener(window: &Window, cache: Arc<Mutex<Cache>>) {
-    window.add_global_event_handler(move |event| match event {
-        WindowEvent::Resized(new_size) => {
-            let mut cache = cache.lock().unwrap();
-            cache.window.win_w = new_size.width;
-            cache.window.win_h = new_size.height;
-        }
-        WindowEvent::Moved(new_pos) => {
-            let mut cache = cache.lock().unwrap();
-            cache.window.win_x = new_pos.x;
-            cache.window.win_y = new_pos.y;
-        }
-        _ => (),
-    });
 }
 
 fn make_root_container() -> Rc<VerticalLayoutContainer> {
@@ -321,8 +224,7 @@ fn make_picture_widget(
     bottom_bar: Rc<BottomBar>,
     left_to_pan_hint: Rc<HelpScreen>,
     copy_notifications: CopyNotifications,
-    config: Rc<RefCell<Configuration>>,
-    cache: Arc<Mutex<Cache>>,
+    config: Arc<Mutex<Configuration>>,
 ) -> Rc<PictureWidget> {
     let picture_widget = Rc::new(PictureWidget::new(
         &window.display_mut(),
@@ -331,7 +233,6 @@ fn make_picture_widget(
         left_to_pan_hint,
         copy_notifications,
         config,
-        cache,
     ));
     picture_widget.set_height(Length::Stretch {
         min: 0.0,

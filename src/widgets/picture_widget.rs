@@ -1,27 +1,24 @@
 use std::{
     cell::{Ref, RefCell},
-    path::PathBuf,
+    path::{Path, PathBuf},
     rc::{Rc, Weak},
     sync::{Arc, Mutex},
     time::{Duration, Instant},
 };
 
+use cgmath::{Matrix4, Vector2, Vector3};
+use glium::{
+    glutin::event::{ElementState, ModifiersState, MouseButton},
+    program, uniform,
+    uniforms::MagnifySamplerFilter,
+    Display, Frame, Program, Surface,
+};
 use crate::gelatin::{
     application::request_exit,
-    cgmath,
-    cgmath::{Matrix4, Vector2, Vector3},
-    glium::{
-        self,
-        glutin::event::{ElementState, ModifiersState, MouseButton},
-        program, uniform,
-        uniforms::MagnifySamplerFilter,
-        Display, Frame, Program, Surface,
-    },
     misc::{Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement},
     window::{RenderValidity, Window},
     DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData, WidgetError,
 };
-
 use super::{
     bottom_bar::BottomBar, copy_notification::CopyNotifications,
     help_screen::HelpScreen,
@@ -29,7 +26,7 @@ use super::{
 use crate::{
     add_common_widget_functions,
     clipboard_handler::ClipboardHandler,
-    configuration::{Antialias, Cache, Configuration},
+    configuration::{Antialias, Configuration, ScalingMode},
     image_cache::{image_loader::Orientation, AnimationFrameTexture},
     input_handling::*,
     playback_manager::*,
@@ -40,13 +37,6 @@ use crate::{
 const MIN_ZOOM_FACTOR: f32 = 0.0001;
 const MAX_ZOOM_FACTOR: f32 = 10000.0;
 const AA_TEXEL_SIZE_THRESHOLD: f32 = 4f32;
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-pub enum ScalingMode {
-    Fixed,
-    FitStretch,
-    FitMin,
-}
 
 #[derive(PartialEq, Eq, Clone, Copy)]
 pub enum MovementDir {
@@ -127,8 +117,7 @@ struct PictureWidgetData {
     click: bool,
     hover: bool,
 
-    configuration: Rc<RefCell<Configuration>>,
-    cache: Arc<Mutex<Cache>>,
+    config: Arc<Mutex<Configuration>>,
     playback_manager: PlaybackManager,
     // It's an option to allow manual destruction.
     clipboard_handler: Option<ClipboardHandler>,
@@ -165,6 +154,7 @@ struct PictureWidgetData {
     copy_notifications: CopyNotifications,
     window: Weak<Window>,
 }
+
 impl WidgetData for PictureWidgetData {
     fn placement(&mut self) -> &mut WidgetPlacement {
         &mut self.placement
@@ -178,6 +168,7 @@ impl WidgetData for PictureWidgetData {
         &mut self.visible
     }
 }
+
 impl PictureWidgetData {
     fn fit_image_to_panel(&mut self, dpi_scale: f32, stretch: bool) {
         let size = self.drawn_bounds.size.vec;
@@ -352,22 +343,54 @@ impl PictureWidgetData {
         playback_state: PlaybackState,
         file_path: &Option<PathBuf>,
     ) {
+        let mut title = match file_path {
+            Some(file_path) => self.format_file_path(file_path),
+            None => self.format_file_path("[ none ]"),
+        };
+
         let playback = match playback_state {
             PlaybackState::Forward => " : Playing",
             PlaybackState::Present => " : Presenting",
             PlaybackState::RandomPresent => " : Presenting Shuffled",
             PlaybackState::Paused => "",
         };
-
-        let config = self.configuration.borrow();
-        let title_config = config.title.clone().unwrap_or_default();
-
-        let name = match file_path {
-            Some(file_path) => title_config.format_file_path(file_path),
-            None => "[ none ]".into(),
-        };
-        let title = format!("{name}{playback}");
+        title.push_str(playback);
         window.set_title(title);
+    }
+
+    fn format_file_path<P: AsRef<Path>>(&self, file_path: P) -> String {
+        let file_path = file_path.as_ref();
+        let title_folders = self.config.lock().unwrap().title_folders();
+        match title_folders {
+            0 => file_path.file_name().unwrap().to_string_lossy().into(),
+            n => {
+                let mut component_count = 0;
+                // On Windows the root can be the second component,
+                // when a `Prefix` is the first.
+                let mut root_index = 0;
+                for (idx, c) in file_path.components().enumerate() {
+                    component_count += 1;
+                    if c == std::path::Component::RootDir {
+                        root_index = idx as u32;
+                    }
+                }
+                let path = if (component_count - root_index) <= (1 + n) {
+                    file_path
+                        .to_string_lossy()
+                        .trim_start_matches("\\\\?\\")
+                        .to_owned()
+                        .into()
+                } else {
+                    let ancestor = file_path
+                        .ancestors()
+                        .take(2 + n as usize)
+                        .last()
+                        .unwrap();
+                    file_path.strip_prefix(ancestor).unwrap().to_string_lossy()
+                };
+                path.into()
+            }
+        }
     }
 
     fn get_texture(&self) -> Option<AnimationFrameTexture> {
@@ -382,15 +405,12 @@ impl PictureWidgetData {
     }
 
     pub fn set_img_size_to_fit(&mut self, stretch: bool) {
-        {
-            let mut cache = self.cache.lock().unwrap();
-            cache.image.fit_stretches = stretch;
-        }
         self.scaling = if stretch {
             ScalingMode::FitStretch
         } else {
             ScalingMode::FitMin
         };
+        self.config.lock().unwrap().set_scaling(self.scaling);
         self.update_scaling_buttons();
         self.render_validity.invalidate();
     }
@@ -406,13 +426,13 @@ impl PictureWidgetData {
             Antialias::Always => Antialias::Never,
         };
         self.antialiasing = aa;
-        self.cache.lock().unwrap().image.antialiasing = aa;
+        self.config.lock().unwrap().set_antialiasing(aa);
         self.render_validity.invalidate();
     }
 
     pub fn set_automatic_antialias(&mut self) {
         self.antialiasing = Antialias::Auto;
-        self.cache.lock().unwrap().image.antialiasing = Antialias::Auto;
+        self.config.lock().unwrap().set_antialiasing(Antialias::Auto);
         self.render_validity.invalidate();
     }
 
@@ -457,6 +477,7 @@ impl PictureWidgetData {
 pub struct PictureWidget {
     data: RefCell<PictureWidgetData>,
 }
+
 impl PictureWidget {
     add_common_widget_functions!(data);
 
@@ -466,8 +487,7 @@ impl PictureWidget {
         bottom_bar: Rc<BottomBar>,
         left_to_pan_hint: Rc<HelpScreen>,
         copy_notifications: CopyNotifications,
-        configuration: Rc<RefCell<Configuration>>,
-        cache: Arc<Mutex<Cache>>,
+        config: Arc<Mutex<Configuration>>,
     ) -> PictureWidget {
         let program = program!(display,
             140 => {
@@ -481,39 +501,8 @@ impl PictureWidget {
         )
         .unwrap();
 
-        let scaling;
-        {
-            let cache = cache.lock().unwrap();
-            if cache.image.fit_stretches {
-                scaling = ScalingMode::FitStretch;
-            } else {
-                scaling = ScalingMode::FitMin;
-            }
-        }
-
-        let antialiasing = configuration
-            .borrow()
-            .image
-            .as_ref()
-            .and_then(|s| s.antialiasing.clone())
-            .unwrap_or_else(|| "auto".into());
-
-        let antialiasing = match antialiasing.as_str() {
-            "auto" => Antialias::Auto,
-            "always" => Antialias::Always,
-            "never" => Antialias::Never,
-            "previous" => cache.lock().unwrap().image.antialiasing,
-            val => {
-                eprintln!(
-                    "Illegal configuration value {:?} for antialiasing!",
-                    val
-                );
-                eprintln!(
-                    r#"Allowed values are "auto", "always", "never" and "previous"."#
-                );
-                Antialias::default()
-            }
-        };
+        let scaling = config.lock().unwrap().scaling();
+        let antialiasing = config.lock().unwrap().antialiasing();
 
         let mut data = PictureWidgetData {
             placement: Default::default(),
@@ -522,8 +511,7 @@ impl PictureWidget {
             prev_draw_size: Default::default(),
             click: false,
             hover: false,
-            configuration,
-            cache,
+            config,
             playback_manager: PlaybackManager::new(),
             clipboard_handler: Some(ClipboardHandler::new()),
             clipboard_request_was_pending: false,
@@ -596,7 +584,7 @@ impl PictureWidget {
         macro_rules! triggered {
             ($action_name:ident) => {
                 action_triggered(
-                    &borrowed.configuration,
+                    &borrowed.config,
                     $action_name,
                     input_key,
                     modifiers,
@@ -607,14 +595,14 @@ impl PictureWidget {
             if let Some(window) = borrowed.window.upgrade() {
                 let fullscreen = !window.fullscreen();
                 window.set_fullscreen(fullscreen);
-                borrowed.bottom_bar.set_visible_if_should_show(!fullscreen);
+                borrowed.bottom_bar.set_visible(!fullscreen);
             }
         }
         if triggered!(ESCAPE_NAME) {
             if let Some(window) = borrowed.window.upgrade() {
                 if window.fullscreen() {
                     window.set_fullscreen(false);
-                    borrowed.bottom_bar.set_visible_if_should_show(true);
+                    borrowed.bottom_bar.set_visible(true);
                 } else {
                     request_exit();
                 }
@@ -710,7 +698,7 @@ impl PictureWidget {
                 let img_and_folder = (img_path.to_str(), folder_path.to_str());
                 if let (Some(img_path), Some(folder_path)) = img_and_folder {
                     execute_triggered_commands(
-                        borrowed.configuration.clone(),
+                        borrowed.config.clone(),
                         input_key,
                         modifiers,
                         img_path,
@@ -875,9 +863,7 @@ impl Widget for PictureWidget {
                                         window.set_fullscreen(fullscreen);
                                         borrowed
                                             .bottom_bar
-                                            .set_visible_if_should_show(
-                                                !fullscreen,
-                                            );
+                                            .set_visible(!fullscreen);
                                     }
                                     None => unreachable!(),
                                 }
@@ -926,7 +912,7 @@ impl Widget for PictureWidget {
                     // Panning is a special snowflake
                     let mut borrowed = self.data.borrow_mut();
                     if action_triggered(
-                        &borrowed.configuration,
+                        &borrowed.config,
                         PAN_NAME,
                         input_key_str.as_str(),
                         event.modifiers,
@@ -939,7 +925,7 @@ impl Widget for PictureWidget {
                     macro_rules! movement_trigger {
                         ($input:expr, $vel:expr, $name:expr, $dir:expr) => {
                             if action_triggered(
-                                &borrowed.configuration,
+                                &borrowed.config,
                                 $name,
                                 input_key_str.as_str(),
                                 event.modifiers,
@@ -1177,10 +1163,10 @@ fn draw_tex_grid(
         let transform = projection_transform * transform;
 
         let sampler = cell_tex
-			.tex
-			.sampled()
-			.minify_filter(glium::uniforms::MinifySamplerFilter::LinearMipmapLinear)
-			.wrap_function(glium::uniforms::SamplerWrapFunction::Clamp);
+            .tex
+            .sampled()
+            .minify_filter(glium::uniforms::MinifySamplerFilter::LinearMipmapLinear)
+            .wrap_function(glium::uniforms::SamplerWrapFunction::Clamp);
 
         let filter = match data.antialiasing {
             Antialias::Auto

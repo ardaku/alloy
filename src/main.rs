@@ -161,6 +161,7 @@ fn main() {
         });
     }
     let help_visible = Cell::new(first_launch);
+    bottom_bar.set_help_visible(help_visible.get());
     help_screen.set_visible(help_visible.get());
     {
         let help_screen = help_screen;

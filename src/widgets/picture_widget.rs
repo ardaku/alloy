@@ -400,6 +400,7 @@ impl PictureWidgetData {
     pub fn set_img_size_to_orig(&mut self) {
         self.img_texel_size = 1.0;
         self.scaling = ScalingMode::Fixed;
+        self.config.lock().unwrap().set_scaling(self.scaling);
         self.update_scaling_buttons();
         self.render_validity.invalidate();
     }
@@ -519,7 +520,7 @@ impl PictureWidget {
 
             program,
             bright_shade: 0.95,
-            img_texel_size: 0.0,
+            img_texel_size: 1.0,
             scaling,
             img_pos: Default::default(),
             antialiasing,

@@ -75,7 +75,7 @@ usvg = "0.36"
 winit = "0.28"
 
 [dependencies.libavif-image]
-version = "0.10"
+version = "0.11"
 default-features = false
 features = ["codec-dav1d"]
 optional = true

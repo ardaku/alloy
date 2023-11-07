@@ -64,7 +64,7 @@ open = "5.0"
 pico-args = "0.5"
 rand = "0.8"
 resvg = "0.36"
-serde = { version = "1.0.159", features = ["derive"] }
+serde = { version = "1.0.192", features = ["derive"] }
 sys-info = "0.9"
 thiserror = "1.0"
 tiny-skia = "0.11"

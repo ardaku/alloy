@@ -71,7 +71,7 @@ tiny-skia = "0.11"
 toml = "0.8"
 trash = { version = "3.0", default-features = false }
 typed-builder = "0.18"
-usvg = "0.36"
+usvg = "0.37"
 winit = "0.28"
 
 [dependencies.libavif-image]

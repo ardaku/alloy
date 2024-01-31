@@ -74,7 +74,6 @@ skip = [
     { name = "num_enum_derive", version = "0.5" },
     { name = "raw-window-handle", version = "0.4" },
     { name = "redox_syscall", version = "0.3" },
-    { name = "roxmltree", version = "0.18" },
     { name = "sctk-adwaita", version = "0.4" },
     { name = "syn", version = "1.0" },
     { name = "toml", version = "0.5" },

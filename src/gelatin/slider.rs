@@ -1,17 +1,22 @@
 use std::{cell::RefCell, rc::Rc};
 
 use cgmath::{Matrix4, Vector3};
-use crate::add_common_widget_functions;
-use crate::gelatin::{
-    misc::{Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement},
-    window::RenderValidity,
-    DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData, WidgetError,
-};
 use glium::{
     glutin::event::{ElementState, MouseButton},
-    DrawParameters,
-    Blend, BlendingFunction, LinearBlendingFactor,
-    uniform, Frame, Surface,
+    uniform, Blend, BlendingFunction, DrawParameters, Frame,
+    LinearBlendingFactor, Surface,
+};
+
+use crate::{
+    add_common_widget_functions,
+    gelatin::{
+        misc::{
+            Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement,
+        },
+        window::RenderValidity,
+        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
+        WidgetError,
+    },
 };
 
 struct SliderData {

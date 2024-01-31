@@ -1,14 +1,18 @@
 use std::{cell::RefCell, rc::Rc};
 
-use crate::add_common_widget_functions;
-use crate::gelatin::{
-    glium,
-    cgmath::{Matrix4, Vector3},
-    glium::{uniform, Frame, Surface},
-    misc::{Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement},
-    picture::Picture,
-    window::RenderValidity,
-    DrawContext, Event, NextUpdate, Widget, WidgetData, WidgetError,
+use crate::{
+    add_common_widget_functions,
+    gelatin::{
+        cgmath::{Matrix4, Vector3},
+        glium,
+        glium::{uniform, Frame, Surface},
+        misc::{
+            Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement,
+        },
+        picture::Picture,
+        window::RenderValidity,
+        DrawContext, Event, NextUpdate, Widget, WidgetData, WidgetError,
+    },
 };
 
 struct HelpScreenData {
@@ -133,15 +137,9 @@ impl Widget for HelpScreen {
             let texture = borrowed.usage_image.texture(context.display)?;
             let sampler = texture
                 .sampled()
-                .wrap_function(
-                    glium::uniforms::SamplerWrapFunction::Clamp,
-                )
-                .minify_filter(
-                    glium::uniforms::MinifySamplerFilter::Linear,
-                )
-                .magnify_filter(
-                    glium::uniforms::MagnifySamplerFilter::Linear,
-                );
+                .wrap_function(glium::uniforms::SamplerWrapFunction::Clamp)
+                .minify_filter(glium::uniforms::MinifySamplerFilter::Linear)
+                .magnify_filter(glium::uniforms::MagnifySamplerFilter::Linear);
             let uniforms = uniform! {
                 matrix: Into::<[[f32; 4]; 4]>::into(transform),
                 tex: sampler,

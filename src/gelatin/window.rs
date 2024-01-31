@@ -8,23 +8,25 @@ use std::{
 
 use cgmath::{ortho, Matrix4, Vector3};
 use glium::{
-    index::PrimitiveType,
     glutin::{
         self,
         dpi::{PhysicalPosition, PhysicalSize},
         event::WindowEvent,
         window::{CursorIcon, Icon, WindowId},
     },
-    program, uniform, Blend, BlendingFunction, Display, DrawParameters, Frame, IndexBuffer,
-    Program, Rect, Surface, VertexBuffer,
+    index::PrimitiveType,
+    program, uniform, Blend, BlendingFunction, Display, DrawParameters, Frame,
+    IndexBuffer, Program, Rect, Surface, VertexBuffer,
 };
 use typed_builder::TypedBuilder;
 
-use crate::VerticalLayoutContainer;
-use crate::gelatin::{
-    application::Application,
-    misc::{FromPhysical, LogicalRect, LogicalVector},
-    shaders, DrawContext, Event, EventKind, NextUpdate, Vertex, Widget,
+use crate::{
+    gelatin::{
+        application::Application,
+        misc::{FromPhysical, LogicalRect, LogicalVector},
+        shaders, DrawContext, Event, EventKind, NextUpdate, Vertex, Widget,
+    },
+    VerticalLayoutContainer,
 };
 
 const EVENT_UPDATE_DELTA: std::time::Duration =
@@ -146,8 +148,7 @@ impl Window {
             .with_gl_profile(glutin::GlProfile::Core)
             .with_vsync(true);
         let display =
-            Display::new(window, context, &application.event_loop)
-                .unwrap();
+            Display::new(window, context, &application.event_loop).unwrap();
 
         if let Some(pos) = desc.position {
             display.gl_window().window().set_outer_position(pos);
@@ -243,9 +244,7 @@ impl Window {
                 render_validity: RenderValidity {
                     validity: Rc::new(Cell::new(false)),
                 },
-                root_widget: Rc::new(
-                    VerticalLayoutContainer::new(),
-                ),
+                root_widget: Rc::new(VerticalLayoutContainer::new()),
                 bg_color: [0.85, 0.85, 0.85, 1.0],
 
                 global_event_handlers: Vec::new(),

@@ -2,15 +2,17 @@ use std::{cell::RefCell, rc::Rc};
 
 use glium::Frame;
 
-use crate::add_common_widget_functions;
-use crate::gelatin::{
-    misc::{
-        Alignment, HorDim, Length, LogicalRect, LogicalVector, PickDimension,
-        VerDim, WidgetPlacement,
+use crate::{
+    add_common_widget_functions,
+    gelatin::{
+        misc::{
+            Alignment, HorDim, Length, LogicalRect, LogicalVector,
+            PickDimension, VerDim, WidgetPlacement,
+        },
+        widget_data_ptr,
+        window::{RenderValidity, Window},
+        DrawContext, Event, NextUpdate, Widget, WidgetData, WidgetError,
     },
-    widget_data_ptr,
-    window::{RenderValidity, Window},
-    DrawContext, Event, NextUpdate, Widget, WidgetData, WidgetError,
 };
 
 pub type HorizontalLayoutContainer = LineLayoutContainer<HorDim>;

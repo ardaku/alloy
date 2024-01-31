@@ -18,11 +18,11 @@ use image::{
 use resvg::{
     tiny_skia::{Pixmap, Transform},
     usvg::{self, TreeParsing},
-    Tree,
 };
 
 pub mod errors {
     use std::io;
+
     use glium::texture;
 
     pub type Result<T = (), E = Error> = std::result::Result<T, E>;
@@ -181,7 +181,6 @@ pub fn load_svg(path: &std::path::Path) -> Result<image::RgbaImage> {
     let opt = usvg::Options::default();
     let data = std::fs::read(path)?;
     let tree = usvg::Tree::from_data(&data, &opt)?;
-    let tree = Tree::from_usvg(&tree);
     let size = tree.size;
     let (width, height) = (size.width(), size.height());
     // Scale to fit 4096
@@ -190,7 +189,11 @@ pub fn load_svg(path: &std::path::Path) -> Result<image::RgbaImage> {
     // These unwrapped Options are fine as long as the dimensions are correct
     let mut pixmap = Pixmap::new(width, height).unwrap();
 
-    tree.render(Transform::from_scale(zoom, zoom), &mut pixmap.as_mut());
+    resvg::render(
+        &tree,
+        Transform::from_scale(zoom, zoom),
+        &mut pixmap.as_mut(),
+    );
 
     Ok(image::RgbaImage::from_raw(width, height, pixmap.take()).unwrap())
 }

@@ -1,8 +1,7 @@
 //! Idk man
 
 use std::{
-    any::Any, error::Error, fmt, path::PathBuf, rc::Rc,
-    time::Instant, vec::Vec,
+    any::Any, error::Error, fmt, path::PathBuf, rc::Rc, time::Instant, vec::Vec,
 };
 
 pub use cgmath;

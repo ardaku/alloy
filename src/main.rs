@@ -13,7 +13,7 @@ use crate::{
     configuration::{Configuration, Theme, WindowMode},
     gelatin::{
         application::*,
-        glium::glutin::{window::Icon},
+        glium::glutin::window::Icon,
         image,
         label::*,
         line_layout_container::*,
@@ -61,9 +61,8 @@ fn main() {
     let mut application = Application::new();
     let window: Rc<Window> = {
         let cfg = &mut config.lock().unwrap();
-        let window_desc = WindowDescriptor::builder()
-            .icon(Some(make_icon()))
-            .build();
+        let window_desc =
+            WindowDescriptor::builder().icon(Some(make_icon())).build();
         let window = Window::new(&mut application, window_desc);
 
         match cfg.window_mode() {

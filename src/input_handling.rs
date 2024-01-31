@@ -1,5 +1,8 @@
-use std::{collections::HashMap, process::Command};
-use std::sync::{Arc, Mutex};
+use std::{
+    collections::HashMap,
+    process::Command,
+    sync::{Arc, Mutex},
+};
 
 use glium::glutin::event::ModifiersState;
 use lazy_static::lazy_static;

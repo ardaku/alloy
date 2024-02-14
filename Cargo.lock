@@ -69,7 +69,7 @@ dependencies = [
  "toml 0.8.10",
  "trash",
  "typed-builder",
- "usvg",
+ "usvg 0.37.0",
  "winit 0.28.7",
  "winres",
 ]
@@ -1151,6 +1151,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "kurbo"
+version = "0.10.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1618d4ebd923e97d67e7cd363d80aef35fe961005cbbbb3d2dad8bdd1bc63440"
+dependencies = [
+ "arrayvec 0.7.4",
+ "smallvec",
+]
+
+[[package]]
 name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1832,9 +1842,9 @@ checksum = "c08c74e62047bb2de4ff487b251e4a92e24f48745648451635cec7d591162d9f"
 
 [[package]]
 name = "resvg"
-version = "0.37.0"
+version = "0.39.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cadccb3d99a9efb8e5e00c16fbb732cbe400db2ec7fc004697ee7d97d86cf1f4"
+checksum = "16a15c715c5a88eedff8cd54e2821f39f6ee4345964fd48986c0615d5a24cbe5"
 dependencies = [
  "gif",
  "jpeg-decoder",
@@ -1842,9 +1852,9 @@ dependencies = [
  "pico-args",
  "png",
  "rgb",
- "svgtypes",
+ "svgtypes 0.14.0",
  "tiny-skia 0.11.4",
- "usvg",
+ "usvg 0.39.0",
 ]
 
 [[package]]
@@ -2088,7 +2098,17 @@ version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6e44e288cd960318917cbd540340968b90becc8bc81f171345d706e7a89d9d70"
 dependencies = [
- "kurbo",
+ "kurbo 0.9.5",
+ "siphasher",
+]
+
+[[package]]
+name = "svgtypes"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59d7618f12b51be8171a7cfdda1e7a93f79cbc57c4e7adf89a749cf671125241"
+dependencies = [
+ "kurbo 0.10.4",
  "siphasher",
 ]
 
@@ -2425,6 +2445,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "usvg"
+version = "0.39.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e753216e7c0e49048a0c986ed9ad7284451844a21107374392aaa107ec805c9c"
+dependencies = [
+ "base64",
+ "data-url",
+ "flate2",
+ "fontdb",
+ "imagesize",
+ "kurbo 0.9.5",
+ "log",
+ "pico-args",
+ "roxmltree",
+ "rustybuzz",
+ "simplecss",
+ "siphasher",
+ "strict-num",
+ "svgtypes 0.14.0",
+ "tiny-skia-path 0.11.4",
+ "unicode-bidi",
+ "unicode-script",
+ "unicode-vo",
+ "xmlwriter",
+]
+
+[[package]]
 name = "usvg-parser"
 version = "0.37.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2433,12 +2480,12 @@ dependencies = [
  "data-url",
  "flate2",
  "imagesize",
- "kurbo",
+ "kurbo 0.9.5",
  "log",
  "roxmltree",
  "simplecss",
  "siphasher",
- "svgtypes",
+ "svgtypes 0.13.0",
  "usvg-tree",
 ]
 
@@ -2449,7 +2496,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d383a3965de199d7f96d4e11a44dd859f46e86de7f3dca9a39bf82605da0a37c"
 dependencies = [
  "fontdb",
- "kurbo",
+ "kurbo 0.9.5",
  "log",
  "rustybuzz",
  "unicode-bidi",
@@ -2466,7 +2513,7 @@ checksum = "8ee3d202ebdb97a6215604b8f5b4d6ef9024efd623cf2e373a6416ba976ec7d3"
 dependencies = [
  "rctree",
  "strict-num",
- "svgtypes",
+ "svgtypes 0.13.0",
  "tiny-skia-path 0.11.4",
 ]
 

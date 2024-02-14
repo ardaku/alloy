@@ -67,7 +67,6 @@ skip = [
     { name = "libredox", version = "0.0.1" },
     { name = "memmap2", version = "0.5" },
     { name = "memoffset", version = "0.6" },
-    { name = "memoffset", version = "0.7" },
     { name = "nix", version = "0.24" },
     { name = "nix", version = "0.25" },
     { name = "num_enum", version = "0.5" },
@@ -107,6 +106,7 @@ skip = [
     { name = "windows_x86_64_msvc", version = "0.42" },
     { name = "windows_x86_64_msvc", version = "0.48" },
     { name = "winit", version = "0.27" },
+    { name = "winnow", version = "0.5" },
 ]
 
 [[bans.features]]

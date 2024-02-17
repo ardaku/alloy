@@ -4,8 +4,10 @@ use std::{
     path,
 };
 
-use glium::texture::{MipmapsOption, RawImage2d, SrgbTexture2d};
-use glium::Display;
+use glium::{
+    texture::{MipmapsOption, RawImage2d, SrgbTexture2d},
+    Display,
+};
 use image::{error::ImageError, RgbaImage};
 
 pub struct PictureTextureRef<'a> {
@@ -109,10 +111,7 @@ impl Picture {
         }
     }
 
-    fn upload_to_texture(
-        &self,
-        display: &Display,
-    ) -> Result<(), ImageError> {
+    fn upload_to_texture(&self, display: &Display) -> Result<(), ImageError> {
         let mut borrowed = self.data.borrow_mut();
         let mut tmp_picture = PictureData::Path("".into());
         std::mem::swap(&mut *borrowed, &mut tmp_picture);
@@ -142,10 +141,7 @@ impl Picture {
         Ok(())
     }
 
-    fn cpu_to_texture(
-        img: RgbaImage,
-        display: &Display,
-    ) -> SrgbTexture2d {
+    fn cpu_to_texture(img: RgbaImage, display: &Display) -> SrgbTexture2d {
         let image_dimensions = img.dimensions();
         let image = RawImage2d::from_raw_rgba(img.into_raw(), image_dimensions);
         SrgbTexture2d::with_mipmaps(

@@ -1,13 +1,15 @@
 use std::{f32, rc::Rc};
 
-use crate::gelatin::{
-    button::Button,
-    line_layout_container::HorizontalLayoutContainer,
-    misc::{Alignment, Length},
-    picture::Picture,
-    slider::Slider,
+use crate::{
+    configuration::{ScalingMode, Theme},
+    gelatin::{
+        button::Button,
+        line_layout_container::HorizontalLayoutContainer,
+        misc::{Alignment, Length},
+        picture::Picture,
+        slider::Slider,
+    },
 };
-use crate::configuration::{ScalingMode, Theme};
 
 static MOON: &[u8] = include_bytes!("../../resource/moon.png");
 static LIGHT: &[u8] = include_bytes!("../../resource/light.png");

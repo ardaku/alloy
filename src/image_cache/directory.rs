@@ -338,7 +338,9 @@ impl Directory {
     }
 
     fn set_image_index_from_file_index(&mut self) {
-        if let Some(Some(img_idx)) = self.file_i_to_img_i.get(self.curr_file_idx) {
+        if let Some(Some(img_idx)) =
+            self.file_i_to_img_i.get(self.curr_file_idx)
+        {
             self.curr_image_idx = *img_idx;
         }
     }

@@ -17,7 +17,7 @@ use image::{
 };
 use resvg::{
     tiny_skia::{Pixmap, Transform},
-    usvg::{self, TreeParsing},
+    usvg,
 };
 
 pub mod errors {

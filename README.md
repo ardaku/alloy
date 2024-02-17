@@ -349,7 +349,7 @@ that could help.
 Alloy is licensed under the [MIT License].
 
 Copyright (c) 2020 The Emulsion Contributors  
-Copyright (c) 2022-2023 The Alloy Contributors  
+Copyright (c) 2022-2024 The Alloy Contributors  
 
 [Emulsion]: https://arturkovacs.github.io/emulsion-website/
 [MIT License]: https://mit-license.org/

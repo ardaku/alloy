@@ -7,11 +7,13 @@ use std::{
     time::{Duration, Instant},
 };
 
-use crate::gelatin::{NextUpdate, glium::Display, window::Window};
 use log::{debug, trace};
 use rand::{seq::SliceRandom, thread_rng};
 
-use crate::image_cache::{self, AnimationFrameTexture, ImageCache};
+use crate::{
+    gelatin::{glium::Display, window::Window, NextUpdate},
+    image_cache::{self, AnimationFrameTexture, ImageCache},
+};
 
 const NANOS_PER_SEC: u64 = 1_000_000_000;
 
@@ -415,8 +417,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
             match load_request {
                 LoadRequest::Jump(0) => {
                     // Waiting on current image to be loaded.
-                    next_update =
-                        NextUpdate::WaitUntil(few_millisecs_from_now);
+                    next_update = NextUpdate::WaitUntil(few_millisecs_from_now);
                 }
                 _ => {
                     image_cache.prefetch_neighbors();
@@ -499,8 +500,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
                 }
             }
         } else {
-            next_update =
-                NextUpdate::WaitUntil(few_millisecs_from_now);
+            next_update = NextUpdate::WaitUntil(few_millisecs_from_now);
         }
         match load_request {
             LoadRequest::None | LoadRequest::FilePath(..) => (),
@@ -538,8 +538,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
                     // Set the load request to jump in place so that
                     // next time we attempt to load this again.
                     self.load_request = LoadRequest::Jump(0);
-                    next_update =
-                        NextUpdate::WaitUntil(few_millisecs_from_now);
+                    next_update = NextUpdate::WaitUntil(few_millisecs_from_now);
                 }
                 Err(err) => {
                     self.image_texture = None;

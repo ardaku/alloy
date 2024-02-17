@@ -23,6 +23,7 @@ use resvg::{
 
 pub mod errors {
     use std::io;
+
     use glium::texture;
 
     pub type Result<T = (), E = Error> = std::result::Result<T, E>;

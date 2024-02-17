@@ -28,7 +28,9 @@ use self::{
 
 pub mod errors {
     use std::io;
+
     use glium::texture;
+
     use crate::image_cache::image_loader;
 
     pub type Result<T = (), E = Error> = std::result::Result<T, E>;

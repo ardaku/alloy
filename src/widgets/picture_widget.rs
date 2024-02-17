@@ -13,12 +13,7 @@ use glium::{
     uniforms::MagnifySamplerFilter,
     Display, Frame, Program, Surface,
 };
-use crate::gelatin::{
-    application::request_exit,
-    misc::{Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement},
-    window::{RenderValidity, Window},
-    DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData, WidgetError,
-};
+
 use super::{
     bottom_bar::BottomBar, copy_notification::CopyNotifications,
     help_screen::HelpScreen,
@@ -27,6 +22,15 @@ use crate::{
     add_common_widget_functions,
     clipboard_handler::ClipboardHandler,
     configuration::{Antialias, Configuration, ScalingMode},
+    gelatin::{
+        application::request_exit,
+        misc::{
+            Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement,
+        },
+        window::{RenderValidity, Window},
+        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
+        WidgetError,
+    },
     image_cache::{image_loader::Orientation, AnimationFrameTexture},
     input_handling::*,
     playback_manager::*,
@@ -433,7 +437,10 @@ impl PictureWidgetData {
 
     pub fn set_automatic_antialias(&mut self) {
         self.antialiasing = Antialias::Auto;
-        self.config.lock().unwrap().set_antialiasing(Antialias::Auto);
+        self.config
+            .lock()
+            .unwrap()
+            .set_antialiasing(Antialias::Auto);
         self.render_validity.invalidate();
     }
 
@@ -1166,7 +1173,9 @@ fn draw_tex_grid(
         let sampler = cell_tex
             .tex
             .sampled()
-            .minify_filter(glium::uniforms::MinifySamplerFilter::LinearMipmapLinear)
+            .minify_filter(
+                glium::uniforms::MinifySamplerFilter::LinearMipmapLinear,
+            )
             .wrap_function(glium::uniforms::SamplerWrapFunction::Clamp);
 
         let filter = match data.antialiasing {

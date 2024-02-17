@@ -1,11 +1,14 @@
+use std::{collections::BTreeMap, fs, path::PathBuf};
+
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
-use std::{collections::BTreeMap, fs, path::PathBuf};
 
 /// Application name for project directories
 const APPLICATION: &str = "Alloy";
 
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(
+    Clone, Copy, Debug, Default, Eq, PartialEq, Serialize, Deserialize,
+)]
 pub enum WindowMode {
     #[default]
     Normal,
@@ -13,7 +16,9 @@ pub enum WindowMode {
     Fullscreen,
 }
 
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(
+    Clone, Copy, Debug, Default, Eq, PartialEq, Serialize, Deserialize,
+)]
 pub enum Theme {
     #[default]
     Light,
@@ -29,7 +34,9 @@ impl Theme {
     }
 }
 
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(
+    Clone, Copy, Debug, Default, Eq, PartialEq, Serialize, Deserialize,
+)]
 pub enum ScalingMode {
     #[default]
     Fixed,
@@ -37,7 +44,9 @@ pub enum ScalingMode {
     FitMin,
 }
 
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Serialize, Deserialize)]
+#[derive(
+    Clone, Copy, Debug, Default, Eq, PartialEq, Serialize, Deserialize,
+)]
 pub enum Antialias {
     #[default]
     Auto,
@@ -101,7 +110,10 @@ impl Configuration {
     }
 
     pub fn scaling(&self) -> ScalingMode {
-        self.image.as_ref().and_then(|i| i.scaling).unwrap_or_default()
+        self.image
+            .as_ref()
+            .and_then(|i| i.scaling)
+            .unwrap_or_default()
     }
 
     pub fn set_scaling(&mut self, scaling: ScalingMode) {
@@ -114,7 +126,10 @@ impl Configuration {
     }
 
     pub fn antialiasing(&self) -> Antialias {
-        self.image.as_ref().and_then(|i| i.antialiasing).unwrap_or_default()
+        self.image
+            .as_ref()
+            .and_then(|i| i.antialiasing)
+            .unwrap_or_default()
     }
 
     pub fn set_antialiasing(&mut self, antialias: Antialias) {
@@ -127,15 +142,24 @@ impl Configuration {
     }
 
     pub fn title_folders(&self) -> u32 {
-        self.window.as_ref().and_then(|w| w.title_folders).unwrap_or_default()
+        self.window
+            .as_ref()
+            .and_then(|w| w.title_folders)
+            .unwrap_or_default()
     }
 
     pub fn window_mode(&self) -> WindowMode {
-        self.window.as_ref().and_then(|w| w.mode).unwrap_or_default()
+        self.window
+            .as_ref()
+            .and_then(|w| w.mode)
+            .unwrap_or_default()
     }
 
     pub fn theme(&self) -> Theme {
-        self.window.as_ref().and_then(|w| w.theme).unwrap_or_default()
+        self.window
+            .as_ref()
+            .and_then(|w| w.theme)
+            .unwrap_or_default()
     }
 
     pub fn set_theme(&mut self, theme: Theme) {

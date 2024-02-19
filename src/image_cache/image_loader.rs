@@ -17,8 +17,7 @@ use image::{
 };
 use resvg::{
     tiny_skia::{Pixmap, Transform},
-    usvg::{self, TreeParsing},
-    Tree,
+    usvg::{self, fontdb::Database},
 };
 
 pub mod errors {
@@ -181,9 +180,12 @@ pub fn load_gif(
 pub fn load_svg(path: &std::path::Path) -> Result<image::RgbaImage> {
     let opt = usvg::Options::default();
     let data = std::fs::read(path)?;
-    let tree = usvg::Tree::from_data(&data, &opt)?;
-    let tree = Tree::from_usvg(&tree);
-    let size = tree.size;
+    let mut font_db = Database::new();
+
+    font_db.load_system_fonts();
+
+    let tree = usvg::Tree::from_data(&data, &opt, &font_db)?;
+    let size = tree.size();
     let (width, height) = (size.width(), size.height());
     // Scale to fit 4096
     let zoom = 4096.0 / width.max(height);
@@ -191,7 +193,11 @@ pub fn load_svg(path: &std::path::Path) -> Result<image::RgbaImage> {
     // These unwrapped Options are fine as long as the dimensions are correct
     let mut pixmap = Pixmap::new(width, height).unwrap();
 
-    tree.render(Transform::from_scale(zoom, zoom), &mut pixmap.as_mut());
+    resvg::render(
+        &tree,
+        Transform::from_scale(zoom, zoom),
+        &mut pixmap.as_mut(),
+    );
 
     Ok(image::RgbaImage::from_raw(width, height, pixmap.take()).unwrap())
 }

@@ -56,7 +56,6 @@ dependencies = [
  "kamadak-exif",
  "lazy_static",
  "lexical-sort",
- "libavif-image",
  "log",
  "open",
  "pico-args",
@@ -1182,49 +1181,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "libavif"
-version = "0.12.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "de9e3e4b3d7207b3e3a5e88292b304d4daf2d018e4cdc57ec28a6757ab75235c"
-dependencies = [
- "libavif-sys",
-]
-
-[[package]]
-name = "libavif-image"
-version = "0.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "00adf2185dbfd6555c2a428b6ab13d1839c58dd9fdf409569ed244c2f54f99a5"
-dependencies = [
- "image",
- "libavif",
-]
-
-[[package]]
-name = "libavif-sys"
-version = "0.15.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "baaae0ec93359268f49b6659a7505ba224f0e8f7885535f6a8d14c4aa2a544da"
-dependencies = [
- "cmake",
- "libc",
- "libdav1d-sys",
-]
-
-[[package]]
 name = "libc"
 version = "0.2.153"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9c198f91728a82281a64e1f4f9eeb25d82cb32a5de251c6bd1b5154d63a8e7bd"
-
-[[package]]
-name = "libdav1d-sys"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12c9cc342dc258130a727ad15f48d01ebb181aafec30dd65338d8e51db930572"
-dependencies = [
- "libc",
-]
 
 [[package]]
 name = "libloading"

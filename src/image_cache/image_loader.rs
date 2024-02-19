@@ -39,8 +39,6 @@ pub mod errors {
         ExifError(#[from] exif::Error),
         #[error(transparent)]
         SvgError(#[from] usvg::Error),
-        #[cfg(feature = "avif")]
-        AvifError(#[from] libavif_image::Error),
         #[error("{0}")]
         Msg(String),
     }
@@ -58,8 +56,6 @@ pub const NON_EXISTENT_REQUEST_ID: u32 = std::u32::MAX;
 pub enum ImgFormat {
     Image(ImageFormat),
     Svg,
-    #[cfg(feature = "avif")]
-    Avif,
 }
 
 /// These values define the transformation for a pixel array which is to be displayed.
@@ -104,12 +100,6 @@ pub fn detect_format(path: &Path) -> Result<ImgFormat> {
 
     // Try to detect the format from the first 512 bytes
     if file.read_exact(&mut file_start_bytes).is_ok() {
-        #[cfg(feature = "avif")]
-        {
-            if libavif_image::is_avif(&file_start_bytes) {
-                return Ok(ImgFormat::Avif);
-            }
-        }
         if path.extension() == Some(std::ffi::OsStr::new("svg")) {
             return Ok(ImgFormat::Svg);
         }
@@ -256,17 +246,6 @@ where
                 orientation,
             })?;
         }
-        #[cfg(feature = "avif")]
-        ImgFormat::Avif => {
-            let buf = fs::read(path)?;
-            let image = libavif_image::read(&buf)?.into_rgba8();
-            process_image(LoadResult::Frame {
-                req_id,
-                image,
-                delay_nano: 0,
-                orientation,
-            })?;
-        }
         ImgFormat::Svg => {
             let image = load_svg(path)?;
             process_image(LoadResult::Frame {
@@ -319,8 +298,6 @@ pub fn is_file_supported(filename: &Path) -> bool {
                 | "ppm" | "pgm" => {
                     return true;
                 }
-                #[cfg(feature = "avif")]
-                "avif" => return true,
                 _ => (),
             }
         }

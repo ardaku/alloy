@@ -14,7 +14,7 @@ identifier = "org.ardaku.alloy"
 icon = ["resource_dev/alloy.png"]
 resources = ["LICENSE.txt"]
 short_description = "A lightweight and minimalistic image viewer based on emulsion"
-copyright = "Copyright (c) 2020 The Emulsion Contributors, Copyright (c) 2022 The Alloy Contributors"
+copyright = "Copyright (c) 2020 The Emulsion Contributors, Copyright (c) 2022-2024 The Alloy Contributors"
 linux_exec_args = "%f"
 linux_mime_types = [
     "image/jpeg",
@@ -41,9 +41,6 @@ linux_mime_types = [
     "image/x‑portable‑pixmap",
     "image/x‑portable‑anymap"
 ]
-
-[features]
-avif = ["libavif-image"]
 
 [target.'cfg(windows)'.build-dependencies]
 winres = "0.1"
@@ -73,9 +70,3 @@ trash = { version = "3.0", default-features = false }
 typed-builder = "0.18"
 usvg = "0.40"
 winit = "0.28"
-
-[dependencies.libavif-image]
-version = "0.11"
-default-features = false
-features = ["codec-dav1d"]
-optional = true

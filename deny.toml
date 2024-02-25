@@ -63,6 +63,7 @@ skip = [
     { name = "core-graphics", version = "0.22" },
     { name = "foreign-types", version = "0.3" },
     { name = "foreign-types-shared", version = "0.1" },
+    { name = "gif", version = "0.12" },
     { name = "kurbo", version = "0.9" },
     { name = "libloading", version = "0.7" },
     { name = "libredox", version = "0.0.1" },

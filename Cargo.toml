@@ -46,7 +46,7 @@ linux_mime_types = [
 winres = "0.1"
 
 [dependencies]
-arboard = "3.2"
+arboard = "3.3"
 backtrace = "0.3"
 cgmath = "0.18"
 directories = "5.0"

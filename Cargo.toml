@@ -66,7 +66,7 @@ sys-info = "0.9"
 thiserror = "1.0"
 tiny-skia = "0.11"
 toml = "0.8"
-trash = { version = "3.0", default-features = false }
+trash = { version = "4.0", default-features = false }
 typed-builder = "0.18"
 usvg = "0.40"
 winit = "0.28"

@@ -161,7 +161,7 @@ pub fn load_gif(
     path: &Path,
     req_id: u32,
 ) -> Result<impl Iterator<Item = Result<LoadResult>>> {
-    let file = fs::File::open(path)?;
+    let file = BufReader::new(fs::File::open(path)?);
     let decoder = GifDecoder::new(file)?;
     Ok(load_animation(req_id, decoder))
 }
@@ -216,10 +216,10 @@ where
             }
         }
         ImgFormat::Image(ImageFormat::Png) => {
-            let file = fs::File::open(path)?;
+            let file = BufReader::new(fs::File::open(path)?);
             let decoder = PngDecoder::new(file)?;
-            if decoder.is_apng() {
-                let mut animation = load_animation(req_id, decoder.apng());
+            if decoder.is_apng()? {
+                let mut animation = load_animation(req_id, decoder.apng()?);
                 if allow_animation {
                     for frame in animation {
                         process_image(frame?)?;

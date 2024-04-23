@@ -73,6 +73,7 @@ impl Slider {
         }
     }
 
+    #[allow(dead_code)]
     pub fn steps(&self) -> u32 {
         self.data.borrow().steps
     }
@@ -92,6 +93,7 @@ impl Slider {
         }
     }
 
+    #[allow(dead_code)]
     pub fn set_value(&self, value: u32) {
         let mut borrowed = self.data.borrow_mut();
         borrowed.value = value;

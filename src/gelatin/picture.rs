@@ -55,6 +55,7 @@ impl Picture {
         }
     }
 
+    #[allow(dead_code)]
     pub fn from_image(img: RgbaImage) -> Picture {
         Picture {
             data: RefCell::new(PictureData::Cpu(img)),

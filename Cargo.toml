@@ -46,7 +46,7 @@ linux_mime_types = [
 winres = "0.1"
 
 [dependencies]
-arboard = "3.2"
+arboard = "3.4"
 backtrace = "0.3"
 cgmath = "0.18"
 directories = "5.0"
@@ -61,7 +61,7 @@ open = "5.0"
 pico-args = "0.5"
 rand = "0.8"
 resvg = "0.41"
-serde = { version = "1.0.159", features = ["derive"] }
+serde = { version = "1.0.202", features = ["derive"] }
 sys-info = "0.9"
 thiserror = "1.0"
 tiny-skia = "0.11"

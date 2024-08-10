@@ -105,6 +105,7 @@ impl<Dim: PickDimension + 'static> LineLayoutContainer<Dim> {
         borrowed.render_validity.invalidate();
     }
 
+    #[allow(dead_code)]
     pub fn remove_child(&self, target: Rc<dyn Widget>) {
         let mut borrowed = self.data.borrow_mut();
         let target_ptr = widget_data_ptr(&target);

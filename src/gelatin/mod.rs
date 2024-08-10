@@ -234,6 +234,7 @@ pub trait Widget: Any {
     fn handle_event(&self, event: &Event);
 
     /// The implementer is expected to `push` its children into the provided vector.
+    #[allow(dead_code)]
     fn children(&self, children: &mut Vec<Rc<dyn Widget>>);
 
     fn placement(&self) -> WidgetPlacement;
@@ -295,37 +296,44 @@ macro_rules! add_common_widget_functions {
             borrowed.placement.margin_bottom = pixels;
             borrowed.render_validity.invalidate();
         }
+        #[allow(dead_code)]
         pub fn set_horizontal_align(&self, align: Alignment) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.placement.horizontal_align = align;
             borrowed.render_validity.invalidate();
         }
+        #[allow(dead_code)]
         pub fn set_vertical_align(&self, align: Alignment) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.placement.vertical_align = align;
             borrowed.render_validity.invalidate();
         }
+        #[allow(dead_code)]
         pub fn set_fixed_size(&self, size: LogicalVector) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.placement.width = Length::Fixed(size.vec.x);
             borrowed.placement.height = Length::Fixed(size.vec.y);
             borrowed.render_validity.invalidate();
         }
+        #[allow(dead_code)]
         pub fn set_width(&self, width: Length) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.placement.width = width;
             borrowed.render_validity.invalidate();
         }
+        #[allow(dead_code)]
         pub fn set_height(&self, height: Length) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.placement.height = height;
             borrowed.render_validity.invalidate();
         }
+        #[allow(dead_code)]
         pub fn set_ignore_layout(&self, ignore: bool) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.placement.ignore_layout = ignore;
             borrowed.render_validity.invalidate();
         }
+        #[allow(dead_code)]
         pub fn set_visible(&self, visible: bool) {
             let mut borrowed = self.$data_field.borrow_mut();
             borrowed.visible = visible;

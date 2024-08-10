@@ -152,8 +152,8 @@ pub struct LogicalRect {
     pub size: LogicalVector,
 }
 
+#[allow(dead_code)]
 impl LogicalRect {
-    #[allow(dead_code)]
     #[inline]
     pub fn left(&self) -> f32 {
         self.pos.vec.x
@@ -237,16 +237,7 @@ pub struct WidgetPlacement {
     pub margin_bottom: f32,
 }
 
-/// Used to represent physical pixel coordinates and dimensions.
-///
-/// See `LogicalVector`
-#[derive(Copy, Clone, Debug)]
-pub struct PhysicalVector {
-    pub vec: Vector2<f32>,
-}
-
-// TODO implement stuff for physical vector
-
+#[allow(dead_code)]
 pub trait PickDimension {
     fn vec_mut(v: &mut LogicalVector) -> &mut f32;
     fn vec(v: LogicalVector) -> f32;

@@ -65,6 +65,7 @@ skip = [
     { name = "libredox", version = "0.0.2" },
     { name = "memmap2", version = "0.5" },
     { name = "memoffset", version = "0.6" },
+    { name = "miniz_oxide", version = "0.7" },
     { name = "nix", version = "0.24" },
     { name = "nix", version = "0.25" },
     { name = "num_enum", version = "0.5" },

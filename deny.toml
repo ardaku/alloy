@@ -11,7 +11,11 @@ db-path = "~/.cargo/advisory-db"
 db-urls = ["https://github.com/rustsec/advisory-db"]
 yanked = "deny"
 ignore = [
-    # "RUSTSEC-0000-0000",
+    # instant is unmaintained: https://rustsec.org/advisories/RUSTSEC-2024-0384
+    #
+    # Will move off winit which pulls it in eventually, so it's ok to allow for
+    # now
+    "RUSTSEC-2024-0384",
 ]
 
 [licenses]
@@ -65,7 +69,6 @@ skip = [
     { name = "libloading", version = "0.7" },
     { name = "memmap2", version = "0.5" },
     { name = "memoffset", version = "0.6" },
-    { name = "miniz_oxide", version = "0.7" },
     { name = "nix", version = "0.24" },
     { name = "nix", version = "0.25" },
     { name = "num_enum", version = "0.5" },
@@ -79,11 +82,14 @@ skip = [
     { name = "syn", version = "1.0" },
     { name = "toml", version = "0.5" },
     { name = "toml_edit", version = "0.19" },
+    { name = "ttf-parser", version = "0.24" },
     { name = "tiny-skia", version = "0.7" },
     { name = "tiny-skia", version = "0.8" },
     { name = "tiny-skia-path", version = "0.7" },
     { name = "tiny-skia-path", version = "0.8" },
     { name = "ttf-parser", version = "0.24" },
+    { name = "thiserror", version = "1.0" },
+    { name = "thiserror-impl", version = "1.0" },
     { name = "windows-targets", version = "0.42" },
     { name = "windows-targets", version = "0.48" },
     { name = "windows-sys", version = "0.36" },

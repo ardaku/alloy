@@ -2,7 +2,7 @@ use std::{fs::OpenOptions, io, io::Write, iter, panic, string::String};
 
 use backtrace::Backtrace;
 
-pub fn handle_panic(info: &panic::PanicInfo) {
+pub fn handle_panic(info: &panic::PanicHookInfo) {
     let trace = Backtrace::new();
 
     let mut msg = String::new();

@@ -88,6 +88,8 @@ skip = [
     { name = "tiny-skia-path", version = "0.7" },
     { name = "tiny-skia-path", version = "0.8" },
     { name = "ttf-parser", version = "0.24" },
+    { name = "thiserror", version = "1.0" },
+    { name = "thiserror-impl", version = "1.0" },
     { name = "windows-targets", version = "0.42" },
     { name = "windows-targets", version = "0.48" },
     { name = "windows-sys", version = "0.36" },

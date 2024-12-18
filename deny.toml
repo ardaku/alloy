@@ -30,7 +30,7 @@ allow = [
     "ISC",
     "MIT",
     "MPL-2.0",
-    "Unicode-DFS-2016",
+    "Unicode-3.0",
     "Zlib",
 ]
 confidence-threshold = 1.0
@@ -64,11 +64,9 @@ skip = [
     { name = "core-graphics", version = "0.22" },
     { name = "foreign-types", version = "0.3" },
     { name = "foreign-types-shared", version = "0.1" },
-    { name = "image", version = "0.25" },
     { name = "image-webp", version = "0.1" },
     { name = "libloading", version = "0.7" },
     { name = "memmap2", version = "0.5" },
-    { name = "memoffset", version = "0.6" },
     { name = "nix", version = "0.24" },
     { name = "nix", version = "0.25" },
     { name = "num_enum", version = "0.5" },
@@ -95,7 +93,6 @@ skip = [
     { name = "windows-sys", version = "0.36" },
     { name = "windows-sys", version = "0.45" },
     { name = "windows-sys", version = "0.48" },
-    { name = "windows-sys", version = "0.52" },
     { name = "windows_aarch64_gnullvm", version = "0.42" },
     { name = "windows_aarch64_gnullvm", version = "0.48" },
     { name = "windows_aarch64_msvc", version = "0.36" },

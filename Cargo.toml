@@ -59,7 +59,7 @@ lexical-sort = "0.3"
 log = "0.4"
 open = "5.3"
 pico-args = "0.5"
-rand = "0.8"
+rand = "0.9"
 resvg = "0.44"
 serde = { version = "1.0.210", features = ["derive"] }
 sys-info = "0.9"

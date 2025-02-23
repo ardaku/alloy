@@ -2,20 +2,21 @@ use std::{cell::RefCell, rc::Rc};
 
 use cgmath::{Matrix4, Vector3};
 use glium::{
+    Blend, BlendingFunction, DrawParameters, Frame, LinearBlendingFactor,
+    Surface,
     glutin::event::{ElementState, MouseButton},
-    uniform, Blend, BlendingFunction, DrawParameters, Frame,
-    LinearBlendingFactor, Surface,
+    uniform,
 };
 
 use crate::{
     add_common_widget_functions,
     gelatin::{
+        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
+        WidgetError,
         misc::{
             Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement,
         },
         window::RenderValidity,
-        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
-        WidgetError,
     },
 };
 

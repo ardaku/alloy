@@ -241,14 +241,16 @@ impl Directory {
         let curr_filename = curr_filename.as_deref();
         let curr_index = self.curr_file_idx;
         debug!(
-			"Directory: `update_directory`. Current filename: {:?}, curr_index: {:?}",
-			curr_filename, curr_index
-		);
+            "Directory: `update_directory`. Current filename: {:?}, curr_index: {:?}",
+            curr_filename, curr_index
+        );
         self.collect_directory()?;
         if curr_filename.is_some() {
             for (index, desc) in self.files.iter().enumerate() {
                 if desc.path.file_name() == curr_filename {
-                    debug!("Found file the previously 'current' file in the directory.");
+                    debug!(
+                        "Found file the previously 'current' file in the directory."
+                    );
                     self.curr_file_idx = index;
                     self.set_image_index_from_file_index();
                     self.check_filter_ready();

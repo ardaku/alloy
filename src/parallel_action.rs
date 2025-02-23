@@ -1,7 +1,7 @@
 use std::{
     sync::{
-        atomic::{AtomicBool, Ordering},
         Arc, Mutex,
+        atomic::{AtomicBool, Ordering},
     },
     thread::JoinHandle,
     time::Duration,
@@ -37,15 +37,16 @@ fn run_processor<InpT, OutT, F: FnMut(InpT) -> OutT>(
         std::thread::sleep(Duration::from_millis(5));
         let input = {
             let mut state = shared.state.lock().unwrap();
-            if let ActionState::InputGiven(_) = &*state {
-                let mut input = ActionState::Pending;
-                std::mem::swap(&mut input, &mut *state);
-                match input {
-                    ActionState::InputGiven(inp) => Some(inp),
-                    _ => unreachable!(),
+            match &*state {
+                ActionState::InputGiven(_) => {
+                    let mut input = ActionState::Pending;
+                    std::mem::swap(&mut input, &mut *state);
+                    match input {
+                        ActionState::InputGiven(inp) => Some(inp),
+                        _ => unreachable!(),
+                    }
                 }
-            } else {
-                None
+                _ => None,
             }
         }; // let go of the mutex lock
         if let Some(input) = input {
@@ -95,15 +96,16 @@ impl<InpT: Send + 'static, OutT: Send + 'static> ParallelAction<InpT, OutT> {
 
     pub fn try_get_output(&self) -> Option<OutT> {
         let mut state = self.shared.state.lock().unwrap();
-        if let ActionState::OutputReady(_) = &*state {
-            let mut output = ActionState::Ready;
-            std::mem::swap(&mut output, &mut *state);
-            match output {
-                ActionState::OutputReady(o) => Some(o),
-                _ => unreachable!(),
+        match &*state {
+            ActionState::OutputReady(_) => {
+                let mut output = ActionState::Ready;
+                std::mem::swap(&mut output, &mut *state);
+                match output {
+                    ActionState::OutputReady(o) => Some(o),
+                    _ => unreachable!(),
+                }
             }
-        } else {
-            None
+            _ => None,
         }
     }
 

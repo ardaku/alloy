@@ -14,9 +14,8 @@ use std::{
 };
 
 use glium::{
-    self,
+    self, CapabilitiesSource,
     texture::{MipmapsOption, RawImage2d, SrgbTexture2d},
-    CapabilitiesSource,
 };
 use log::trace;
 
@@ -49,7 +48,9 @@ pub mod errors {
         DirError(#[from] super::directory::Error),
         #[error("ImageCache is waiting for loader to send result")]
         WaitingOnLoader,
-        #[error("ImageCache is waiting for the directory items to be filtered for image files")]
+        #[error(
+            "ImageCache is waiting for the directory items to be filtered for image files"
+        )]
         WaitingOnDirFilter,
         #[error("Failed to load {req_id}")]
         FailedToLoadImage { req_id: u32 },
@@ -334,12 +335,11 @@ impl ImageCache {
     }
 
     fn curr_dir_item(&self) -> Result<DirItem> {
-        if let Some(desc) = self.dir.curr_descriptor() {
-            Ok(desc.clone())
-        } else {
-            Err(Error::Msg(
+        match self.dir.curr_descriptor() {
+            Some(desc) => Ok(desc.clone()),
+            _ => Err(Error::Msg(
                 "Could not get the current file descriptor".to_string(),
-            ))
+            )),
         }
     }
 
@@ -533,18 +533,26 @@ impl ImageCache {
                 self.dir.jump_to_prev();
             }
             target_path = self.dir.curr_descriptor().unwrap().path.clone();
-        } else if let (Some(curr_index), Some(img_count)) =
-            (self.dir.curr_img_index(), self.dir.image_count())
-        {
-            // rem_euclid calculates the least nonnegative remainder
-            let target_index = (curr_index as isize + file_jump_count as isize)
-                .rem_euclid(img_count as isize)
-                as usize;
-
-            target_path =
-                self.dir.image_by_index(target_index).unwrap().path.clone();
         } else {
-            return Err(Error::Msg("Folder is empty, no folder was open, or folder hasn't finished filtering when trying to jump to an image by index.".to_string()));
+            match (self.dir.curr_img_index(), self.dir.image_count()) {
+                (Some(curr_index), Some(img_count)) => {
+                    // rem_euclid calculates the least nonnegative remainder
+                    let target_index = (curr_index as isize
+                        + file_jump_count as isize)
+                        .rem_euclid(img_count as isize)
+                        as usize;
+
+                    target_path = self
+                        .dir
+                        .image_by_index(target_index)
+                        .unwrap()
+                        .path
+                        .clone();
+                }
+                _ => {
+                    return Err(Error::Msg("Folder is empty, no folder was open, or folder hasn't finished filtering when trying to jump to an image by index.".to_string()));
+                }
+            }
         }
         let result = self.load_specific(display, &target_path, None)?;
         Ok((result, target_path))
@@ -942,7 +950,7 @@ fn get_file_name_and_parent(path: &Path) -> Result<(OsString, PathBuf)> {
         None => {
             return Err(Error::Msg(format!(
                 "Could not get file name from path {path:?}"
-            )))
+            )));
         }
     };
     let parent = match path.parent() {

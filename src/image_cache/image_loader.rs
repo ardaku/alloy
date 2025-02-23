@@ -3,17 +3,16 @@ use std::{
     io::{BufReader, Read},
     path::{Path, PathBuf},
     sync::{
-        atomic::{AtomicBool, AtomicU32, Ordering},
-        mpsc::{channel, Receiver, Sender, TryRecvError},
         Arc, Mutex,
+        atomic::{AtomicBool, AtomicU32, Ordering},
+        mpsc::{Receiver, Sender, TryRecvError, channel},
     },
     thread,
 };
 
 use image::{
-    self,
+    self, AnimationDecoder, ImageFormat,
     codecs::{gif::GifDecoder, png::PngDecoder},
-    AnimationDecoder, ImageFormat,
 };
 use resvg::{
     tiny_skia::{Pixmap, Transform},
@@ -133,7 +132,9 @@ pub fn detect_orientation(path: &Path) -> Result<Orientation> {
                     7 => Ok(Orientation::Deg270VerFlip),
                     8 => Ok(Orientation::Deg90),
                     _ => {
-                        eprintln!("Invalid Exif orientation. Using default orientation.");
+                        eprintln!(
+                            "Invalid Exif orientation. Using default orientation."
+                        );
                         Ok(Orientation::Deg0)
                     }
                 }
@@ -160,7 +161,7 @@ pub fn simple_load_image(
 pub fn load_gif(
     path: &Path,
     req_id: u32,
-) -> Result<impl Iterator<Item = Result<LoadResult>>> {
+) -> Result<impl Iterator<Item = Result<LoadResult>> + use<>> {
     let file = BufReader::new(fs::File::open(path)?);
     let decoder = GifDecoder::new(file)?;
     Ok(load_animation(req_id, decoder))
@@ -207,8 +208,13 @@ where
                 for frame in frames {
                     process_image(frame?)?;
                 }
-            } else if let Some(frame) = frames.next() {
-                process_image(frame?)?;
+            } else {
+                match frames.next() {
+                    Some(frame) => {
+                        process_image(frame?)?;
+                    }
+                    _ => {}
+                }
             }
         }
         ImgFormat::Image(ImageFormat::Png) => {
@@ -220,8 +226,13 @@ where
                     for frame in animation {
                         process_image(frame?)?;
                     }
-                } else if let Some(frame) = animation.next() {
-                    process_image(frame?)?;
+                } else {
+                    match animation.next() {
+                        Some(frame) => {
+                            process_image(frame?)?;
+                        }
+                        _ => {}
+                    }
                 }
             } else {
                 let image = simple_load_image(path, ImageFormat::Png)?;

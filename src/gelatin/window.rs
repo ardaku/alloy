@@ -6,8 +6,10 @@ use std::{
     rc::Rc,
 };
 
-use cgmath::{ortho, Matrix4, Vector3};
+use cgmath::{Matrix4, Vector3, ortho};
 use glium::{
+    Blend, BlendingFunction, Display, DrawParameters, Frame, IndexBuffer,
+    Program, Rect, Surface, VertexBuffer,
     glutin::{
         self,
         dpi::{PhysicalPosition, PhysicalSize},
@@ -15,18 +17,18 @@ use glium::{
         window::{CursorIcon, Icon, WindowId},
     },
     index::PrimitiveType,
-    program, uniform, Blend, BlendingFunction, Display, DrawParameters, Frame,
-    IndexBuffer, Program, Rect, Surface, VertexBuffer,
+    program, uniform,
 };
 use typed_builder::TypedBuilder;
 
 use crate::{
+    VerticalLayoutContainer,
     gelatin::{
+        DrawContext, Event, EventKind, NextUpdate, Vertex, Widget,
         application::Application,
         misc::{FromPhysical, LogicalRect, LogicalVector},
-        shaders, DrawContext, Event, EventKind, NextUpdate, Vertex, Widget,
+        shaders,
     },
-    VerticalLayoutContainer,
 };
 
 const EVENT_UPDATE_DELTA: std::time::Duration =

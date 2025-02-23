@@ -5,13 +5,13 @@ use glium::Frame;
 use crate::{
     add_common_widget_functions,
     gelatin::{
+        DrawContext, Event, NextUpdate, Widget, WidgetData, WidgetError,
         misc::{
             Alignment, HorDim, Length, LogicalRect, LogicalVector,
             PickDimension, VerDim, WidgetPlacement,
         },
         widget_data_ptr,
         window::{RenderValidity, Window},
-        DrawContext, Event, NextUpdate, Widget, WidgetData, WidgetError,
     },
 };
 

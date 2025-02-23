@@ -11,7 +11,7 @@ use log::{debug, trace};
 use rand::{seq::SliceRandom, thread_rng};
 
 use crate::{
-    gelatin::{glium::Display, window::Window, NextUpdate},
+    gelatin::{NextUpdate, glium::Display, window::Window},
     image_cache::{self, AnimationFrameTexture, ImageCache},
 };
 
@@ -147,10 +147,9 @@ impl Playback for AnimPlayback {
     }
 
     fn delay_nanos(player: &ImgSequencePlayer<Self>) -> u64 {
-        if let Some(ref frame) = player.image_texture {
-            frame.delay_nano
-        } else {
-            0
+        match player.image_texture {
+            Some(ref frame) => frame.delay_nano,
+            _ => 0,
         }
     }
 }
@@ -384,8 +383,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
     ) -> NextUpdate {
         trace!(
             "Begin `update_image`. Curr image is: {:?}. Load request is {:?}",
-            self.file_path,
-            self.load_request
+            self.file_path, self.load_request
         );
         let is_paused = matches!(self.playback_state, PlaybackState::Paused);
         let no_request = matches!(self.load_request, LoadRequest::None);

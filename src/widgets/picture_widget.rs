@@ -10,10 +10,10 @@ use std::{
 
 use cgmath::{Matrix4, Vector2, Vector3};
 use glium::{
+    Display, Frame, Program, Surface,
     glutin::event::{ElementState, ModifiersState, MouseButton},
     program, uniform,
     uniforms::MagnifySamplerFilter,
-    Display, Frame, Program, Surface,
 };
 
 use super::{
@@ -25,15 +25,15 @@ use crate::{
     clipboard_handler::ClipboardHandler,
     configuration::{Antialias, Configuration, ScalingMode},
     gelatin::{
+        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
+        WidgetError,
         application::request_exit,
         misc::{
             Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement,
         },
         window::{RenderValidity, Window},
-        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
-        WidgetError,
     },
-    image_cache::{image_loader::Orientation, AnimationFrameTexture},
+    image_cache::{AnimationFrameTexture, image_loader::Orientation},
     input_handling::*,
     playback_manager::*,
     shaders,
@@ -690,13 +690,15 @@ impl PictureWidget {
                 borrowed.playback_manager.shown_file_path().clone()
             {
                 let request_started;
-                if let Some(clipboard_handler) = &mut borrowed.clipboard_handler
-                {
-                    request_started = true;
-                    clipboard_handler.request_copy(path);
-                    borrowed.copy_notifications.set_started();
-                } else {
-                    request_started = false;
+                match &mut borrowed.clipboard_handler {
+                    Some(clipboard_handler) => {
+                        request_started = true;
+                        clipboard_handler.request_copy(path);
+                        borrowed.copy_notifications.set_started();
+                    }
+                    _ => {
+                        request_started = false;
+                    }
                 }
                 if request_started {
                     borrowed.clipboard_request_was_pending = true;
@@ -715,7 +717,10 @@ impl PictureWidget {
                         folder_path,
                     );
                 } else {
-                    eprintln!("Could not convert the image path to utf8. Path: '{:?}'", img_path);
+                    eprintln!(
+                        "Could not convert the image path to utf8. Path: '{:?}'",
+                        img_path
+                    );
                 }
             } else {
                 eprintln!(
@@ -763,11 +768,14 @@ impl Widget for PictureWidget {
         );
         if prev_texture.is_none() != new_texture.is_none() {
             data.render_validity.invalidate();
-        } else if let (Some(prev_tex), Some(new_tex)) =
-            (prev_texture, new_texture)
-        {
-            if !Rc::ptr_eq(&prev_tex.tex_grid, &new_tex.tex_grid) {
-                data.render_validity.invalidate();
+        } else {
+            match (prev_texture, new_texture) {
+                (Some(prev_tex), Some(new_tex)) => {
+                    if !Rc::ptr_eq(&prev_tex.tex_grid, &new_tex.tex_grid) {
+                        data.render_validity.invalidate();
+                    }
+                }
+                _ => {}
             }
         }
         if let Some(clipboard_handler) = &data.clipboard_handler {
@@ -933,7 +941,7 @@ impl Widget for PictureWidget {
                     let pressed = input.state == ElementState::Pressed;
 
                     macro_rules! movement_trigger {
-                        ($input:expr, $vel:expr, $name:expr, $dir:expr) => {
+                        ($input:expr_2021, $vel:expr_2021, $name:expr_2021, $dir:expr_2021) => {
                             if action_triggered(
                                 &borrowed.config,
                                 $name,

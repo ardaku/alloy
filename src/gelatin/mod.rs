@@ -8,8 +8,8 @@ pub use cgmath;
 use cgmath::{Matrix4, Vector3};
 pub use glium;
 use glium::{
-    glutin, implement_vertex, uniform, Blend, BlendingFunction, Display, Frame,
-    IndexBuffer, LinearBlendingFactor, Program, Rect, Surface, VertexBuffer,
+    Blend, BlendingFunction, Display, Frame, IndexBuffer, LinearBlendingFactor,
+    Program, Rect, Surface, VertexBuffer, glutin, implement_vertex, uniform,
 };
 use glutin::event_loop::ControlFlow;
 pub use image;
@@ -174,17 +174,15 @@ impl NextUpdate {
     pub fn aggregate(self, other: NextUpdate) -> NextUpdate {
         match other {
             NextUpdate::Soonest => other,
-            NextUpdate::WaitUntil(others_time) => match self {
-                NextUpdate::Soonest => self,
-                NextUpdate::WaitUntil(self_time) => {
-                    if others_time < self_time {
-                        other
-                    } else {
-                        self
+            NextUpdate::WaitUntil(others_time) => {
+                match self {
+                    NextUpdate::Soonest => self,
+                    NextUpdate::WaitUntil(self_time) => {
+                        if others_time < self_time { other } else { self }
                     }
+                    NextUpdate::Latest => other,
                 }
-                NextUpdate::Latest => other,
-            },
+            }
             NextUpdate::Latest => self,
         }
     }

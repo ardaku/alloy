@@ -3,15 +3,15 @@ use std::{cell::RefCell, rc::Rc};
 use crate::{
     add_common_widget_functions,
     gelatin::{
+        DrawContext, Event, NextUpdate, Widget, WidgetData, WidgetError,
         cgmath::{Matrix4, Vector3},
         glium,
-        glium::{uniform, Frame, Surface},
+        glium::{Frame, Surface, uniform},
         misc::{
             Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement,
         },
         picture::Picture,
         window::RenderValidity,
-        DrawContext, Event, NextUpdate, Widget, WidgetData, WidgetError,
     },
 };
 

@@ -219,11 +219,11 @@ impl PictureWidgetData {
         let mut image_texel_size = (self.img_texel_size * delta).max(0.0);
         if (image_texel_size - 1.0).abs() < 0.01 {
             image_texel_size = 1.0;
-        } else if image_texel_size < MIN_ZOOM_FACTOR {
-            image_texel_size = MIN_ZOOM_FACTOR;
-        } else if image_texel_size > MAX_ZOOM_FACTOR {
-            image_texel_size = MAX_ZOOM_FACTOR;
+        } else {
+            image_texel_size =
+                image_texel_size.clamp(MIN_ZOOM_FACTOR, MAX_ZOOM_FACTOR);
         }
+
         self.img_pos = (image_texel_size / self.img_texel_size)
             * (self.img_pos - anchor)
             + anchor;
@@ -768,14 +768,11 @@ impl Widget for PictureWidget {
         );
         if prev_texture.is_none() != new_texture.is_none() {
             data.render_validity.invalidate();
-        } else {
-            match (prev_texture, new_texture) {
-                (Some(prev_tex), Some(new_tex)) => {
-                    if !Rc::ptr_eq(&prev_tex.tex_grid, &new_tex.tex_grid) {
-                        data.render_validity.invalidate();
-                    }
-                }
-                _ => {}
+        } else if let (Some(prev_tex), Some(new_tex)) =
+            (prev_texture, new_texture)
+        {
+            if !Rc::ptr_eq(&prev_tex.tex_grid, &new_tex.tex_grid) {
+                data.render_validity.invalidate();
             }
         }
         if let Some(clipboard_handler) = &data.clipboard_handler {
@@ -1016,7 +1013,7 @@ impl Widget for PictureWidget {
                             .playback_manager
                             .shown_file_path()
                             .clone()
-                            .unwrap_or_else(PathBuf::new);
+                            .unwrap_or_default();
                         borrowed.hover_state = HoverState::ItemHovered {
                             prev_path: curr_path,
                         };

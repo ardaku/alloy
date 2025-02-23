@@ -386,7 +386,7 @@ pub struct DrawContext<'a> {
     pub viewport: &'a Rect,
     pub projection_transform: &'a Matrix4<f32>,
 }
-impl<'a> DrawContext<'a> {
+impl DrawContext<'_> {
     pub fn logical_rect_to_viewport(&self, rect: &LogicalRect) -> Rect {
         let dpi_scale = self.dpi_scale_factor;
         let window_phys_height = self.viewport.height;

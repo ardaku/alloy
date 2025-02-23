@@ -207,7 +207,7 @@ fn make_slider() -> Rc<Slider> {
     slider.set_height(Length::Fixed(BUTTON_SIZE));
     slider.set_width(Length::Stretch {
         min: 0.0,
-        max: std::f32::INFINITY,
+        max: f32::INFINITY,
     });
     slider.set_horizontal_align(Alignment::Center);
     slider.set_steps(6, 1);

@@ -31,13 +31,13 @@ pub mod errors {
         #[error("Error during I/O")]
         Io(#[from] io::Error),
         #[error(transparent)]
-        TextureCreationError(#[from] texture::TextureCreationError),
+        TextureCreation(#[from] texture::TextureCreationError),
         #[error(transparent)]
-        ImageLoadError(#[from] image::ImageError),
+        ImageLoad(#[from] image::ImageError),
         #[error(transparent)]
-        ExifError(#[from] exif::Error),
+        Exif(#[from] exif::Error),
         #[error(transparent)]
-        SvgError(#[from] usvg::Error),
+        Svg(#[from] usvg::Error),
         #[error("{0}")]
         Msg(String),
     }
@@ -50,7 +50,7 @@ use self::errors::*;
 /// which will only carry out the request if the focused request id matches their request or
 /// if the focused is set to `NON_EXISTENT_REQUEST_ID`
 pub static PRIORITY_REQUEST_ID: AtomicU32 = AtomicU32::new(0); // The first request usually
-pub const NON_EXISTENT_REQUEST_ID: u32 = std::u32::MAX;
+pub const NON_EXISTENT_REQUEST_ID: u32 = u32::MAX;
 
 pub enum ImgFormat {
     Image(ImageFormat),
@@ -208,13 +208,8 @@ where
                 for frame in frames {
                     process_image(frame?)?;
                 }
-            } else {
-                match frames.next() {
-                    Some(frame) => {
-                        process_image(frame?)?;
-                    }
-                    _ => {}
-                }
+            } else if let Some(frame) = frames.next() {
+                process_image(frame?)?;
             }
         }
         ImgFormat::Image(ImageFormat::Png) => {
@@ -226,13 +221,8 @@ where
                     for frame in animation {
                         process_image(frame?)?;
                     }
-                } else {
-                    match animation.next() {
-                        Some(frame) => {
-                            process_image(frame?)?;
-                        }
-                        _ => {}
-                    }
+                } else if let Some(frame) = animation.next() {
+                    process_image(frame?)?;
                 }
             } else {
                 let image = simple_load_image(path, ImageFormat::Png)?;

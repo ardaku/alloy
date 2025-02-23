@@ -39,13 +39,13 @@ pub mod errors {
         #[error("Error during IO")]
         Io(#[from] io::Error),
         #[error(transparent)]
-        TextureCreationError(#[from] texture::TextureCreationError),
+        TextureCreation(#[from] texture::TextureCreationError),
         #[error(transparent)]
-        ImageRsError(#[from] image::ImageError),
+        ImageRs(#[from] image::ImageError),
         #[error(transparent)]
-        TextureLoaderError(#[from] image_loader::errors::Error),
+        TextureLoader(#[from] image_loader::errors::Error),
         #[error(transparent)]
-        DirError(#[from] super::directory::Error),
+        Dir(#[from] super::directory::Error),
         #[error("ImageCache is waiting for loader to send result")]
         WaitingOnLoader,
         #[error(
@@ -86,7 +86,7 @@ enum RequestKind<'a> {
     Priority { display: &'a glium::Display },
 }
 
-impl<'a> RequestKind<'a> {
+impl RequestKind<'_> {
     pub fn priority(self) -> bool {
         match self {
             RequestKind::Priority { .. } => true,

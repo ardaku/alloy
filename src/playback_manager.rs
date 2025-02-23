@@ -181,7 +181,7 @@ impl PlaybackManager {
         };
 
         let thread_count = match sys_info::cpu_num() {
-            Ok(value) => value.max(2).min(4),
+            Ok(value) => value.clamp(2, 4),
             _ => 4,
         };
 
@@ -249,10 +249,8 @@ impl PlaybackManager {
                 // The there's no file to open, just request to open the empty path.
                 // This will hide the previously loaded image.
                 // Note that `image_cache.current_file_path()` is used instead of `self.shown_file_path()`
-                let path = self
-                    .image_cache
-                    .current_file_path()
-                    .unwrap_or_else(PathBuf::new);
+                let path =
+                    self.image_cache.current_file_path().unwrap_or_default();
                 self.request_load(LoadRequest::FilePath(path));
             }
         }

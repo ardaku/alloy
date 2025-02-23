@@ -62,14 +62,14 @@ impl RenderValidity {
 pub struct WindowDisplayRefMut<'a> {
     window_ref: RefMut<'a, WindowData>,
 }
-impl<'a> Deref for WindowDisplayRefMut<'a> {
+impl Deref for WindowDisplayRefMut<'_> {
     type Target = Display;
 
     fn deref(&self) -> &Self::Target {
         &self.window_ref.display
     }
 }
-impl<'a> DerefMut for WindowDisplayRefMut<'a> {
+impl DerefMut for WindowDisplayRefMut<'_> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.window_ref.display
     }

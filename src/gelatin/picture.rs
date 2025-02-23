@@ -13,7 +13,7 @@ use image::{RgbaImage, error::ImageError};
 pub struct PictureTextureRef<'a> {
     pic_data: Ref<'a, PictureData>,
 }
-impl<'a> Deref for PictureTextureRef<'a> {
+impl Deref for PictureTextureRef<'_> {
     type Target = SrgbTexture2d;
 
     fn deref(&self) -> &SrgbTexture2d {

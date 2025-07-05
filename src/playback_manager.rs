@@ -8,7 +8,7 @@ use std::{
 };
 
 use log::{debug, trace};
-use rand::{seq::SliceRandom, thread_rng};
+use rand::{rng, seq::SliceRandom};
 
 use crate::{
     gelatin::{NextUpdate, glium::Display, window::Window},
@@ -560,7 +560,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
             for i in 0..dir_len {
                 self.present_remaining.push(i);
             }
-            let mut rng = thread_rng();
+            let mut rng = rng();
             self.present_remaining.as_mut_slice().shuffle(&mut rng);
             true
         } else {

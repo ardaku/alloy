@@ -2,20 +2,21 @@ use std::{cell::RefCell, rc::Rc};
 
 use cgmath::{Matrix4, Vector3};
 use glium::{
+    Frame, Surface,
     glutin::event::{ElementState, MouseButton},
-    uniform, Frame, Surface,
+    uniform,
 };
 
 use crate::{
     add_common_widget_functions,
     gelatin::{
+        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
+        WidgetError,
         misc::{
             Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement,
         },
         picture::Picture,
         window::RenderValidity,
-        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
-        WidgetError,
     },
 };
 
@@ -132,58 +133,65 @@ impl Widget for Button {
                 ..Default::default()
             };
             let texture_size = [img_w, img_h];
-            if let Some(ref icon) = borrowed.icon {
-                let texture = icon.texture(context.display)?;
-                let sampler = texture
-                    .sampled()
-                    .wrap_function(glium::uniforms::SamplerWrapFunction::Clamp)
-                    .minify_filter(glium::uniforms::MinifySamplerFilter::Linear)
-                    .magnify_filter(
-                        glium::uniforms::MagnifySamplerFilter::Linear,
-                    );
-                let uniforms = uniform! {
-                    matrix: Into::<[[f32; 4]; 4]>::into(transform),
-                    tex: sampler,
-                    bg_color: borrowed.bg_color,
-                    texture_size: texture_size,
-                    //brighten: if self.hover { 0.15f32 } else { 0.0f32 },
-                    brighten: 0.0f32,
-                    shadow_color: Into::<[f32; 3]>::into(Vector3::<f32>::new(0.0, 0.0, 0.0)),
-                    shadow_offset: if borrowed.click {
-                        0.5f32
-                    } else if borrowed.hover { 0.7 } else { 1.0f32 }
-                };
-                target
-                    .draw(
-                        context.unit_quad_vertices,
-                        context.unit_quad_indices,
-                        context.textured_program,
-                        &uniforms,
-                        &image_draw_params,
-                    )
-                    .unwrap();
-            } else {
-                // building the uniforms
-                let uniforms = uniform! {
-                    matrix: Into::<[[f32; 4]; 4]>::into(transform),
-                    bg_color: borrowed.bg_color,
-                    size: texture_size,
-                    //brighten: if self.hover { 0.15f32 } else { 0.0f32 },
-                    brighten: 0.0f32,
-                    shadow_color: Into::<[f32; 3]>::into(Vector3::<f32>::new(0.0, 0.0, 0.0)),
-                    shadow_offset: if borrowed.click {
-                        0.5f32
-                    } else if borrowed.hover { 0.7 } else { 1.0f32 }
-                };
-                target
-                    .draw(
-                        context.unit_quad_vertices,
-                        context.unit_quad_indices,
-                        context.colored_shadowed_program,
-                        &uniforms,
-                        &image_draw_params,
-                    )
-                    .unwrap();
+            match borrowed.icon {
+                Some(ref icon) => {
+                    let texture = icon.texture(context.display)?;
+                    let sampler = texture
+                        .sampled()
+                        .wrap_function(
+                            glium::uniforms::SamplerWrapFunction::Clamp,
+                        )
+                        .minify_filter(
+                            glium::uniforms::MinifySamplerFilter::Linear,
+                        )
+                        .magnify_filter(
+                            glium::uniforms::MagnifySamplerFilter::Linear,
+                        );
+                    let uniforms = uniform! {
+                        matrix: Into::<[[f32; 4]; 4]>::into(transform),
+                        tex: sampler,
+                        bg_color: borrowed.bg_color,
+                        texture_size: texture_size,
+                        //brighten: if self.hover { 0.15f32 } else { 0.0f32 },
+                        brighten: 0.0f32,
+                        shadow_color: Into::<[f32; 3]>::into(Vector3::<f32>::new(0.0, 0.0, 0.0)),
+                        shadow_offset: if borrowed.click {
+                            0.5f32
+                        } else if borrowed.hover { 0.7 } else { 1.0f32 }
+                    };
+                    target
+                        .draw(
+                            context.unit_quad_vertices,
+                            context.unit_quad_indices,
+                            context.textured_program,
+                            &uniforms,
+                            &image_draw_params,
+                        )
+                        .unwrap();
+                }
+                _ => {
+                    // building the uniforms
+                    let uniforms = uniform! {
+                        matrix: Into::<[[f32; 4]; 4]>::into(transform),
+                        bg_color: borrowed.bg_color,
+                        size: texture_size,
+                        //brighten: if self.hover { 0.15f32 } else { 0.0f32 },
+                        brighten: 0.0f32,
+                        shadow_color: Into::<[f32; 3]>::into(Vector3::<f32>::new(0.0, 0.0, 0.0)),
+                        shadow_offset: if borrowed.click {
+                            0.5f32
+                        } else if borrowed.hover { 0.7 } else { 1.0f32 }
+                    };
+                    target
+                        .draw(
+                            context.unit_quad_vertices,
+                            context.unit_quad_indices,
+                            context.colored_shadowed_program,
+                            &uniforms,
+                            &image_draw_params,
+                        )
+                        .unwrap();
+                }
             }
         }
         Ok(NextUpdate::Latest)

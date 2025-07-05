@@ -3,17 +3,16 @@ use std::{
     io::{BufReader, Read},
     path::{Path, PathBuf},
     sync::{
-        atomic::{AtomicBool, AtomicU32, Ordering},
-        mpsc::{channel, Receiver, Sender, TryRecvError},
         Arc, Mutex,
+        atomic::{AtomicBool, AtomicU32, Ordering},
+        mpsc::{Receiver, Sender, TryRecvError, channel},
     },
     thread,
 };
 
 use image::{
-    self,
+    self, AnimationDecoder, ImageFormat,
     codecs::{gif::GifDecoder, png::PngDecoder},
-    AnimationDecoder, ImageFormat,
 };
 use resvg::{
     tiny_skia::{Pixmap, Transform},
@@ -32,13 +31,13 @@ pub mod errors {
         #[error("Error during I/O")]
         Io(#[from] io::Error),
         #[error(transparent)]
-        TextureCreationError(#[from] texture::TextureCreationError),
+        TextureCreation(#[from] texture::TextureCreationError),
         #[error(transparent)]
-        ImageLoadError(#[from] image::ImageError),
+        ImageLoad(#[from] image::ImageError),
         #[error(transparent)]
-        ExifError(#[from] exif::Error),
+        Exif(#[from] exif::Error),
         #[error(transparent)]
-        SvgError(#[from] usvg::Error),
+        Svg(#[from] usvg::Error),
         #[error("{0}")]
         Msg(String),
     }
@@ -51,7 +50,7 @@ use self::errors::*;
 /// which will only carry out the request if the focused request id matches their request or
 /// if the focused is set to `NON_EXISTENT_REQUEST_ID`
 pub static PRIORITY_REQUEST_ID: AtomicU32 = AtomicU32::new(0); // The first request usually
-pub const NON_EXISTENT_REQUEST_ID: u32 = std::u32::MAX;
+pub const NON_EXISTENT_REQUEST_ID: u32 = u32::MAX;
 
 pub enum ImgFormat {
     Image(ImageFormat),
@@ -133,7 +132,9 @@ pub fn detect_orientation(path: &Path) -> Result<Orientation> {
                     7 => Ok(Orientation::Deg270VerFlip),
                     8 => Ok(Orientation::Deg90),
                     _ => {
-                        eprintln!("Invalid Exif orientation. Using default orientation.");
+                        eprintln!(
+                            "Invalid Exif orientation. Using default orientation."
+                        );
                         Ok(Orientation::Deg0)
                     }
                 }
@@ -160,7 +161,7 @@ pub fn simple_load_image(
 pub fn load_gif(
     path: &Path,
     req_id: u32,
-) -> Result<impl Iterator<Item = Result<LoadResult>>> {
+) -> Result<impl Iterator<Item = Result<LoadResult>> + use<>> {
     let file = BufReader::new(fs::File::open(path)?);
     let decoder = GifDecoder::new(file)?;
     Ok(load_animation(req_id, decoder))
@@ -449,9 +450,10 @@ impl ImageLoader {
                 },
                 Err(error) => {
                     eprintln!(
-						"Request #{}: Error occurred while loading file {:?}\n    {}",
-						request.req_id, request.path, error,
-					);
+                        "Request #{}: Error occurred while loading file \
+                         {:?}\n    {error}",
+                        request.req_id, request.path,
+                    );
                     LoadResult::Failed {
                         req_id: request.req_id,
                     }
@@ -476,7 +478,7 @@ impl Drop for ImageLoader {
 
             for handle in join_handles.into_iter() {
                 if let Err(err) = handle.join() {
-                    eprintln!("Error occurred while joining handle {:?}", err);
+                    eprintln!("Error occurred while joining handle {err:?}");
                 }
             }
         }

@@ -1,17 +1,17 @@
 use std::{cell::RefCell, rc::Rc};
 
 use cgmath::{Matrix4, Vector3};
-use glium::{uniform, Frame, Surface};
+use glium::{Frame, Surface, uniform};
 
 use crate::{
     add_common_widget_functions,
     gelatin::{
+        DrawContext, Event, NextUpdate, Widget, WidgetData, WidgetError,
         misc::{
             Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement,
         },
         picture::Picture,
         window::RenderValidity,
-        DrawContext, Event, NextUpdate, Widget, WidgetData, WidgetError,
     },
 };
 
@@ -118,53 +118,60 @@ impl Widget for Label {
                 ..Default::default()
             };
             let texture_size = [img_w, img_h];
-            if let Some(ref icon) = borrowed.icon {
-                let texture = icon.texture(context.display)?;
-                let sampler = texture
-                    .sampled()
-                    .wrap_function(glium::uniforms::SamplerWrapFunction::Clamp)
-                    .minify_filter(glium::uniforms::MinifySamplerFilter::Linear)
-                    .magnify_filter(
-                        glium::uniforms::MagnifySamplerFilter::Linear,
-                    );
-                let uniforms = uniform! {
-                    matrix: Into::<[[f32; 4]; 4]>::into(transform),
-                    tex: sampler,
-                    color: [1.0f32, 0.1, 0.5, 0.5],
-                    texture_size: texture_size,
-                    //brighten: if self.hover { 0.15f32 } else { 0.0f32 },
-                    brighten: 0.0f32,
-                    shadow_color: Into::<[f32; 3]>::into(Vector3::<f32>::new(0.0, 0.0, 0.0)),
-                    shadow_offset: 1.0 - borrowed.shadow_size,
-                };
-                target
-                    .draw(
-                        context.unit_quad_vertices,
-                        context.unit_quad_indices,
-                        context.textured_program,
-                        &uniforms,
-                        &image_draw_params,
-                    )
-                    .unwrap();
-            } else {
-                let uniforms = uniform! {
-                    matrix: Into::<[[f32; 4]; 4]>::into(transform),
-                    color: [1.0f32, 0.1, 0.5, 0.5],
-                    size: texture_size,
-                    //brighten: if self.hover { 0.15f32 } else { 0.0f32 },
-                    brighten: 0.0f32,
-                    shadow_color: Into::<[f32; 3]>::into(Vector3::<f32>::new(0.0, 0.0, 0.0)),
-                    shadow_offset: 1.0 - borrowed.shadow_size,
-                };
-                target
-                    .draw(
-                        context.unit_quad_vertices,
-                        context.unit_quad_indices,
-                        context.colored_shadowed_program,
-                        &uniforms,
-                        &image_draw_params,
-                    )
-                    .unwrap();
+            match borrowed.icon {
+                Some(ref icon) => {
+                    let texture = icon.texture(context.display)?;
+                    let sampler = texture
+                        .sampled()
+                        .wrap_function(
+                            glium::uniforms::SamplerWrapFunction::Clamp,
+                        )
+                        .minify_filter(
+                            glium::uniforms::MinifySamplerFilter::Linear,
+                        )
+                        .magnify_filter(
+                            glium::uniforms::MagnifySamplerFilter::Linear,
+                        );
+                    let uniforms = uniform! {
+                        matrix: Into::<[[f32; 4]; 4]>::into(transform),
+                        tex: sampler,
+                        color: [1.0f32, 0.1, 0.5, 0.5],
+                        texture_size: texture_size,
+                        //brighten: if self.hover { 0.15f32 } else { 0.0f32 },
+                        brighten: 0.0f32,
+                        shadow_color: Into::<[f32; 3]>::into(Vector3::<f32>::new(0.0, 0.0, 0.0)),
+                        shadow_offset: 1.0 - borrowed.shadow_size,
+                    };
+                    target
+                        .draw(
+                            context.unit_quad_vertices,
+                            context.unit_quad_indices,
+                            context.textured_program,
+                            &uniforms,
+                            &image_draw_params,
+                        )
+                        .unwrap();
+                }
+                _ => {
+                    let uniforms = uniform! {
+                        matrix: Into::<[[f32; 4]; 4]>::into(transform),
+                        color: [1.0f32, 0.1, 0.5, 0.5],
+                        size: texture_size,
+                        //brighten: if self.hover { 0.15f32 } else { 0.0f32 },
+                        brighten: 0.0f32,
+                        shadow_color: Into::<[f32; 3]>::into(Vector3::<f32>::new(0.0, 0.0, 0.0)),
+                        shadow_offset: 1.0 - borrowed.shadow_size,
+                    };
+                    target
+                        .draw(
+                            context.unit_quad_vertices,
+                            context.unit_quad_indices,
+                            context.colored_shadowed_program,
+                            &uniforms,
+                            &image_draw_params,
+                        )
+                        .unwrap();
+                }
             }
         }
         Ok(NextUpdate::Latest)

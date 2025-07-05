@@ -20,14 +20,14 @@ impl fmt::Display for Error {
             Error::WaitingOnFolderFilter => {
                 f.write_str("The directory is still being filtered for images")
             }
-            Error::Other(s) => f.write_fmt(format_args!("Other error: {}", s)),
+            Error::Other(s) => f.write_fmt(format_args!("Other error: {s}")),
         }
     }
 }
 impl std::error::Error for Error {}
 impl From<std::io::Error> for Error {
     fn from(e: std::io::Error) -> Self {
-        Error::Other(format!("{}", e))
+        Error::Other(e.to_string())
     }
 }
 
@@ -146,8 +146,7 @@ impl Directory {
         }
 
         Err(Error::Other(format!(
-            "Could not find file {:?} in directory {:?}",
-            filename, path
+            "Could not find file {filename:?} in directory {path:?}",
         )))
     }
 
@@ -241,14 +240,16 @@ impl Directory {
         let curr_filename = curr_filename.as_deref();
         let curr_index = self.curr_file_idx;
         debug!(
-			"Directory: `update_directory`. Current filename: {:?}, curr_index: {:?}",
-			curr_filename, curr_index
-		);
+            "Directory: `update_directory`. Current filename: \
+             {curr_filename:?}, curr_index: {curr_index:?}",
+        );
         self.collect_directory()?;
         if curr_filename.is_some() {
             for (index, desc) in self.files.iter().enumerate() {
                 if desc.path.file_name() == curr_filename {
-                    debug!("Found file the previously 'current' file in the directory.");
+                    debug!(
+                        "Found file the previously 'current' file in the directory."
+                    );
                     self.curr_file_idx = index;
                     self.set_image_index_from_file_index();
                     self.check_filter_ready();

@@ -15,7 +15,7 @@ pub fn handle_panic(info: &panic::PanicHookInfo) {
 
     msg.push('\n');
     if let Some(panic_message) = payload_string {
-        msg.push_str(&format!("\n--\n{}\n--\n\n", panic_message));
+        msg.push_str(&format!("\n--\n{panic_message}\n--\n\n"));
     }
     if let Some(location) = info.location() {
         msg.push_str(&format!(
@@ -25,8 +25,8 @@ pub fn handle_panic(info: &panic::PanicHookInfo) {
             location.column()
         ));
     }
-    msg.push_str(&format!("{:?}\n", trace));
-    for ch in iter::repeat('=').take(99) {
+    msg.push_str(&format!("{trace:?}\n"));
+    for ch in iter::repeat_n('=', 99) {
         msg.push(ch);
     }
 

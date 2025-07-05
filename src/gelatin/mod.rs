@@ -8,8 +8,8 @@ pub use cgmath;
 use cgmath::{Matrix4, Vector3};
 pub use glium;
 use glium::{
-    glutin, implement_vertex, uniform, Blend, BlendingFunction, Display, Frame,
-    IndexBuffer, LinearBlendingFactor, Program, Rect, Surface, VertexBuffer,
+    Blend, BlendingFunction, Display, Frame, IndexBuffer, LinearBlendingFactor,
+    Program, Rect, Surface, VertexBuffer, glutin, implement_vertex, uniform,
 };
 use glutin::event_loop::ControlFlow;
 pub use image;
@@ -33,7 +33,7 @@ impl fmt::Display for WidgetError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             WidgetError::Image(img_err) => {
-                write!(f, "WidgetError: Image ({})", img_err)?
+                write!(f, "WidgetError: Image ({img_err})")?
             }
         }
         Ok(())
@@ -174,17 +174,15 @@ impl NextUpdate {
     pub fn aggregate(self, other: NextUpdate) -> NextUpdate {
         match other {
             NextUpdate::Soonest => other,
-            NextUpdate::WaitUntil(others_time) => match self {
-                NextUpdate::Soonest => self,
-                NextUpdate::WaitUntil(self_time) => {
-                    if others_time < self_time {
-                        other
-                    } else {
-                        self
+            NextUpdate::WaitUntil(others_time) => {
+                match self {
+                    NextUpdate::Soonest => self,
+                    NextUpdate::WaitUntil(self_time) => {
+                        if others_time < self_time { other } else { self }
                     }
+                    NextUpdate::Latest => other,
                 }
-                NextUpdate::Latest => other,
-            },
+            }
             NextUpdate::Latest => self,
         }
     }
@@ -388,7 +386,7 @@ pub struct DrawContext<'a> {
     pub viewport: &'a Rect,
     pub projection_transform: &'a Matrix4<f32>,
 }
-impl<'a> DrawContext<'a> {
+impl DrawContext<'_> {
     pub fn logical_rect_to_viewport(&self, rect: &LogicalRect) -> Rect {
         let dpi_scale = self.dpi_scale_factor;
         let window_phys_height = self.viewport.height;

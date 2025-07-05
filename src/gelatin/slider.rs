@@ -2,20 +2,21 @@ use std::{cell::RefCell, rc::Rc};
 
 use cgmath::{Matrix4, Vector3};
 use glium::{
+    Blend, BlendingFunction, DrawParameters, Frame, LinearBlendingFactor,
+    Surface,
     glutin::event::{ElementState, MouseButton},
-    uniform, Blend, BlendingFunction, DrawParameters, Frame,
-    LinearBlendingFactor, Surface,
+    uniform,
 };
 
 use crate::{
     add_common_widget_functions,
     gelatin::{
+        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
+        WidgetError,
         misc::{
             Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement,
         },
         window::RenderValidity,
-        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
-        WidgetError,
     },
 };
 
@@ -229,8 +230,7 @@ impl Widget for Slider {
                         - borrowed.drawn_bounds.pos.vec.x;
                     let proportion = (relative_cursor_x
                         / borrowed.drawn_bounds.size.vec.x)
-                        .max(0.0)
-                        .min(1.0);
+                        .clamp(0.0, 1.0);
                     let stepsf = borrowed.steps as f32;
                     borrowed.value =
                         (proportion * (1.0 + 1.0 / stepsf) * (stepsf - 1.0))

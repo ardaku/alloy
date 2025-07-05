@@ -11,7 +11,7 @@ use log::{debug, trace};
 use rand::{seq::SliceRandom, thread_rng};
 
 use crate::{
-    gelatin::{glium::Display, window::Window, NextUpdate},
+    gelatin::{NextUpdate, glium::Display, window::Window},
     image_cache::{self, AnimationFrameTexture, ImageCache},
 };
 
@@ -147,10 +147,9 @@ impl Playback for AnimPlayback {
     }
 
     fn delay_nanos(player: &ImgSequencePlayer<Self>) -> u64 {
-        if let Some(ref frame) = player.image_texture {
-            frame.delay_nano
-        } else {
-            0
+        match player.image_texture {
+            Some(ref frame) => frame.delay_nano,
+            _ => 0,
         }
     }
 }
@@ -182,7 +181,7 @@ impl PlaybackManager {
         };
 
         let thread_count = match sys_info::cpu_num() {
-            Ok(value) => value.max(2).min(4),
+            Ok(value) => value.clamp(2, 4),
             _ => 4,
         };
 
@@ -241,8 +240,7 @@ impl PlaybackManager {
         if let LoadRequest::None = self.folder_player.load_request {
             let curr_path = self.image_cache.current_file_path();
             debug!(
-                "In `update_directory`, current_file_path is: {:?}",
-                curr_path
+                "In `update_directory`, current_file_path is: {curr_path:?}",
             );
             if curr_path.is_some() {
                 self.image_cache.update_directory()?;
@@ -250,10 +248,8 @@ impl PlaybackManager {
                 // The there's no file to open, just request to open the empty path.
                 // This will hide the previously loaded image.
                 // Note that `image_cache.current_file_path()` is used instead of `self.shown_file_path()`
-                let path = self
-                    .image_cache
-                    .current_file_path()
-                    .unwrap_or_else(PathBuf::new);
+                let path =
+                    self.image_cache.current_file_path().unwrap_or_default();
                 self.request_load(LoadRequest::FilePath(path));
             }
         }
@@ -280,7 +276,7 @@ impl PlaybackManager {
         let next_update = self
             .folder_player
             .update_image(&display, &mut self.image_cache);
-        trace!("Folder player next update: {:?}", next_update);
+        trace!("Folder player next update: {next_update:?}");
         let new_file = self.folder_player.image_texture();
         let mut file_changed = prev_file.is_none() != new_file.is_none();
         if let (Some(prev), Some(new)) = (prev_file, new_file) {
@@ -296,7 +292,7 @@ impl PlaybackManager {
         let img_player_next_update = self
             .image_player
             .update_image(&display, &mut self.image_cache);
-        trace!("Image player next update: {:?}", img_player_next_update);
+        trace!("Image player next update: {img_player_next_update:?}");
         next_update.aggregate(img_player_next_update)
     }
 }
@@ -384,8 +380,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
     ) -> NextUpdate {
         trace!(
             "Begin `update_image`. Curr image is: {:?}. Load request is {:?}",
-            self.file_path,
-            self.load_request
+            self.file_path, self.load_request
         );
         let is_paused = matches!(self.playback_state, PlaybackState::Paused);
         let no_request = matches!(self.load_request, LoadRequest::None);
@@ -410,8 +405,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
         if self.playback_state == PlaybackState::Paused {
             if let Err(e) = image_cache.process_prefetched(display) {
                 eprintln!(
-                    "Failed to process prefetched images with error '{:?}'",
-                    e
+                    "Failed to process prefetched images with error '{e:?}'",
                 );
             }
             match load_request {
@@ -547,8 +541,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
                     let stderr_errmsg = "Error writing to stderr";
                     writeln!(
                         stderr,
-                        "Error occurred while loading image: {}",
-                        err
+                        "Error occurred while loading image: {err}",
                     )
                     .expect(stderr_errmsg);
                     writeln!(stderr).expect(stderr_errmsg);

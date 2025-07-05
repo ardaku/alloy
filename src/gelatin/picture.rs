@@ -5,22 +5,23 @@ use std::{
 };
 
 use glium::{
-    texture::{MipmapsOption, RawImage2d, SrgbTexture2d},
     Display,
+    texture::{MipmapsOption, RawImage2d, SrgbTexture2d},
 };
-use image::{error::ImageError, RgbaImage};
+use image::{RgbaImage, error::ImageError};
 
 pub struct PictureTextureRef<'a> {
     pic_data: Ref<'a, PictureData>,
 }
-impl<'a> Deref for PictureTextureRef<'a> {
+impl Deref for PictureTextureRef<'_> {
     type Target = SrgbTexture2d;
 
     fn deref(&self) -> &SrgbTexture2d {
-        if let PictureData::Gpu(texture) = &*self.pic_data {
-            texture
-        } else {
-            unreachable!()
+        match &*self.pic_data {
+            PictureData::Gpu(texture) => texture,
+            _ => {
+                unreachable!()
+            }
         }
     }
 }
@@ -103,12 +104,13 @@ impl Picture {
         display: &Display,
     ) -> Result<PictureTextureRef, ImageError> {
         self.upload_to_texture(display)?;
-        if let PictureData::Gpu(_) = &*self.data.borrow() {
-            Ok(PictureTextureRef {
+        match &*self.data.borrow() {
+            PictureData::Gpu(_) => Ok(PictureTextureRef {
                 pic_data: self.data.borrow(),
-            })
-        } else {
-            unreachable!()
+            }),
+            _ => {
+                unreachable!()
+            }
         }
     }
 

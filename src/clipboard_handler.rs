@@ -1,18 +1,18 @@
 use std::{
     path::PathBuf,
     sync::{
-        atomic::{AtomicBool, Ordering},
         Arc, Condvar, Mutex,
+        atomic::{AtomicBool, Ordering},
     },
 };
 
 use image::imageops::{
-    flip_horizontal_in_place, flip_vertical_in_place, rotate180_in_place,
-    rotate270, rotate90,
+    flip_horizontal_in_place, flip_vertical_in_place, rotate90,
+    rotate180_in_place, rotate270,
 };
 
 use crate::image_cache::image_loader::{
-    complex_load_image, errors::Error, LoadResult, Orientation,
+    LoadResult, Orientation, complex_load_image, errors::Error,
 };
 
 #[derive(Debug, Clone, Eq, PartialEq)]
@@ -58,10 +58,13 @@ impl ClipboardHandler {
     pub fn request_copy(&mut self, target: PathBuf) -> bool {
         {
             let mut state = self.request_handle.state.lock().unwrap();
-            if let ClipboardState::Pending(..) = &*state {
-                return false;
-            } else {
-                *state = ClipboardState::Pending(target);
+            match &*state {
+                ClipboardState::Pending(..) => {
+                    return false;
+                }
+                _ => {
+                    *state = ClipboardState::Pending(target);
+                }
             }
         }
         // Notify the condvar after releasing the mutex
@@ -90,29 +93,35 @@ impl ClipboardHandler {
             std::time::Duration::from_millis(50);
         let mut clipboard = arboard::Clipboard::new();
         if let Err(e) = &clipboard {
-            eprintln!("The clipboard could not be created, error was: {}", e);
+            eprintln!("The clipboard could not be created, error was: {e}");
         }
         while request_handle.run_thread.load(Ordering::Acquire) {
             let request_path;
             {
                 let mut state_guard = request_handle.state.lock().unwrap();
                 'wait_for_request: loop {
-                    if let ClipboardState::Pending(path) = state_guard.clone() {
-                        request_path = path;
-                        break 'wait_for_request;
-                    } else {
-                        if !request_handle.run_thread.load(Ordering::Acquire) {
-                            return;
+                    match state_guard.clone() {
+                        ClipboardState::Pending(path) => {
+                            request_path = path;
+                            break 'wait_for_request;
                         }
-                        match request_handle
-                            .condvar
-                            .wait_timeout(state_guard, WAIT_TIMEOUT)
-                        {
-                            Ok((guard, _)) => {
-                                state_guard = guard;
+                        _ => {
+                            if !request_handle
+                                .run_thread
+                                .load(Ordering::Acquire)
+                            {
+                                return;
                             }
-                            Err(e) => {
-                                panic!("{}", e);
+                            match request_handle
+                                .condvar
+                                .wait_timeout(state_guard, WAIT_TIMEOUT)
+                            {
+                                Ok((guard, _)) => {
+                                    state_guard = guard;
+                                }
+                                Err(e) => {
+                                    panic!("{}", e);
+                                }
                             }
                         }
                     }
@@ -163,7 +172,9 @@ impl ClipboardHandler {
                             bytes: image.into_raw().into(),
                         };
                         if let Err(e) = clipboard.set_image(cb_image) {
-                            eprintln!("Could not set the clipboard image, error was: {e}");
+                            eprintln!(
+                                "Could not set the clipboard image, error was: {e}"
+                            );
                         } else {
                             return Ok(());
                         }

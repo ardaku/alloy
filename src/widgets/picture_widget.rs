@@ -10,10 +10,10 @@ use std::{
 
 use cgmath::{Matrix4, Vector2, Vector3};
 use glium::{
+    Display, Frame, Program, Surface,
     glutin::event::{ElementState, ModifiersState, MouseButton},
     program, uniform,
     uniforms::MagnifySamplerFilter,
-    Display, Frame, Program, Surface,
 };
 
 use super::{
@@ -25,15 +25,15 @@ use crate::{
     clipboard_handler::ClipboardHandler,
     configuration::{Antialias, Configuration, ScalingMode},
     gelatin::{
+        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
+        WidgetError,
         application::request_exit,
         misc::{
             Alignment, Length, LogicalRect, LogicalVector, WidgetPlacement,
         },
         window::{RenderValidity, Window},
-        DrawContext, Event, EventKind, NextUpdate, Widget, WidgetData,
-        WidgetError,
     },
-    image_cache::{image_loader::Orientation, AnimationFrameTexture},
+    image_cache::{AnimationFrameTexture, image_loader::Orientation},
     input_handling::*,
     playback_manager::*,
     shaders,
@@ -219,11 +219,11 @@ impl PictureWidgetData {
         let mut image_texel_size = (self.img_texel_size * delta).max(0.0);
         if (image_texel_size - 1.0).abs() < 0.01 {
             image_texel_size = 1.0;
-        } else if image_texel_size < MIN_ZOOM_FACTOR {
-            image_texel_size = MIN_ZOOM_FACTOR;
-        } else if image_texel_size > MAX_ZOOM_FACTOR {
-            image_texel_size = MAX_ZOOM_FACTOR;
+        } else {
+            image_texel_size =
+                image_texel_size.clamp(MIN_ZOOM_FACTOR, MAX_ZOOM_FACTOR);
         }
+
         self.img_pos = (image_texel_size / self.img_texel_size)
             * (self.img_pos - anchor)
             + anchor;
@@ -675,12 +675,11 @@ impl PictureWidget {
             if let Some(path) = borrowed.playback_manager.shown_file_path() {
                 if let Err(e) = trash::delete(path) {
                     eprintln!(
-                        "Error while moving file '{:?}' to trash: {:?}",
-                        path, e
+                        "Error while moving file '{path:?}' to trash: {e:?}",
                     );
                 }
                 if let Err(e) = borrowed.playback_manager.update_directory() {
-                    eprintln!("Error while updating directory {:?}", e);
+                    eprintln!("Error while updating directory {e:?}");
                 }
                 borrowed.render_validity.invalidate();
             }
@@ -690,13 +689,15 @@ impl PictureWidget {
                 borrowed.playback_manager.shown_file_path().clone()
             {
                 let request_started;
-                if let Some(clipboard_handler) = &mut borrowed.clipboard_handler
-                {
-                    request_started = true;
-                    clipboard_handler.request_copy(path);
-                    borrowed.copy_notifications.set_started();
-                } else {
-                    request_started = false;
+                match &mut borrowed.clipboard_handler {
+                    Some(clipboard_handler) => {
+                        request_started = true;
+                        clipboard_handler.request_copy(path);
+                        borrowed.copy_notifications.set_started();
+                    }
+                    _ => {
+                        request_started = false;
+                    }
                 }
                 if request_started {
                     borrowed.clipboard_request_was_pending = true;
@@ -715,12 +716,15 @@ impl PictureWidget {
                         folder_path,
                     );
                 } else {
-                    eprintln!("Could not convert the image path to utf8. Path: '{:?}'", img_path);
+                    eprintln!(
+                        "Could not convert the image path to utf8. Path: \
+                         '{img_path:?}'",
+                    );
                 }
             } else {
                 eprintln!(
-                    "Could not get parent folder for the image path {:?}",
-                    img_path
+                    "Could not get parent folder for the image path \
+                     {img_path:?}",
                 );
             }
         }
@@ -933,7 +937,7 @@ impl Widget for PictureWidget {
                     let pressed = input.state == ElementState::Pressed;
 
                     macro_rules! movement_trigger {
-                        ($input:expr, $vel:expr, $name:expr, $dir:expr) => {
+                        ($input:expr_2021, $vel:expr_2021, $name:expr_2021, $dir:expr_2021) => {
                             if action_triggered(
                                 &borrowed.config,
                                 $name,
@@ -1008,7 +1012,7 @@ impl Widget for PictureWidget {
                             .playback_manager
                             .shown_file_path()
                             .clone()
-                            .unwrap_or_else(PathBuf::new);
+                            .unwrap_or_default();
                         borrowed.hover_state = HoverState::ItemHovered {
                             prev_path: curr_path,
                         };

@@ -4,7 +4,7 @@ use std::{
 };
 
 use crate::gelatin::{
-    label::Label, misc::*, picture::Picture, NextUpdate, Widget,
+    NextUpdate, Widget, label::Label, misc::*, picture::Picture,
 };
 
 static COPY_STARTED: &[u8] = include_bytes!("../../resource/copy-started.png");

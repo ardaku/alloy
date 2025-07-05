@@ -675,12 +675,11 @@ impl PictureWidget {
             if let Some(path) = borrowed.playback_manager.shown_file_path() {
                 if let Err(e) = trash::delete(path) {
                     eprintln!(
-                        "Error while moving file '{:?}' to trash: {:?}",
-                        path, e
+                        "Error while moving file '{path:?}' to trash: {e:?}",
                     );
                 }
                 if let Err(e) = borrowed.playback_manager.update_directory() {
-                    eprintln!("Error while updating directory {:?}", e);
+                    eprintln!("Error while updating directory {e:?}");
                 }
                 borrowed.render_validity.invalidate();
             }
@@ -718,14 +717,14 @@ impl PictureWidget {
                     );
                 } else {
                     eprintln!(
-                        "Could not convert the image path to utf8. Path: '{:?}'",
-                        img_path
+                        "Could not convert the image path to utf8. Path: \
+                         '{img_path:?}'",
                     );
                 }
             } else {
                 eprintln!(
-                    "Could not get parent folder for the image path {:?}",
-                    img_path
+                    "Could not get parent folder for the image path \
+                     {img_path:?}",
                 );
             }
         }

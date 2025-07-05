@@ -33,7 +33,7 @@ impl fmt::Display for WidgetError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             WidgetError::Image(img_err) => {
-                write!(f, "WidgetError: Image ({})", img_err)?
+                write!(f, "WidgetError: Image ({img_err})")?
             }
         }
         Ok(())

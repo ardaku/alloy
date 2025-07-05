@@ -240,8 +240,7 @@ impl PlaybackManager {
         if let LoadRequest::None = self.folder_player.load_request {
             let curr_path = self.image_cache.current_file_path();
             debug!(
-                "In `update_directory`, current_file_path is: {:?}",
-                curr_path
+                "In `update_directory`, current_file_path is: {curr_path:?}",
             );
             if curr_path.is_some() {
                 self.image_cache.update_directory()?;
@@ -277,7 +276,7 @@ impl PlaybackManager {
         let next_update = self
             .folder_player
             .update_image(&display, &mut self.image_cache);
-        trace!("Folder player next update: {:?}", next_update);
+        trace!("Folder player next update: {next_update:?}");
         let new_file = self.folder_player.image_texture();
         let mut file_changed = prev_file.is_none() != new_file.is_none();
         if let (Some(prev), Some(new)) = (prev_file, new_file) {
@@ -293,7 +292,7 @@ impl PlaybackManager {
         let img_player_next_update = self
             .image_player
             .update_image(&display, &mut self.image_cache);
-        trace!("Image player next update: {:?}", img_player_next_update);
+        trace!("Image player next update: {img_player_next_update:?}");
         next_update.aggregate(img_player_next_update)
     }
 }
@@ -406,8 +405,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
         if self.playback_state == PlaybackState::Paused {
             if let Err(e) = image_cache.process_prefetched(display) {
                 eprintln!(
-                    "Failed to process prefetched images with error '{:?}'",
-                    e
+                    "Failed to process prefetched images with error '{e:?}'",
                 );
             }
             match load_request {
@@ -543,8 +541,7 @@ impl<P: Playback> ImgSequencePlayer<P> {
                     let stderr_errmsg = "Error writing to stderr";
                     writeln!(
                         stderr,
-                        "Error occurred while loading image: {}",
-                        err
+                        "Error occurred while loading image: {err}",
                     )
                     .expect(stderr_errmsg);
                     writeln!(stderr).expect(stderr_errmsg);

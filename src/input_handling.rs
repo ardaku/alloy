@@ -109,8 +109,8 @@ pub fn execute_triggered_commands(
                 }
                 if let Err(e) = cmd.status() {
                     eprintln!(
-                        "Error while executing the following user command. See the error below.\n{:?}\nError: {:?}",
-                        command, e
+                        "Error while executing the following user command. See \
+                         the error below.\n{command:?}\nError: {e:?}",
                     );
                 }
             }

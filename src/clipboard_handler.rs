@@ -93,7 +93,7 @@ impl ClipboardHandler {
             std::time::Duration::from_millis(50);
         let mut clipboard = arboard::Clipboard::new();
         if let Err(e) = &clipboard {
-            eprintln!("The clipboard could not be created, error was: {}", e);
+            eprintln!("The clipboard could not be created, error was: {e}");
         }
         while request_handle.run_thread.load(Ordering::Acquire) {
             let request_path;

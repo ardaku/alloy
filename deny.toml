@@ -16,6 +16,10 @@ ignore = [
     # Will move off winit which pulls it in eventually, so it's ok to allow for
     # now
     "RUSTSEC-2024-0384",
+    # paste is unmaintained: https://rustsec.org/advisories/RUSTSEC-2024-0436
+    #
+    # Requires rav1e to remove as dependency
+    "RUSTSEC-2024-0436",
 ]
 
 [licenses]
@@ -30,6 +34,7 @@ allow = [
     "ISC",
     "MIT",
     "MPL-2.0",
+    "NCSA",
     "Unicode-3.0",
     "Zlib",
 ]
@@ -64,6 +69,7 @@ skip = [
     { name = "core-graphics", version = "0.22" },
     { name = "foreign-types", version = "0.3" },
     { name = "foreign-types-shared", version = "0.1" },
+    { name = "getrandom", version = "0.2" },
     { name = "image-webp", version = "0.1" },
     { name = "libloading", version = "0.7" },
     { name = "memmap2", version = "0.5" },
@@ -72,6 +78,8 @@ skip = [
     { name = "num_enum", version = "0.5" },
     { name = "num_enum_derive", version = "0.5" },
     { name = "objc2", version = "0.3.0-beta.3.patch-leaks.3" },
+    { name = "objc2", version = "0.5" },
+    { name = "objc2-foundation", version = "0.2" },
     { name = "objc-sys", version = "0.2.0-beta.2" },
     { name = "objc2-encode", version = "2.0.0-pre.2" },
     { name = "raw-window-handle", version = "0.4" },
@@ -88,30 +96,41 @@ skip = [
     { name = "ttf-parser", version = "0.24" },
     { name = "thiserror", version = "1.0" },
     { name = "thiserror-impl", version = "1.0" },
+    { name = "wasi", version = "0.11" },
     { name = "windows-targets", version = "0.42" },
     { name = "windows-targets", version = "0.48" },
+    { name = "windows-targets", version = "0.52" },
     { name = "windows-sys", version = "0.36" },
     { name = "windows-sys", version = "0.45" },
     { name = "windows-sys", version = "0.48" },
+    { name = "windows-sys", version = "0.59" },
     { name = "windows_aarch64_gnullvm", version = "0.42" },
     { name = "windows_aarch64_gnullvm", version = "0.48" },
+    { name = "windows_aarch64_gnullvm", version = "0.52" },
     { name = "windows_aarch64_msvc", version = "0.36" },
     { name = "windows_aarch64_msvc", version = "0.42" },
     { name = "windows_aarch64_msvc", version = "0.48" },
+    { name = "windows_aarch64_msvc", version = "0.52" },
     { name = "windows_i686_gnu", version = "0.36" },
     { name = "windows_i686_gnu", version = "0.42" },
     { name = "windows_i686_gnu", version = "0.48" },
+    { name = "windows_i686_gnu", version = "0.52" },
+    { name = "windows_i686_gnullvm", version = "0.52" },
     { name = "windows_i686_msvc", version = "0.36" },
     { name = "windows_i686_msvc", version = "0.42" },
     { name = "windows_i686_msvc", version = "0.48" },
+    { name = "windows_i686_msvc", version = "0.52" },
     { name = "windows_x86_64_gnu", version = "0.36" },
     { name = "windows_x86_64_gnu", version = "0.42" },
     { name = "windows_x86_64_gnu", version = "0.48" },
+    { name = "windows_x86_64_gnu", version = "0.52" },
     { name = "windows_x86_64_gnullvm", version = "0.42" },
     { name = "windows_x86_64_gnullvm", version = "0.48" },
+    { name = "windows_x86_64_gnullvm", version = "0.52" },
     { name = "windows_x86_64_msvc", version = "0.36" },
     { name = "windows_x86_64_msvc", version = "0.42" },
     { name = "windows_x86_64_msvc", version = "0.48" },
+    { name = "windows_x86_64_msvc", version = "0.52" },
     { name = "winit", version = "0.27" },
     { name = "winnow", version = "0.5" },
 ]

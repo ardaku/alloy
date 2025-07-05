@@ -24,7 +24,7 @@ pub fn parse_args() -> Args {
 
     // Help and version flags take precedence
     if pargs.contains(["-h", "--help"]) {
-        print!("{}", HELP);
+        print!("{HELP}");
         std::process::exit(0);
     } else if pargs.contains(["-v", "--version"]) {
         println!("{}", Version::cargo_pkg_version().to_string().as_str());
@@ -40,7 +40,7 @@ pub fn parse_args() -> Args {
         },
         Ok(_) => {
             println!("Invalid usage\n");
-            print!("{}", HELP);
+            print!("{HELP}");
             std::process::exit(1);
         }
         Err(_) => Args { file_path: None },

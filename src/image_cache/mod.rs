@@ -834,10 +834,7 @@ impl ImageCache {
         if let RequestKind::Priority { display } = kind {
             if self.pending_requests.len() >= Self::MAX_PENDING_REQUESTS {
                 if let Err(e) = self.process_prefetched(display) {
-                    eprintln!(
-                        "Error while processing prefetched images:\n{}",
-                        e
-                    );
+                    eprintln!("Error while processing prefetched images:\n{e}");
                 }
             }
         }

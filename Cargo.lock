@@ -63,7 +63,6 @@ dependencies = [
  "glium",
  "image",
  "kamadak-exif",
- "lazy_static",
  "lexical-sort",
  "log",
  "open",
@@ -71,7 +70,6 @@ dependencies = [
  "rand 0.9.2",
  "resvg",
  "serde",
- "sys-info",
  "thiserror 2.0.16",
  "tiny-skia 0.11.4",
  "toml 0.9.7",
@@ -2623,16 +2621,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
-]
-
-[[package]]
-name = "sys-info"
-version = "0.9.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b3a0d0aba8bf96a0e1ddfdc352fc53b3df7f39318c71854910c3c4b024ae52c"
-dependencies = [
- "cc",
- "libc",
 ]
 
 [[package]]

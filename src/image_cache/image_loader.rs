@@ -350,7 +350,7 @@ pub struct ImageLoader {
 impl ImageLoader {
     /// # Arguemnts
     /// * `capacity` - Number of bytes. The last image loaded will be the one at which the allocated memory reaches or exceeds capacity
-    pub fn new(threads: u32) -> ImageLoader {
+    pub fn new(threads: usize) -> ImageLoader {
         let running = Arc::new(AtomicBool::from(true));
         let (load_request_tx, load_request_rx) = channel();
         let load_request_rx = Arc::new(Mutex::new(load_request_rx));

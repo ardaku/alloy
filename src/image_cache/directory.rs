@@ -168,12 +168,12 @@ impl Directory {
         if !self.check_filter_ready() {
             return Err(Error::WaitingOnFolderFilter);
         }
-        if let Some(file_idx) = self.img_i_to_file_i.get(index) {
-            if *file_idx < self.files.len() {
-                self.curr_file_idx = *file_idx;
-                self.curr_image_idx = index;
-                return Ok(());
-            }
+        if let Some(file_idx) = self.img_i_to_file_i.get(index)
+            && *file_idx < self.files.len()
+        {
+            self.curr_file_idx = *file_idx;
+            self.curr_image_idx = index;
+            return Ok(());
         }
         Err(Error::Other("Could not find image index".to_string()))
     }

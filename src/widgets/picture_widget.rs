@@ -601,21 +601,21 @@ impl PictureWidget {
                 )
             };
         }
-        if triggered!(TOGGLE_FULLSCREEN_NAME) {
-            if let Some(window) = borrowed.window.upgrade() {
-                let fullscreen = !window.fullscreen();
-                window.set_fullscreen(fullscreen);
-                borrowed.bottom_bar.set_visible(!fullscreen);
-            }
+        if triggered!(TOGGLE_FULLSCREEN_NAME)
+            && let Some(window) = borrowed.window.upgrade()
+        {
+            let fullscreen = !window.fullscreen();
+            window.set_fullscreen(fullscreen);
+            borrowed.bottom_bar.set_visible(!fullscreen);
         }
-        if triggered!(ESCAPE_NAME) {
-            if let Some(window) = borrowed.window.upgrade() {
-                if window.fullscreen() {
-                    window.set_fullscreen(false);
-                    borrowed.bottom_bar.set_visible(true);
-                } else {
-                    request_exit();
-                }
+        if triggered!(ESCAPE_NAME)
+            && let Some(window) = borrowed.window.upgrade()
+        {
+            if window.fullscreen() {
+                window.set_fullscreen(false);
+                borrowed.bottom_bar.set_visible(true);
+            } else {
+                request_exit();
             }
         }
         if triggered!(PLAY_ANIM_NAME) {
@@ -671,37 +671,34 @@ impl PictureWidget {
             }
             borrowed.render_validity.invalidate();
         }
-        if triggered!(IMG_DEL_NAME) {
-            if let Some(path) = borrowed.playback_manager.shown_file_path() {
-                if let Err(e) = trash::delete(path) {
-                    eprintln!(
-                        "Error while moving file '{path:?}' to trash: {e:?}",
-                    );
-                }
-                if let Err(e) = borrowed.playback_manager.update_directory() {
-                    eprintln!("Error while updating directory {e:?}");
-                }
-                borrowed.render_validity.invalidate();
+        if triggered!(IMG_DEL_NAME)
+            && let Some(path) = borrowed.playback_manager.shown_file_path()
+        {
+            if let Err(e) = trash::delete(path) {
+                eprintln!("Error while moving file '{path:?}' to trash: {e:?}",);
             }
+            if let Err(e) = borrowed.playback_manager.update_directory() {
+                eprintln!("Error while updating directory {e:?}");
+            }
+            borrowed.render_validity.invalidate();
         }
-        if triggered!(IMG_COPY_NAME) {
-            if let Some(path) =
+        if triggered!(IMG_COPY_NAME)
+            && let Some(path) =
                 borrowed.playback_manager.shown_file_path().clone()
-            {
-                let request_started;
-                match &mut borrowed.clipboard_handler {
-                    Some(clipboard_handler) => {
-                        request_started = true;
-                        clipboard_handler.request_copy(path);
-                        borrowed.copy_notifications.set_started();
-                    }
-                    _ => {
-                        request_started = false;
-                    }
+        {
+            let request_started;
+            match &mut borrowed.clipboard_handler {
+                Some(clipboard_handler) => {
+                    request_started = true;
+                    clipboard_handler.request_copy(path);
+                    borrowed.copy_notifications.set_started();
                 }
-                if request_started {
-                    borrowed.clipboard_request_was_pending = true;
+                _ => {
+                    request_started = false;
                 }
+            }
+            if request_started {
+                borrowed.clipboard_request_was_pending = true;
             }
         }
         if let Some(img_path) = borrowed.playback_manager.shown_file_path() {
@@ -769,10 +766,9 @@ impl Widget for PictureWidget {
             data.render_validity.invalidate();
         } else if let (Some(prev_tex), Some(new_tex)) =
             (prev_texture, new_texture)
+            && !Rc::ptr_eq(&prev_tex.tex_grid, &new_tex.tex_grid)
         {
-            if !Rc::ptr_eq(&prev_tex.tex_grid, &new_tex.tex_grid) {
-                data.render_validity.invalidate();
-            }
+            data.render_validity.invalidate();
         }
         if let Some(clipboard_handler) = &data.clipboard_handler {
             let clipboard_result = clipboard_handler.try_get_result();

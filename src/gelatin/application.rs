@@ -179,13 +179,13 @@ impl Application {
                         *control_flow = ControlFlow::Wait;
                     }
                 }
-                if *control_flow == ControlFlow::Exit {
-                    if let Some(at_exit) = at_exit.take() {
-                        at_exit();
-                    }
-                    // Drop 'em all!
-                    //windows.clear();
+                if *control_flow == ControlFlow::Exit
+                    && let Some(at_exit) = at_exit.take()
+                {
+                    at_exit();
                 }
+                // Drop 'em all!
+                //windows.clear();
 
                 #[cfg(all(unix, not(target_os = "macos")))]
                 if matches!(control_flow, ControlFlow::Poll) {

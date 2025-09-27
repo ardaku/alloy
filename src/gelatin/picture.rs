@@ -102,7 +102,7 @@ impl Picture {
     pub fn texture(
         &self,
         display: &Display,
-    ) -> Result<PictureTextureRef, ImageError> {
+    ) -> Result<PictureTextureRef<'_>, ImageError> {
         self.upload_to_texture(display)?;
         match &*self.data.borrow() {
             PictureData::Gpu(_) => Ok(PictureTextureRef {

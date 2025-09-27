@@ -345,12 +345,12 @@ impl ImageCache {
 
     /// Returns tru if and only if the current image has been fully loaded and it has a single frame.
     pub fn loaded_still_image(&self) -> bool {
-        if let Some(desc) = self.dir.curr_descriptor() {
-            if let Some(img) = self.texture_cache.get(&desc.request_id) {
-                if img.fully_loaded && img.frames.len() == 1 {
-                    return true;
-                }
-            }
+        if let Some(desc) = self.dir.curr_descriptor()
+            && let Some(img) = self.texture_cache.get(&desc.request_id)
+            && img.fully_loaded
+            && img.frames.len() == 1
+        {
+            return true;
         }
         false
     }
@@ -440,12 +440,11 @@ impl ImageCache {
             Some(frame_id) => frame_id,
             None => {
                 let mut retval = 0;
-                if let Some(prev_img_index) = prev_img_index {
-                    if let Some(curr_img_index) = self.dir.curr_img_index() {
-                        if curr_img_index == prev_img_index {
-                            retval = self.current_frame_idx as isize;
-                        }
-                    }
+                if let Some(prev_img_index) = prev_img_index
+                    && let Some(curr_img_index) = self.dir.curr_img_index()
+                    && curr_img_index == prev_img_index
+                {
+                    retval = self.current_frame_idx as isize;
                 }
                 retval
             }
@@ -636,10 +635,10 @@ impl ImageCache {
                 fs::metadata(&path).ok().and_then(|m| m.modified().ok());
             let mut get_from_cache = false;
             if let Some(curr_mod_time) = modified {
-                if let Some(mod_time) = tex.mod_time {
-                    if mod_time == curr_mod_time {
-                        get_from_cache = true;
-                    }
+                if let Some(mod_time) = tex.mod_time
+                    && mod_time == curr_mod_time
+                {
+                    get_from_cache = true;
                 }
             } else {
                 get_from_cache = true;
@@ -709,10 +708,10 @@ impl ImageCache {
                         let mut overwrite = true;
                         if let Some(curr_mod_time) = curr_mod_time {
                             let cached = entry.get();
-                            if let Some(existing_mod_time) = cached.mod_time {
-                                if existing_mod_time == curr_mod_time {
-                                    overwrite = false;
-                                }
+                            if let Some(existing_mod_time) = cached.mod_time
+                                && existing_mod_time == curr_mod_time
+                            {
+                                overwrite = false;
                             }
                         }
                         if overwrite {
@@ -831,12 +830,11 @@ impl ImageCache {
         req_id: u32,
         kind: RequestKind,
     ) -> bool {
-        if let RequestKind::Priority { display } = kind {
-            if self.pending_requests.len() >= Self::MAX_PENDING_REQUESTS {
-                if let Err(e) = self.process_prefetched(display) {
-                    eprintln!("Error while processing prefetched images:\n{e}");
-                }
-            }
+        if let RequestKind::Priority { display } = kind
+            && self.pending_requests.len() >= Self::MAX_PENDING_REQUESTS
+            && let Err(e) = self.process_prefetched(display)
+        {
+            eprintln!("Error while processing prefetched images:\n{e}");
         }
         if self.pending_requests.len() >= Self::MAX_PENDING_REQUESTS {
             return false;

@@ -286,17 +286,17 @@ fn load_animation(
 }
 
 pub fn is_file_supported(filename: &Path) -> bool {
-    if let Some(ext) = filename.extension() {
-        if let Some(ext) = ext.to_str() {
-            let ext = ext.to_lowercase();
-            match ext.as_str() {
-                "jpg" | "jpeg" | "png" | "apng" | "gif" | "webp" | "tif"
-                | "tiff" | "tga" | "bmp" | "ico" | "hdr" | "pbm" | "pam"
-                | "ppm" | "pgm" => {
-                    return true;
-                }
-                _ => (),
+    if let Some(ext) = filename.extension()
+        && let Some(ext) = ext.to_str()
+    {
+        let ext = ext.to_lowercase();
+        match ext.as_str() {
+            "jpg" | "jpeg" | "png" | "apng" | "gif" | "webp" | "tif"
+            | "tiff" | "tga" | "bmp" | "ico" | "hdr" | "pbm" | "pam"
+            | "ppm" | "pgm" => {
+                return true;
             }
+            _ => (),
         }
     }
     detect_format(filename).is_ok()

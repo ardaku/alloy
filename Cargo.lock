@@ -63,7 +63,6 @@ dependencies = [
  "glium",
  "image",
  "kamadak-exif",
- "lazy_static",
  "lexical-sort",
  "log",
  "open",

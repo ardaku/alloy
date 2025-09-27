@@ -1,11 +1,10 @@
 use std::{
     collections::HashMap,
     process::Command,
-    sync::{Arc, Mutex},
+    sync::{Arc, LazyLock, Mutex},
 };
 
 use glium::glutin::event::ModifiersState;
-use lazy_static::lazy_static;
 
 use crate::configuration::Configuration;
 
@@ -31,27 +30,27 @@ pub static PAN_RIGHT_NAME: &str = "pan_right";
 pub static PAN_UP_NAME: &str = "pan_up";
 pub static PAN_DOWN_NAME: &str = "pan_down";
 
-lazy_static! {
-    pub static ref DEFAULT_BINDINGS: HashMap<&'static str, Vec<&'static str>> = {
-        let mut m = HashMap::new();
-        m.insert(TOGGLE_FULLSCREEN_NAME, vec!["F11", "Return"]);
-        m.insert(ESCAPE_NAME, vec!["Escape"]);
-        m.insert(IMG_NEXT_NAME, vec!["D", "Right", "PageDown"]);
-        m.insert(IMG_PREV_NAME, vec!["A", "Left", "PageUp"]);
-        m.insert(IMG_ORIG_NAME, vec!["Q", "1"]);
-        m.insert(IMG_FIT_NAME, vec!["F"]);
-        m.insert(IMG_FIT_BEST_NAME, vec!["E"]);
-        m.insert(IMG_DEL_NAME, vec!["Delete"]);
-        m.insert(IMG_COPY_NAME, vec!["CmdCtrl+C"]);
-        m.insert(PAN_NAME, vec!["Space"]);
-        m.insert(PLAY_ANIM_NAME, vec!["Alt+A", "Alt+V"]);
-        m.insert(PLAY_PRESENT_NAME, vec!["P"]);
-        m.insert(PLAY_PRESENT_RND_NAME, vec!["Alt+P"]);
-        m.insert(TOGGLE_ANTIALIAS_NAME, vec!["S"]);
-        m.insert(SET_AUTOMATIC_ANTIALIAS_NAME, vec!["Alt+S"]);
-        m
-    };
-}
+pub static DEFAULT_BINDINGS: LazyLock<
+    HashMap<&'static str, Vec<&'static str>>,
+> = LazyLock::new(|| {
+    let mut m = HashMap::new();
+    m.insert(TOGGLE_FULLSCREEN_NAME, vec!["F11", "Return"]);
+    m.insert(ESCAPE_NAME, vec!["Escape"]);
+    m.insert(IMG_NEXT_NAME, vec!["D", "Right", "PageDown"]);
+    m.insert(IMG_PREV_NAME, vec!["A", "Left", "PageUp"]);
+    m.insert(IMG_ORIG_NAME, vec!["Q", "1"]);
+    m.insert(IMG_FIT_NAME, vec!["F"]);
+    m.insert(IMG_FIT_BEST_NAME, vec!["E"]);
+    m.insert(IMG_DEL_NAME, vec!["Delete"]);
+    m.insert(IMG_COPY_NAME, vec!["CmdCtrl+C"]);
+    m.insert(PAN_NAME, vec!["Space"]);
+    m.insert(PLAY_ANIM_NAME, vec!["Alt+A", "Alt+V"]);
+    m.insert(PLAY_PRESENT_NAME, vec!["P"]);
+    m.insert(PLAY_PRESENT_RND_NAME, vec!["Alt+P"]);
+    m.insert(TOGGLE_ANTIALIAS_NAME, vec!["S"]);
+    m.insert(SET_AUTOMATIC_ANTIALIAS_NAME, vec!["Alt+S"]);
+    m
+});
 
 pub fn char_to_input_key(ch: char) -> String {
     let mut input_key = String::with_capacity(8);

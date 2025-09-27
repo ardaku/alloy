@@ -20,6 +20,12 @@ ignore = [
     #
     # Requires rav1e to remove as dependency
     "RUSTSEC-2024-0436",
+    # servo-fontconfig is unmaintained: 
+    # https://rustsec.org/advisories/RUSTSEC-2025-0059
+    #
+    # Will move off winit which pulls it in eventually, so it's ok to allow for
+    # now
+    "RUSTSEC-2025-0059",
 ]
 
 [licenses]
@@ -77,10 +83,8 @@ skip = [
     { name = "num_enum", version = "0.5" },
     { name = "num_enum_derive", version = "0.5" },
     { name = "objc2", version = "0.3.0-beta.3.patch-leaks.3" },
-    { name = "objc2", version = "0.5" },
-    { name = "objc2-foundation", version = "0.2" },
-    { name = "objc-sys", version = "0.2.0-beta.2" },
     { name = "objc2-encode", version = "2.0.0-pre.2" },
+    { name = "png", version = "0.17" },
     { name = "rand", version = "0.8" },
     { name = "rand_chacha", version = "0.3" },
     { name = "rand_core", version = "0.6" },
@@ -106,7 +110,7 @@ skip = [
     { name = "windows-sys", version = "0.36" },
     { name = "windows-sys", version = "0.45" },
     { name = "windows-sys", version = "0.48" },
-    { name = "windows-sys", version = "0.59" },
+    { name = "windows-sys", version = "0.60" },
     { name = "windows_aarch64_gnullvm", version = "0.42" },
     { name = "windows_aarch64_gnullvm", version = "0.48" },
     { name = "windows_aarch64_gnullvm", version = "0.52" },

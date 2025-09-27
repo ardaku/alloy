@@ -299,7 +299,7 @@ impl ImageCache {
 
     /// # Arguments
     /// * `capacity` - Number of bytes. The last image loaded will be the one at which the allocated memory reaches or exceeds capacity
-    pub fn new(capacity: isize, threads: u32) -> ImageCache {
+    pub fn new(capacity: isize, threads: usize) -> ImageCache {
         ImageCache {
             dir: Directory::new(),
             //current_file_idx: 0,

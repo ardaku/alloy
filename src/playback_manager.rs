@@ -4,6 +4,7 @@ use std::{
     mem,
     path::{Path, PathBuf},
     rc::Rc,
+    thread,
     time::{Duration, Instant},
 };
 
@@ -166,28 +167,16 @@ pub struct PlaybackManager {
 
 impl PlaybackManager {
     pub fn new() -> Self {
-        let cache_capaxity = match sys_info::mem_info() {
-            Ok(value) => {
-                // value originally reported in KiB
-                ((value.total / 8) * 1024) as isize
-            }
-            _ => {
-                eprintln!(
-                    "Could not get system memory size, using default value"
-                );
-                // bytes
-                500_000_000
-            }
-        };
+        // Allow up to 500 MB of cached images
+        const CACHE_CAPACITY: isize = 500_000_000;
 
-        let thread_count = match sys_info::cpu_num() {
-            Ok(value) => value.clamp(2, 4),
-            _ => 4,
-        };
+        let thread_count = thread::available_parallelism()
+            .map(|value| value.get().clamp(2, 4))
+            .unwrap_or(4);
 
         PlaybackManager {
             //playback_state: PlaybackState::Paused,
-            image_cache: ImageCache::new(cache_capaxity, thread_count),
+            image_cache: ImageCache::new(CACHE_CAPACITY, thread_count),
             folder_player: ImgSequencePlayer::new(),
             image_player: ImgSequencePlayer::new(),
         }

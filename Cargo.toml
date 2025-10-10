@@ -63,7 +63,7 @@ resvg = "0.45.1"
 serde = { version = "1.0.227", features = ["derive"] }
 thiserror = "2.0.17"
 tiny-skia = "0.11.4"
-toml = "0.9.7"
+toml = "0.9.8"
 trash = { version = "5.2.3", default-features = false }
 typed-builder = "0.22.0"
 usvg = "0.45.1"

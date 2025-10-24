@@ -2888,9 +2888,9 @@ checksum = "df8b2b54733674ad286d16267dcfc7a71ed5c776e4ac7aa3c3e2561f7c637bf2"
 
 [[package]]
 name = "trash"
-version = "5.2.3"
+version = "5.2.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "65a334451012017a39758aa85a30827c13ac684245bf6b08249483c063f64ff3"
+checksum = "0102cfb632fbe1adefa067036d4f383045091ae8d4fc4c2c14d3c0f92d878972"
 dependencies = [
  "libc",
  "log",

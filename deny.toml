@@ -103,7 +103,6 @@ skip = [
     { name = "tiny-skia-path", version = "0.8" },
     { name = "thiserror", version = "1.0" },
     { name = "thiserror-impl", version = "1.0" },
-    { name = "wasi", version = "0.11" },
     { name = "windows-targets", version = "0.42" },
     { name = "windows-targets", version = "0.48" },
     { name = "windows-targets", version = "0.52" },

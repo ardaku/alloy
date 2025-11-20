@@ -65,6 +65,6 @@ thiserror = "2.0.17"
 tiny-skia = "0.11.4"
 toml = "0.9.8"
 trash = { version = "5.2.4", default-features = false }
-typed-builder = "0.23.0"
+typed-builder = "0.23.2"
 usvg = "0.45.1"
 winit = "0.28.7"

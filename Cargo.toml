@@ -66,5 +66,5 @@ tiny-skia = "0.11.4"
 toml = "0.9.8"
 trash = { version = "5.2.4", default-features = false }
 typed-builder = "0.23.0"
-usvg = "0.45.1"
+usvg = "0.46.0"
 winit = "0.28.7"
